@@ -1,0 +1,52 @@
+From c22659d76d73f00f41c13776c490e17a50aacd20 Mon Sep 17 00:00:00 2001
+From: Simon Weller <sweller@ena.com>
+Date: Fri, 4 Mar 2016 06:53:44 -0600
+Subject: [PATCH] Addresses CLOUDSTACK-9300 where the MySQL HA StaticStrategy
+ class fails to load successfully
+
+---
+ client/tomcatconf/catalina.properties.in      | 2 +-
+ packaging/centos7/cloud-management.sysconfig  | 2 +-
+ packaging/centos7/tomcat7/catalina.properties | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/client/tomcatconf/catalina.properties.in b/client/tomcatconf/catalina.properties.in
+index 282892b..e0baf61 100644
+--- a/client/tomcatconf/catalina.properties.in
++++ b/client/tomcatconf/catalina.properties.in
+@@ -44,7 +44,7 @@ package.definition=sun.,java.,org.apache.catalina.,org.apache.coyote.,org.apache
+ #     "foo/*.jar": Add all the JARs of the specified folder as class 
+ #                  repositories
+ #     "foo/bar.jar": Add bar.jar as a class repository
+-common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,/usr/share/java/mysql-connector-java.jar,/usr/share/cloudstack-mysql-ha/lib/*jar
++common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,/usr/share/java/mysql-connector-java.jar,/usr/share/cloudstack-mysql-ha/lib/*.jar
+ 
+ #
+ # List of comma-separated paths defining the contents of the "server" 
+diff --git a/packaging/centos7/cloud-management.sysconfig b/packaging/centos7/cloud-management.sysconfig
+index c262b11..6e5fcf9 100644
+--- a/packaging/centos7/cloud-management.sysconfig
++++ b/packaging/centos7/cloud-management.sysconfig
+@@ -45,5 +45,5 @@ SHUTDOWN_VERBOSE="false"
+ # Set the TOMCAT_PID location
+ CATALINA_PID="/var/run/cloudstack-management.pid"
+ 
+-CLASSPATH=/etc/cloudstack/management:/usr/share/cloudstack-common:/usr/share/cloudstack-management/setup:/usr/share/java/mysql-connector-java.jar
++CLASSPATH=/etc/cloudstack/management:/usr/share/cloudstack-common:/usr/share/cloudstack-management/setup
+ 
+diff --git a/packaging/centos7/tomcat7/catalina.properties b/packaging/centos7/tomcat7/catalina.properties
+index 282892b..e0baf61 100644
+--- a/packaging/centos7/tomcat7/catalina.properties
++++ b/packaging/centos7/tomcat7/catalina.properties
+@@ -44,7 +44,7 @@ package.definition=sun.,java.,org.apache.catalina.,org.apache.coyote.,org.apache
+ #     "foo/*.jar": Add all the JARs of the specified folder as class 
+ #                  repositories
+ #     "foo/bar.jar": Add bar.jar as a class repository
+-common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,/usr/share/java/mysql-connector-java.jar,/usr/share/cloudstack-mysql-ha/lib/*jar
++common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,/usr/share/java/mysql-connector-java.jar,/usr/share/cloudstack-mysql-ha/lib/*.jar
+ 
+ #
+ # List of comma-separated paths defining the contents of the "server" 
+-- 
+1.8.5.6
+
