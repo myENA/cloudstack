@@ -876,8 +876,6 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
                     }
                     s_logger.info("Succesfully unprotected and removed any remaining snapshots (" + snaps.size() + ") of "
                         + pool.getSourceDir() + "/" + uuid + " Continuing to remove the RBD image");
-                } catch (RadosException e) {
-                    throw new CloudRuntimeException(e.toString());
                 } catch (RbdException e) {
                     throw new CloudRuntimeException(e.toString());
                 } finally {
