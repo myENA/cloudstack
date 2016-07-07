@@ -67,7 +67,9 @@ import org.libvirt.LibvirtException;
 
 import com.ceph.rados.IoCTX;
 import com.ceph.rados.Rados;
+import com.ceph.rados.exceptions.RadosException;
 import com.ceph.rbd.Rbd;
+import com.ceph.rbd.RbdException;
 import com.ceph.rbd.RbdImage;
 import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.storage.PrimaryStorageDownloadAnswer;
@@ -1316,6 +1318,8 @@ public class KVMStorageProcessor implements StorageProcessor {
                     image.snapRemove(snapshotName);
                     s_logger.info("Snapshot " + snap_full_name + " successfully removed from " +
                             primaryPool.getType().toString() + "  pool.");
+                } catch (RbdException e) {
+                    s_logger.error(e.toString() + ", return " +e.getReturnValue());
                 } finally {
                     rbd.close(image);
                     r.ioCtxDestroy(io);
@@ -1325,8 +1329,14 @@ public class KVMStorageProcessor implements StorageProcessor {
                 throw new InternalErrorException("Operation not implemented for storage pool type of " + primaryPool.getType().toString());
             }
             return new Answer(cmd, true, "Snapshot " + snap_full_name + " removed successfully.");
+        } catch (RadosException e) {
+            s_logger.error(e.toString() + ", return " +e.getReturnValue());
+            return new Answer(cmd, false, "Failed to remove snapshot " + snap_full_name);
+        } catch (RbdException e) {
+            s_logger.error(e.toString() + ", return " +e.getReturnValue());
+            return new Answer(cmd, false, "Failed to remove snapshot " + snap_full_name);
         } catch (Exception e) {
-            s_logger.error(e.getMessage());
+            s_logger.error(e.toString());
             return new Answer(cmd, false, "Failed to remove snapshot " + snap_full_name);
         }
     }
