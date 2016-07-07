@@ -1153,12 +1153,14 @@ public class NetUtils {
         }
 
         for (String block: allowedNetBlocks) {
-            if (!isNetworkAWithinNetworkB(cidr, block)) {
-                s_logger.warn("cidr " + cidr + " is not RFC 1918 or 6598 compliant");
-                return false;
+            if (isNetworkAWithinNetworkB(cidr, block)) {
+                return true;
             }
         }
-        return true;
+
+        // not in allowedNetBlocks - return false
+        s_logger.warn("cidr " + cidr + " is not RFC 1918 or 6598 compliant");
+        return false;
     }
 
     public static boolean verifyInstanceName(final String instanceName) {
