@@ -41,6 +41,9 @@ public class ApiConstants {
     public static final String CATEGORY = "category";
     public static final String CAN_REVERT = "canrevert";
     public static final String CERTIFICATE = "certificate";
+    public static final String ROOT_CERTIFICATE = "rootcertificate";
+    public static final String INTERMIDIATE_CERTIFICATES = "intermediatecertificates";
+    public static final String SERVER_CERTIFICATE = "servercertificate";
     public static final String CERTIFICATE_CHAIN = "certchain";
     public static final String CERTIFICATE_FINGERPRINT = "fingerprint";
     public static final String CERTIFICATE_ID = "certid";
@@ -645,6 +648,9 @@ public class ApiConstants {
     public static final String OVM3_VIP = "ovm3vip";
 
     public static final String ADMIN = "admin";
+
+    public static final String HAS_ANNOTATION = "hasannotation";
+    public static final String LAST_ANNOTATED = "lastannotated";
 
     public static final String SHOWHIDDEN = "showhidden";
 

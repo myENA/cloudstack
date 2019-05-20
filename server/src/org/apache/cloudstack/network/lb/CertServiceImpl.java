@@ -18,17 +18,18 @@ package org.apache.cloudstack.network.lb;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Principal;
+import java.security.KeyPair;
+import java.security.KeyFactory;
+import java.security.MessageDigest;
 import java.security.Security;
+import java.security.NoSuchProviderException;
+import java.security.InvalidKeyException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertPathBuilder;
 import java.security.cert.CertPathBuilderException;
 import java.security.cert.CertStore;
@@ -39,6 +40,8 @@ import java.security.cert.PKIXBuilderParameters;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +54,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.ejb.Local;
 import javax.inject.Inject;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import org.apache.cloudstack.acl.SecurityChecker;
 import org.apache.cloudstack.api.command.user.loadbalancer.DeleteSslCertCmd;
 import org.apache.cloudstack.api.command.user.loadbalancer.ListSslCertsCmd;
@@ -83,6 +88,8 @@ import com.cloud.user.dao.AccountDao;
 import com.cloud.utils.db.DB;
 import com.cloud.utils.db.EntityManager;
 import com.cloud.utils.exception.CloudRuntimeException;
+import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemReader;
 
 @Local(value = {CertService.class})
 public class CertServiceImpl implements CertService {
@@ -386,7 +393,7 @@ public class CertServiceImpl implements CertService {
         }
     }
 
-    private void validateChain(List<Certificate> chain, Certificate cert) {
+    public void validateChain(List<Certificate> chain, Certificate cert) {
 
         List<Certificate> certs = new ArrayList<Certificate>();
         Set<TrustAnchor> anchors = new HashSet<TrustAnchor>();
@@ -453,6 +460,21 @@ public class CertServiceImpl implements CertService {
 
         } catch (Exception e) {
             throw new IOException("Invalid Key format or invalid password.", e);
+        }
+    }
+
+    public PrivateKey parsePrivateKey(final String key) throws IOException {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
+        try (final PemReader pemReader = new PemReader(new StringReader(key));) {
+            final PemObject pemObject = pemReader.readPemObject();
+            final byte[] content = pemObject.getContent();
+            final PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(content);
+            final KeyFactory factory = KeyFactory.getInstance("RSA", "BC");
+            return factory.generatePrivate(privKeySpec);
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            throw new IOException("No encryption provider available.", e);
+        } catch (final InvalidKeySpecException e) {
+            throw new IOException("Invalid Key format.", e);
         }
     }
 
