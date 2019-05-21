@@ -126,20 +126,52 @@ public class ServiceOfferingResponse extends BaseResponse {
     private Integer hypervisorSnapshotReserve;
 
     @SerializedName("diskBytesReadRate")
-    @Param(description = "bytes read rate of the service offering")
+    @Param(description = "bytes read rate of the disk offering")
     private Long bytesReadRate;
 
+    @SerializedName("diskBytesReadRateMax")
+    @Param(description = "burst bytes read rate of the disk offering")
+    private Long bytesReadRateMax;
+
+    @SerializedName("diskBytesReadRateMaxLength")
+    @Param(description = "length (in seconds) of the burst")
+    private Long bytesReadRateMaxLength;
+
     @SerializedName("diskBytesWriteRate")
-    @Param(description = "bytes write rate of the service offering")
+    @Param(description = "bytes write rate of the disk offering")
     private Long bytesWriteRate;
 
+    @SerializedName("diskBytesWriteRateMax")
+    @Param(description = "burst bytes write rate of the disk offering")
+    private Long bytesWriteRateMax;
+
+    @SerializedName("diskBytesWriteRateMaxLength")
+    @Param(description = "length (in seconds) of the burst")
+    private Long bytesWriteRateMaxLength;
+
     @SerializedName("diskIopsReadRate")
-    @Param(description = "io requests read rate of the service offering")
+    @Param(description = "io requests read rate of the disk offering")
     private Long iopsReadRate;
 
+    @SerializedName("diskIopsReadRateMax")
+    @Param(description = "burst io requests read rate of the disk offering")
+    private Long iopsReadRateMax;
+
+    @SerializedName("diskIopsReadRateMaxLength")
+    @Param(description = "length (in second) of the burst")
+    private Long iopsReadRateMaxLength;
+
     @SerializedName("diskIopsWriteRate")
-    @Param(description = "io requests write rate of the service offering")
+    @Param(description = "io requests write rate of the disk offering")
     private Long iopsWriteRate;
+
+    @SerializedName("diskIopsWriteRateMax")
+    @Param(description = "burst io requests write rate of the disk offering")
+    private Long iopsWriteRateMax;
+
+    @SerializedName("diskIopsWriteRateMaxLength")
+    @Param(description = "length (in seconds) of the burst")
+    private Long iopsWriteRateMaxLength;
 
     @SerializedName(ApiConstants.DEPLOYMENT_PLANNER)
     @Param(description = "deployment strategy used to deploy VM.")
