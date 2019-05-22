@@ -1290,7 +1290,8 @@ public class Upgrade410to420 implements DbUpgrade {
 
     private void addHostDetailsIndex(Connection conn) {
         s_logger.debug("Checking if host_details index exists, if not we will add it");
-        try(PreparedStatement pstmt = conn.prepareStatement("SHOW INDEX FROM `cloud`.`host_details` where KEY_NAME = 'fk_host_details__host_id'");)
+        try(PreparedStatement pstmt = conn.prepareStatement("select constraint_name from information_schema.table_constraints" +
+                " where table_schema = 'cloud' and table_name = 'host_details' and constraint_name = 'fk_host_details__host_id'"))
         {
             try(ResultSet rs = pstmt.executeQuery();) {
                 if (rs.next()) {
