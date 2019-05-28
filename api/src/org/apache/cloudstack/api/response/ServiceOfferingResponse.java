@@ -62,7 +62,8 @@ public class ServiceOfferingResponse extends BaseResponse {
     @Param(description = "the storage type for this service offering")
     private String storageType;
 
-    @SerializedName("provisioningtype") @Param(description="provisioning type used to create volumes. Valid values are thin, sparse, fat.", since = "4.4.0")
+    @SerializedName("provisioningtype")
+    @Param(description = "provisioning type used to create volumes. Valid values are thin, sparse, fat.", since = "4.4.0")
     private String provisioningType;
 
     @SerializedName("offerha")
@@ -276,11 +277,11 @@ public class ServiceOfferingResponse extends BaseResponse {
         this.storageType = storageType;
     }
 
-    public String getProvisioningType(){
+    public String getProvisioningType() {
         return provisioningType;
     }
 
-    public void setProvisioningType(String provisioningType){
+    public void setProvisioningType(String provisioningType) {
         this.provisioningType = provisioningType;
     }
 
@@ -388,16 +389,48 @@ public class ServiceOfferingResponse extends BaseResponse {
         this.bytesReadRate = bytesReadRate;
     }
 
+    public void setBytesReadRateMax(Long bytesReadRateMax) {
+        this.bytesReadRateMax = bytesReadRateMax;
+    }
+
+    public void setBytesReadRateMaxLength(Long bytesReadRateMaxLength) {
+        this.bytesReadRateMaxLength = bytesReadRateMaxLength;
+    }
+
     public void setBytesWriteRate(Long bytesWriteRate) {
         this.bytesWriteRate = bytesWriteRate;
+    }
+
+    public void setBytesWriteRateMax(Long bytesWriteRateMax) {
+        this.bytesWriteRateMax = bytesWriteRateMax;
+    }
+
+    public void setBytesWriteRateMaxLength(Long bytesWriteRateMaxLength) {
+        this.bytesWriteRateMaxLength = bytesWriteRateMaxLength;
     }
 
     public void setIopsReadRate(Long iopsReadRate) {
         this.iopsReadRate = iopsReadRate;
     }
 
+    public void setIopsReadRateMax(Long iopsReadRateMax) {
+        this.iopsReadRateMax = iopsReadRateMax;
+    }
+
+    public void setIopsReadRateMaxLength(Long iopsReadRateMaxLength) {
+        this.iopsReadRateMaxLength = iopsReadRateMaxLength;
+    }
+
     public void setIopsWriteRate(Long iopsWriteRate) {
         this.iopsWriteRate = iopsWriteRate;
+    }
+
+    public void setIopsWriteRateMax(Long iopsWriteRateMax) {
+        this.iopsWriteRateMax = iopsWriteRateMax;
+    }
+
+    public void setIopsWriteRateMaxLength(Long iopsWriteRateMaxLength) {
+        this.iopsWriteRateMaxLength = iopsWriteRateMaxLength;
     }
 
     public void setDetails(Map<String, String> details) {

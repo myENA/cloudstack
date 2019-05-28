@@ -2009,14 +2009,22 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         return createServiceOffering(userId, cmd.getIsSystem(), vmType, cmd.getServiceOfferingName(), cpuNumber, memory, cpuSpeed, cmd.getDisplayText(),
                 cmd.getProvisioningType(), localStorageRequired, offerHA, limitCpuUse, volatileVm, cmd.getTags(), cmd.getDomainId(), cmd.getHostTag(),
                 cmd.getNetworkRate(), cmd.getDeploymentPlanner(), cmd.getDetails(), cmd.isCustomizedIops(), cmd.getMinIops(), cmd.getMaxIops(),
-                cmd.getBytesReadRate(), cmd.getBytesWriteRate(), cmd.getIopsReadRate(), cmd.getIopsWriteRate(), cmd.getHypervisorSnapshotReserve());
+                cmd.getBytesReadRate(), cmd.getBytesReadRateMax(), cmd.getBytesReadRateMaxLength(),
+                cmd.getBytesWriteRate(),cmd.getBytesWriteRateMax(), cmd.getBytesWriteRateMaxLength(),
+                cmd.getIopsReadRate(), cmd.getIopsReadRateMax(), cmd.getIopsReadRateMaxLength(),
+                cmd.getIopsWriteRate(), cmd.getIopsWriteRateMax(), cmd.getIopsWriteRateMaxLength(),
+                cmd.getHypervisorSnapshotReserve());
     }
 
     protected ServiceOfferingVO createServiceOffering(final long userId, final boolean isSystem, final VirtualMachine.Type vmType,
             final String name, final Integer cpu, final Integer ramSize, final Integer speed, final String displayText, final String provisioningType, final boolean localStorageRequired,
             final boolean offerHA, final boolean limitResourceUse, final boolean volatileVm,  String tags, final Long domainId, final String hostTag,
             final Integer networkRate, final String deploymentPlanner, final Map<String, String> details, final Boolean isCustomizedIops, Long minIops, Long maxIops,
-            Long bytesReadRate, Long bytesWriteRate, Long iopsReadRate, Long iopsWriteRate, final Integer hypervisorSnapshotReserve) {
+            Long bytesReadRate, Long bytesReadRateMax, Long bytesReadRateMaxLength,
+            Long bytesWriteRate,  Long bytesWriteRateMax, Long bytesWriteRateMaxLength,
+            Long iopsReadRate, Long iopsReadRateMax, Long iopsReadRateMaxLength,
+            Long iopsWriteRate, Long iopsWriteRateMax, Long iopsWriteRateMaxLength,
+            final Integer hypervisorSnapshotReserve) {
 
         // Check if user exists in the system
         final User user = _userDao.findById(userId);
@@ -2048,9 +2056,17 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
 
         if (isCustomizedIops != null) {
             bytesReadRate = null;
+            bytesReadRateMax = null;
+            bytesReadRateMaxLength = null;
             bytesWriteRate = null;
+            bytesWriteRateMax = null;
+            bytesWriteRateMaxLength = null;
             iopsReadRate = null;
+            iopsReadRateMax = null;
+            iopsReadRateMaxLength = null;
             iopsWriteRate = null;
+            iopsWriteRateMax = null;
+            iopsWriteRateMaxLength = null;
 
             if (isCustomizedIops) {
                 minIops = null;
@@ -2085,14 +2101,38 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         if (bytesReadRate != null && bytesReadRate > 0) {
             offering.setBytesReadRate(bytesReadRate);
         }
+        if (bytesReadRateMax != null && bytesReadRateMax > 0) {
+            offering.setBytesReadRateMax(bytesReadRateMax);
+        }
+        if (bytesReadRateMaxLength != null && bytesReadRateMaxLength > 0) {
+            offering.setBytesReadRateMaxLength(bytesReadRateMaxLength);
+        }
         if (bytesWriteRate != null && bytesWriteRate > 0) {
             offering.setBytesWriteRate(bytesWriteRate);
+        }
+        if (bytesWriteRateMax != null && bytesWriteRateMax > 0) {
+            offering.setBytesWriteRateMax(bytesWriteRateMax);
+        }
+        if (bytesWriteRateMaxLength != null && bytesWriteRateMaxLength > 0) {
+            offering.setBytesWriteRateMaxLength(bytesWriteRateMaxLength);
         }
         if (iopsReadRate != null && iopsReadRate > 0) {
             offering.setIopsReadRate(iopsReadRate);
         }
+        if (iopsReadRateMax != null && iopsReadRateMax > 0) {
+            offering.setIopsReadRateMax(iopsReadRateMax);
+        }
+        if (iopsReadRateMaxLength != null && iopsReadRateMaxLength > 0) {
+            offering.setIopsReadRateMaxLength(iopsReadRateMaxLength);
+        }
         if (iopsWriteRate != null && iopsWriteRate > 0) {
             offering.setIopsWriteRate(iopsWriteRate);
+        }
+        if (iopsWriteRateMax != null && iopsWriteRateMax > 0) {
+            offering.setIopsWriteRateMax(iopsWriteRateMax);
+        }
+        if (iopsWriteRateMaxLength != null && iopsWriteRateMaxLength > 0) {
+            offering.setIopsWriteRateMaxLength(iopsWriteRateMaxLength);
         }
 
         if (hypervisorSnapshotReserve != null && hypervisorSnapshotReserve < 0) {
