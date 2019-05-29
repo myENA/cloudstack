@@ -902,59 +902,177 @@
                             edit: {
                                 label: 'label.edit',
                                 action: function(args) {
+                                    var oldServiceDetails = args.context.serviceOfferings[0];
                                     var data = {
-                                        id: args.context.serviceOfferings[0].id,
-                                        name: args.data.name,
-                                        displaytext: args.data.displaytext
+                                        id: args.context.serviceOfferings[0].id
                                     };
-                                    if (args.data.diskBytesReadRate != null && args.data.diskBytesReadRate.length > 0) {
+                                    if (oldServiceDetails.name !== args.data.name){
+                                        $.extend(data, {
+                                            name: args.data.name
+                                        });
+                                    }
+                                    if (oldServiceDetails.displayText !== args.data.displayText){
+                                        $.extend(data, {
+                                            displaytext: args.data.displayText
+                                        });
+                                    }
+                                    //Disk Bytes Read Rate
+                                    if(oldServiceDetails.diskBytesReadRate == null && args.data.diskBytesReadRate.length > 0){
                                         $.extend(data, {
                                             bytesreadrate: args.data.diskBytesReadRate
                                         });
-                                    }if (args.data.diskBytesReadRateMax != null && args.data.diskBytesReadRateMax.length > 0) {
+                                    }
+                                    else
+                                    {
+                                        if (oldServiceDetails.diskBytesReadRate != args.data.diskBytesReadRate && oldServiceDetails.diskBytesReadRate != null)
+                                        {
+                                            $.extend(data, {
+                                                bytesreadrate: args.data.diskBytesReadRate == "" ? "0" : args.data.diskBytesReadRate
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Read Rate Max
+                                    if(oldServiceDetails.diskBytesReadRateMax == null && args.data.diskBytesReadRateMax.length > 0){
                                         $.extend(data, {
                                             bytesreadratemax: args.data.diskBytesReadRateMax
                                         });
-                                    }if (args.data.diskBytesReadRateMaxLength != null && args.data.diskBytesReadRateMaxLength.length > 0) {
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskBytesReadRateMax != args.data.diskBytesReadRateMax && oldServiceDetails.diskBytesReadRateMax != null) {
+                                            $.extend(data, {
+                                                bytesreadratemax: args.data.diskBytesReadRateMax == "" ? "0" : args.data.diskBytesReadRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Read Rate Max Length
+                                    if(oldServiceDetails.diskBytesReadRateMaxLength == null && args.data.diskBytesReadRateMaxLength.length > 0){
                                         $.extend(data, {
                                             bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength
                                         });
-                                    }if (args.data.diskBytesWriteRate != null && args.data.diskBytesWriteRate.length > 0) {
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskBytesReadRateMaxLength != args.data.diskBytesReadRateMaxLength && oldServiceDetails.diskBytesReadRateMaxLength != null) {
+                                            $.extend(data, {
+                                                bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength == "" ? "0" : args.data.diskBytesReadRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Write Rate
+                                    if(oldServiceDetails.diskBytesWriteRate == null && args.data.diskBytesWriteRate.length > 0){
                                         $.extend(data, {
                                             byteswriterate: args.data.diskBytesWriteRate
                                         });
-                                    }if (args.data.diskBytesWriteRateMax != null && args.data.diskBytesWriteRateMax.length > 0) {
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskBytesWriteRate != args.data.diskBytesWriteRate && oldServiceDetails.diskBytesWriteRate != null) {
+                                            $.extend(data, {
+                                                byteswriterate: args.data.diskBytesWriteRate == "" ? "0" : args.data.diskBytesWriteRate
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Write Rate Max
+                                    if(oldServiceDetails.diskBytesWriteRateMax == null && args.data.diskBytesWriteRateMax.length > 0){
                                         $.extend(data, {
                                             byteswriteratemax: args.data.diskBytesWriteRateMax
                                         });
-                                    }if (args.data.diskBytesWriteRateMaxLength != null && args.data.diskBytesWriteRateMaxLength.length > 0) {
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskBytesWriteRateMax != args.data.diskBytesWriteRateMax && oldServiceDetails.diskBytesWriteRateMax != null) {
+                                            $.extend(data, {
+                                                byteswriteratemax: args.data.diskBytesWriteRateMax == "" ? "0" : args.data.diskBytesWriteRateMax
+                                            });
+                                        }
+                                    }
+                                    // Disk Bytes Write Rate Max Length
+                                    if(oldServiceDetails.diskBytesWriteRateMaxLength == null && args.data.diskBytesWriteRateMaxLength.length > 0){
                                         $.extend(data, {
                                             byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength
                                         });
-                                    }if (args.data.diskIopsReadRate != null && args.data.diskIopsReadRate.length > 0) {
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskBytesWriteRateMaxLength != args.data.diskBytesWriteRateMaxLength && oldServiceDetails.diskBytesWriteRateMaxLength != null) {
+                                            $.extend(data, {
+                                                byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength == "" ? "0" : args.data.diskBytesWriteRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate
+                                    if(oldServiceDetails.diskIopsReadRate == null && args.data.diskIopsReadRate.length > 0){
                                         $.extend(data, {
-                                            iopsreadrate: args.data.diskIopsReadRate
+                                            biopsreadrate: args.data.diskIopsReadRate
                                         });
-                                    }if (args.data.diskIopsReadRateMax != null && args.data.diskIopsReadRateMax.length > 0) {
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsReadRate != args.data.diskIopsReadRate && oldServiceDetails.diskIopsReadRate != null) {
+                                            $.extend(data, {
+                                                iopsreadrate: args.data.diskIopsReadRate == "" ? "0" : args.data.diskIopsReadRate
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate Max
+                                    if(oldServiceDetails.diskIopsReadRateMax == null && args.data.diskIopsReadRateMax.length > 0){
                                         $.extend(data, {
                                             iopsreadratemax: args.data.diskIopsReadRateMax
                                         });
-                                    }if (args.data.diskIopsReadRateMaxLength != null && args.data.diskIopsReadRateMaxLength.length > 0) {
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsReadRateMax != args.data.diskIopsReadRateMax && oldServiceDetails.diskIopsReadRateMax != null) {
+                                            $.extend(data, {
+                                                iopsreadratemax: args.data.diskIopsReadRateMax == "" ? "0" : args.data.diskIopsReadRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate Max Length
+                                    if(oldServiceDetails.diskIopsReadRateMaxLength == null && args.data.diskIopsReadRateMaxLength.length > 0){
                                         $.extend(data, {
                                             iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength
                                         });
-                                    }if (args.data.diskIopsWriteRate != null && args.data.diskIopsWriteRate.length > 0) {
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsReadRateMaxLength != args.data.diskIopsReadRateMaxLength && oldServiceDetails.diskIopsReadRateMaxLength != null) {
+                                            $.extend(data, {
+                                                iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength == "" ? "0" : args.data.diskIopsReadRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate
+                                    if(oldServiceDetails.diskIopsWriteRate == null && args.data.diskIopsWriteRate.length > 0){
                                         $.extend(data, {
                                             iopswriterate: args.data.diskIopsWriteRate
                                         });
-                                    }if (args.data.diskIopsWriteRateMax != null && args.data.diskIopsWriteRateMax.length > 0) {
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsWriteRate != args.data.diskIopsWriteRate && oldServiceDetails.diskIopsWriteRate != null) {
+                                            $.extend(data, {
+                                                iopswriterate: args.data.diskIopsWriteRate == "" ? "0" : args.data.diskIopsWriteRate
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate Max
+                                    if(oldServiceDetails.diskIopsWriteRateMax == null && args.data.diskIopsWriteRateMax.length > 0){
                                         $.extend(data, {
                                             iopswriteratemax: args.data.diskIopsWriteRateMax
                                         });
-                                    }if (args.data.diskIopsWriteRateMaxLength != null && args.data.diskIopsWriteRateMaxLength.length > 0) {
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsWriteRateMax != args.data.diskIopsWriteRateMax && oldServiceDetails.diskIopsWriteRateMax != null) {
+                                            $.extend(data, {
+                                                iopswriteratemax: args.data.diskIopsWriteRateMax == "" ? "0" : args.data.diskIopsWriteRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate Max Length
+                                    if(oldServiceDetails.diskIopsWriteRateMaxLength == null && args.data.diskIopsWriteRateMaxLength.length > 0){
                                         $.extend(data, {
                                             iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength
                                         });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsWriteRateMaxLength != args.data.diskIopsWriteRateMaxLength && oldServiceDetails.diskIopsWriteRateMaxLength != null) {
+                                            $.extend(data, {
+                                                iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength == "" ? "0" : args.data.diskIopsWriteRateMaxLength
+                                            });
+                                        }
                                     }
                                     $.ajax({
                                         url: createURL('updateServiceOffering'),
@@ -2434,59 +2552,177 @@
                             edit: {
                                 label: 'label.edit',
                                 action: function(args) {
+                                    var oldDiskDetails = args.context.diskOfferings[0];
                                     var data = {
-                                        id: args.context.diskOfferings[0].id,
-                                        name: args.data.name,
-                                        displaytext: args.data.displaytext
+                                        id: args.context.diskOfferings[0].id
                                     };
-                                    if (args.data.diskBytesReadRate != null && args.data.diskBytesReadRate.length > 0) {
+                                    if (oldDiskDetails.name !== args.data.name){
+                                        $.extend(data, {
+                                            name: args.data.name
+                                        });
+                                    }
+                                    if (oldDiskDetails.displayText !== args.data.displayText){
+                                        $.extend(data, {
+                                            displaytext: args.data.displayText
+                                        });
+                                    }
+                                    //Disk Bytes Read Rate
+                                    if(oldDiskDetails.diskBytesReadRate == null && args.data.diskBytesReadRate.length > 0){
                                         $.extend(data, {
                                             bytesreadrate: args.data.diskBytesReadRate
                                         });
-                                    }if (args.data.diskBytesReadRateMax != null && args.data.diskBytesReadRateMax.length > 0) {
+                                    }
+                                    else
+                                    {
+                                        if (oldDiskDetails.diskBytesReadRate != args.data.diskBytesReadRate && oldDiskDetails.diskBytesReadRate != null)
+                                        {
+                                            $.extend(data, {
+                                                bytesreadrate: args.data.diskBytesReadRate == "" ? "0" : args.data.diskBytesReadRate
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Read Rate Max
+                                    if(oldDiskDetails.diskBytesReadRateMax == null && args.data.diskBytesReadRateMax.length > 0){
                                         $.extend(data, {
                                             bytesreadratemax: args.data.diskBytesReadRateMax
                                         });
-                                    }if (args.data.diskBytesReadRateMaxLength != null && args.data.diskBytesReadRateMaxLength.length > 0) {
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskBytesReadRateMax != args.data.diskBytesReadRateMax && oldDiskDetails.diskBytesReadRateMax != null) {
+                                            $.extend(data, {
+                                                bytesreadratemax: args.data.diskBytesReadRateMax == "" ? "0" : args.data.diskBytesReadRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Read Rate Max Length
+                                    if(oldDiskDetails.diskBytesReadRateMaxLength == null && args.data.diskBytesReadRateMaxLength.length > 0){
                                         $.extend(data, {
                                             bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength
                                         });
-                                    }if (args.data.diskBytesWriteRate != null && args.data.diskBytesWriteRate.length > 0) {
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskBytesReadRateMaxLength != args.data.diskBytesReadRateMaxLength && oldDiskDetails.diskBytesReadRateMaxLength != null) {
+                                            $.extend(data, {
+                                                bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength == "" ? "0" : args.data.diskBytesReadRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Write Rate
+                                    if(oldDiskDetails.diskBytesWriteRate == null && args.data.diskBytesWriteRate.length > 0){
                                         $.extend(data, {
                                             byteswriterate: args.data.diskBytesWriteRate
                                         });
-                                    }if (args.data.diskBytesWriteRateMax != null && args.data.diskBytesWriteRateMax.length > 0) {
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskBytesWriteRate != args.data.diskBytesWriteRate && oldDiskDetails.diskBytesWriteRate != null) {
+                                            $.extend(data, {
+                                                byteswriterate: args.data.diskBytesWriteRate == "" ? "0" : args.data.diskBytesWriteRate
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Write Rate Max
+                                    if(oldDiskDetails.diskBytesWriteRateMax == null && args.data.diskBytesWriteRateMax.length > 0){
                                         $.extend(data, {
                                             byteswriteratemax: args.data.diskBytesWriteRateMax
                                         });
-                                    }if (args.data.diskBytesWriteRateMaxLength != null && args.data.diskBytesWriteRateMaxLength.length > 0) {
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskBytesWriteRateMax != args.data.diskBytesWriteRateMax && oldDiskDetails.diskBytesWriteRateMax != null) {
+                                            $.extend(data, {
+                                                byteswriteratemax: args.data.diskBytesWriteRateMax == "" ? "0" : args.data.diskBytesWriteRateMax
+                                            });
+                                        }
+                                    }
+                                    // Disk Bytes Write Rate Max Length
+                                    if(oldDiskDetails.diskBytesWriteRateMaxLength == null && args.data.diskBytesWriteRateMaxLength.length > 0){
                                         $.extend(data, {
                                             byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength
                                         });
-                                    }if (args.data.diskIopsReadRate != null && args.data.diskIopsReadRate.length > 0) {
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskBytesWriteRateMaxLength != args.data.diskBytesWriteRateMaxLength && oldDiskDetails.diskBytesWriteRateMaxLength != null) {
+                                            $.extend(data, {
+                                                byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength == "" ? "0" : args.data.diskBytesWriteRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate
+                                    if(oldDiskDetails.diskIopsReadRate == null && args.data.diskIopsReadRate.length > 0){
                                         $.extend(data, {
-                                            iopsreadrate: args.data.diskIopsReadRate
+                                            biopsreadrate: args.data.diskIopsReadRate
                                         });
-                                    }if (args.data.diskIopsReadRateMax != null && args.data.diskIopsReadRateMax.length > 0) {
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsReadRate != args.data.diskIopsReadRate && oldDiskDetails.diskIopsReadRate != null) {
+                                            $.extend(data, {
+                                                iopsreadrate: args.data.diskIopsReadRate == "" ? "0" : args.data.diskIopsReadRate
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate Max
+                                    if(oldDiskDetails.diskIopsReadRateMax == null && args.data.diskIopsReadRateMax.length > 0){
                                         $.extend(data, {
                                             iopsreadratemax: args.data.diskIopsReadRateMax
                                         });
-                                    }if (args.data.diskIopsReadRateMaxLength != null && args.data.diskIopsReadRateMaxLength.length > 0) {
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsReadRateMax != args.data.diskIopsReadRateMax && oldDiskDetails.diskIopsReadRateMax != null) {
+                                            $.extend(data, {
+                                                iopsreadratemax: args.data.diskIopsReadRateMax == "" ? "0" : args.data.diskIopsReadRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate Max Length
+                                    if(oldDiskDetails.diskIopsReadRateMaxLength == null && args.data.diskIopsReadRateMaxLength.length > 0){
                                         $.extend(data, {
                                             iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength
                                         });
-                                    }if (args.data.diskIopsWriteRate != null && args.data.diskIopsWriteRate.length > 0) {
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsReadRateMaxLength != args.data.diskIopsReadRateMaxLength && oldDiskDetails.diskIopsReadRateMaxLength != null) {
+                                            $.extend(data, {
+                                                iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength == "" ? "0" : args.data.diskIopsReadRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate
+                                    if(oldDiskDetails.diskIopsWriteRate == null && args.data.diskIopsWriteRate.length > 0){
                                         $.extend(data, {
                                             iopswriterate: args.data.diskIopsWriteRate
                                         });
-                                    }if (args.data.diskIopsWriteRateMax != null && args.data.diskIopsWriteRateMax.length > 0) {
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsWriteRate != args.data.diskIopsWriteRate && oldDiskDetails.diskIopsWriteRate != null) {
+                                            $.extend(data, {
+                                                iopswriterate: args.data.diskIopsWriteRate == "" ? "0" : args.data.diskIopsWriteRate
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate Max
+                                    if(oldDiskDetails.diskIopsWriteRateMax == null && args.data.diskIopsWriteRateMax.length > 0){
                                         $.extend(data, {
                                             iopswriteratemax: args.data.diskIopsWriteRateMax
                                         });
-                                    }if (args.data.diskIopsWriteRateMaxLength != null && args.data.diskIopsWriteRateMaxLength.length > 0) {
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsWriteRateMax != args.data.diskIopsWriteRateMax && oldDiskDetails.diskIopsWriteRateMax != null) {
+                                            $.extend(data, {
+                                                iopswriteratemax: args.data.diskIopsWriteRateMax == "" ? "0" : args.data.diskIopsWriteRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate Max Length
+                                    if(oldDiskDetails.diskIopsWriteRateMaxLength == null && args.data.diskIopsWriteRateMaxLength.length > 0){
                                         $.extend(data, {
                                             iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength
                                         });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsWriteRateMaxLength != args.data.diskIopsWriteRateMaxLength && oldDiskDetails.diskIopsWriteRateMaxLength != null) {
+                                            $.extend(data, {
+                                                iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength == "" ? "0" : args.data.diskIopsWriteRateMaxLength
+                                            });
+                                        }
                                     }
                                     $.ajax({
                                         url: createURL('updateDiskOffering'),
@@ -2699,56 +2935,57 @@
                                 }],
 
                                 dataProvider: function(args) {
+                                    var diskData = args.context.diskOfferings[0];
                                     var data = {
                                         id: args.context.diskOfferings[0].id
                                     };
-                                    if (args.data.diskBytesReadRate != null && args.data.diskBytesReadRate.length > 0) {
+                                    if (diskData.diskBytesReadRate != null && diskData.diskBytesReadRate.length > 0) {
                                         $.extend(data, {
-                                            bytesreadrate: args.data.diskBytesReadRate
+                                            bytesreadrate: diskData.diskBytesReadRate
                                         });
-                                    }if (args.data.diskBytesReadRateMax != null && args.data.diskBytesReadRateMax.length > 0) {
+                                    }if (diskData.diskBytesReadRateMax != null && diskData.diskBytesReadRateMax.length > 0) {
                                         $.extend(data, {
-                                            bytesreadratemax: args.data.diskBytesReadRateMax
+                                            bytesreadratemax: diskData.diskBytesReadRateMax
                                         });
-                                    }if (args.data.diskBytesReadRateMaxLength != null && args.data.diskBytesReadRateMaxLength.length > 0) {
+                                    }if (diskData.diskBytesReadRateMaxLength != null && diskData.diskBytesReadRateMaxLength.length > 0) {
                                         $.extend(data, {
-                                            bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength
+                                            bytesreadratemaxlength: diskData.diskBytesReadRateMaxLength
                                         });
-                                    }if (args.data.diskBytesWriteRate != null && args.data.diskBytesWriteRate.length > 0) {
+                                    }if (diskData.diskBytesWriteRate != null && diskData.diskBytesWriteRate.length > 0) {
                                         $.extend(data, {
-                                            byteswriterate: args.data.diskBytesWriteRate
+                                            byteswriterate: diskData.diskBytesWriteRate
                                         });
-                                    }if (args.data.diskBytesWriteRateMax != null && args.data.diskBytesWriteRateMax.length > 0) {
+                                    }if (diskData.diskBytesWriteRateMax != null && diskData.diskBytesWriteRateMax.length > 0) {
                                         $.extend(data, {
-                                            byteswriteratemax: args.data.diskBytesWriteRateMax
+                                            byteswriteratemax: diskData.diskBytesWriteRateMax
                                         });
-                                    }if (args.data.diskBytesWriteRateMaxLength != null && args.data.diskBytesWriteRateMaxLength.length > 0) {
+                                    }if (diskData.diskBytesWriteRateMaxLength != null && diskData.diskBytesWriteRateMaxLength.length > 0) {
                                         $.extend(data, {
-                                            byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength
+                                            byteswriteratemaxlength: diskData.diskBytesWriteRateMaxLength
                                         });
-                                    }if (args.data.diskIopsReadRate != null && args.data.diskIopsReadRate.length > 0) {
+                                    }if (diskData.diskIopsReadRate != null && diskData.diskIopsReadRate.length > 0) {
                                         $.extend(data, {
-                                            iopsreadrate: args.data.diskIopsReadRate
+                                            iopsreadrate: diskData.diskIopsReadRate
                                         });
-                                    }if (args.data.diskIopsReadRateMax != null && args.data.diskIopsReadRateMax.length > 0) {
+                                    }if (diskData.diskIopsReadRateMax != null && diskData.diskIopsReadRateMax.length > 0) {
                                         $.extend(data, {
-                                            iopsreadratemax: args.data.diskIopsReadRateMax
+                                            iopsreadratemax: diskData.diskIopsReadRateMax
                                         });
-                                    }if (args.data.diskIopsReadRateMaxLength != null && args.data.diskIopsReadRateMaxLength.length > 0) {
+                                    }if (diskData.diskIopsReadRateMaxLength != null && diskData.diskIopsReadRateMaxLength.length > 0) {
                                         $.extend(data, {
-                                            iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength
+                                            iopsreadratemaxlength: diskData.diskIopsReadRateMaxLength
                                         });
-                                    }if (args.data.diskIopsWriteRate != null && args.data.diskIopsWriteRate.length > 0) {
+                                    }if (diskData.diskIopsWriteRate != null && diskData.diskIopsWriteRate.length > 0) {
                                         $.extend(data, {
-                                            iopswriterate: args.data.diskIopsWriteRate
+                                            iopswriterate: diskData.diskIopsWriteRate
                                         });
-                                    }if (args.data.diskIopsWriteRateMax != null && args.data.diskIopsWriteRateMax.length > 0) {
+                                    }if (diskData.diskIopsWriteRateMax != null && diskData.diskIopsWriteRateMax.length > 0) {
                                         $.extend(data, {
-                                            iopswriteratemax: args.data.diskIopsWriteRateMax
+                                            iopswriteratemax: diskData.diskIopsWriteRateMax
                                         });
-                                    }if (args.data.diskIopsWriteRateMaxLength != null && args.data.diskIopsWriteRateMaxLength.length > 0) {
+                                    }if (diskData.diskIopsWriteRateMaxLength != null && diskData.diskIopsWriteRateMaxLength.length > 0) {
                                         $.extend(data, {
-                                            iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength
+                                            iopswriteratemaxlength: diskData.diskIopsWriteRateMaxLength
                                         });
                                     }
                                     $.ajax({
