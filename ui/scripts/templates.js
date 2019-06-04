@@ -497,6 +497,28 @@
                                         }
                                     },
 
+                                    enlightenment: {
+                                        label: "label.enlightenment",
+                                        select: function(args) {
+                                            var items = []
+                                            items.push({
+                                                id: "none",
+                                                description: "none"
+                                            });
+                                            items.push({
+                                                id: "true",
+                                                description: "true"
+                                            });
+                                            items.push({
+                                                id: "false",
+                                                description: "false"
+                                            });
+                                            args.response.success({
+                                                data: items
+                                            });
+                                        }
+                                    },
+
                                     isExtractable: {
                                         label: "label.extractable",
                                         docID: 'helpRegisterTemplateExtractable',
@@ -579,6 +601,12 @@
                                 if (args.$form.find('.form-item[rel=isrouting]').is(':visible')) {
                                     $.extend(data, {
                                         isrouting: (args.data.isrouting === 'on')
+                                    });
+                                }
+
+                                if(args.data.enlightenment != "none") {
+                                    $.extend(data, {
+                                        'details[0].enlightenment': args.data.enlightenment
                                     });
                                 }
 
