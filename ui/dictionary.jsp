@@ -117,6 +117,7 @@ dictionary = {
 'error.unable.to.reach.management.server': '<fmt:message key="error.unable.to.reach.management.server" />',
 'error.unresolved.internet.name': '<fmt:message key="error.unresolved.internet.name" />',
 'label.extractable': '<fmt:message key="label.extractable" />',
+'label.enlightenment': '<fmt:message key="label.enlightenment"/>',
 'force.delete.domain.warning': '<fmt:message key="force.delete.domain.warning" />',
 'force.delete': '<fmt:message key="force.delete" />',
 'force.remove': '<fmt:message key="force.remove" />',
