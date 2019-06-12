@@ -60,6 +60,8 @@ public class LibvirtVMDef {
         private GuestType _type;
         private String _arch;
         private String _loader;
+        private String _nvram;
+        private boolean _efi = false;
         private String _kernel;
         private String _initrd;
         private String _root;
@@ -86,6 +88,15 @@ public class LibvirtVMDef {
 
         public void setLoader(String loader) {
             _loader = loader;
+        }
+
+
+        public void setNvram( String nvram) {
+            this._nvram = nvram;
+        }
+
+        public void setEfi( boolean efi) {
+            this._efi = efi;
         }
 
         public void setBootKernel(String kernel, String initrd, String rootdev, String cmdline) {
@@ -131,6 +142,13 @@ public class LibvirtVMDef {
                     }
                 }
                 guestDef.append("<smbios mode='sysinfo'/>\n");
+                if (_loader != null) {
+                    String loaderType = _efi ? "pflash" : "rom";
+                    guestDef.append("<loader readonly='yes' type='" + loaderType + "'>" + _loader + "</loader>\n");
+                }
+                if (_nvram != null) {
+                    guestDef.append("<nvram>" + _nvram + "</nvram>\n");
+                }
                 guestDef.append("</os>\n");
                 return guestDef.toString();
             } else if (_type == GuestType.LXC) {

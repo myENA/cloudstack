@@ -261,6 +261,9 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
     protected String _localStorageUUID;
     protected boolean _noMemBalloon = false;
     protected String _guestCpuMode;
+    protected String _loader;
+    protected String _nvram;
+    protected boolean _efi = false;
     protected String _guestCpuModel;
     protected boolean _noKvmClock;
     protected String _videoHw;
@@ -978,6 +981,12 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
                 }
             }
         }
+
+        _loader = (String)params.get("guest.loader.image");
+
+        _efi = Boolean.parseBoolean((String)params.get("guest.loader.efi"));
+
+        _nvram = (String)params.get("guest.loader.nvram");
 
         final String[] info = NetUtils.getNetworkParams(_privateNic);
 
@@ -2060,6 +2069,20 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         }
     }
 
+    protected void setEFIFromDetails(final VirtualMachineTO vmTO, final GuestDef guest) {
+        Map<String, String> details = vmTO.getDetails();
+        if (details == null) {
+            return;
+        }
+
+        if(Boolean.parseBoolean(details.get(VmDetailConstants.BOOT_EFI))) {
+            s_logger.debug("Enabling EFI");
+            guest.setLoader(_loader);
+            guest.setEfi(_efi);
+            guest.setNvram(_nvram);
+        }
+    }
+
     public LibvirtVMDef createVMFromSpec(final VirtualMachineTO vmTO) {
         final LibvirtVMDef vm = new LibvirtVMDef();
         vm.setDomainName(vmTO.getName());
@@ -2091,7 +2114,9 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         guest.setUuid(uuid);
         guest.setBootOrder(GuestDef.BootOrder.CDROM);
         guest.setBootOrder(GuestDef.BootOrder.HARDISK);
-
+        if (vmTO.getType() == VirtualMachine.Type.User) {
+            setEFIFromDetails(vmTO, guest);
+        }
         vm.addComp(guest);
 
         final GuestResourceDef grd = new GuestResourceDef();

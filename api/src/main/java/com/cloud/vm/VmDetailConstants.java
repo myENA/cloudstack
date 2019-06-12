@@ -27,4 +27,5 @@ public interface VmDetailConstants {
     public static final String CPU_NUMBER = "cpuNumber";
     public static final String CPU_SPEED = "cpuSpeed";
     public static final String MEMORY = "memory";
+    public static final String BOOT_EFI = "efi";
 }
