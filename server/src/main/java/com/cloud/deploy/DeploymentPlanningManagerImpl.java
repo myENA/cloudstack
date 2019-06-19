@@ -33,6 +33,7 @@ import javax.naming.ConfigurationException;
 import com.cloud.utils.db.Filter;
 import com.cloud.utils.fsm.StateMachine2;
 
+import com.cloud.vm.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.cloudstack.affinity.AffinityGroupProcessor;
@@ -125,14 +126,11 @@ import com.cloud.utils.db.TransactionCallback;
 import com.cloud.utils.db.TransactionStatus;
 import com.cloud.utils.exception.CloudRuntimeException;
 import com.cloud.utils.fsm.StateListener;
-import com.cloud.vm.DiskProfile;
-import com.cloud.vm.VMInstanceVO;
-import com.cloud.vm.VirtualMachine;
 import com.cloud.vm.VirtualMachine.Event;
 import com.cloud.vm.VirtualMachine.State;
-import com.cloud.vm.VirtualMachineProfile;
 import com.cloud.vm.dao.UserVmDao;
 import com.cloud.vm.dao.VMInstanceDao;
+import org.apache.xpath.operations.Bool;
 
 public class DeploymentPlanningManagerImpl extends ManagerBase implements DeploymentPlanningManager, Manager, Listener,
 StateListener<State, VirtualMachine.Event, VirtualMachine> {
@@ -1063,6 +1061,13 @@ StateListener<State, VirtualMachine.Event, VirtualMachine> {
                 // find suitable hosts under this cluster, need as many hosts as we
                 // get.
                 List<Host> suitableHosts = findSuitableHosts(vmProfile, potentialPlan, avoid, HostAllocator.RETURN_UPTO_ALL);
+                //if the Virtual Machine has EFI enabled we need to keep only the hosts with EFI capability
+                if(vmHasEfiEnabled(vmProfile.getVirtualMachine())) {
+                    List<Host> efiEnabledHosts = findEfiEnabledHosts(suitableHosts);
+                    suitableHosts = efiEnabledHosts;
+                }
+                //if VM has EFI enabled find suitable hosts with EFI enabled
+                if(vmProfile.getVirtualMachine().getDetails().containsKey("3") && vmProfile.getVirtualMachine().getDetails().get("3").contains("true"))
                 // if found suitable hosts in this cluster, find suitable storage
                 // pools for each volume of the VM
                 if (suitableHosts != null && !suitableHosts.isEmpty()) {
@@ -1328,10 +1333,38 @@ StateListener<State, VirtualMachine.Event, VirtualMachine> {
             }
         }
 
-        if (suitableHosts.isEmpty()) {
+        if (suitableHosts.isEmpty())
             s_logger.debug("No suitable hosts found");
-        }
+
         return suitableHosts;
+    }
+
+    protected List<Host> findEfiEnabledHosts(List<Host> suitableHosts){
+        List<Host> efiEnabledHosts = new ArrayList<Host>();
+        for(Host host : suitableHosts){
+            if(host.getCapabilities().contains(VmDetailConstants.BOOT_EFI))
+                efiEnabledHosts.add(host);
+        }
+
+        if(efiEnabledHosts.isEmpty())
+            s_logger.debug("No hosts with EFI enabled found");
+
+        return efiEnabledHosts;
+    }
+
+    protected boolean vmHasEfiEnabled(VirtualMachine vm){
+        if(vm.getDetails().containsKey("EFI"))
+        {
+            return Boolean.parseBoolean(vm.getDetails().get("EFI"));
+        }
+        else if(vm.getDetails().containsKey("efi"))
+        {
+            return Boolean.parseBoolean(vm.getDetails().get("efi"));
+        }
+        else{
+            s_logger.debug("Virtual machine does not have the EFI enabled");
+            return false;
+        }
     }
 
     protected Pair<Map<Volume, List<StoragePool>>, List<Volume>> findSuitablePoolsForVolumes(VirtualMachineProfile vmProfile, DeploymentPlan plan, ExcludeList avoid,

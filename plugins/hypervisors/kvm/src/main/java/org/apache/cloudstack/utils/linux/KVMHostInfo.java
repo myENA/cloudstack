@@ -18,6 +18,7 @@ package org.apache.cloudstack.utils.linux;
 
 import com.cloud.hypervisor.kvm.resource.LibvirtCapXMLParser;
 import com.cloud.hypervisor.kvm.resource.LibvirtConnection;
+import com.cloud.vm.VmDetailConstants;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.libvirt.Connect;
@@ -42,10 +43,10 @@ public class KVMHostInfo {
     private long overCommitMemory;
     private List<String> capabilities = new ArrayList<>();
 
-    public KVMHostInfo(long reservedMemory, long overCommitMemory) {
+    public KVMHostInfo(long reservedMemory, long overCommitMemory, boolean efi) {
         this.reservedMemory = reservedMemory;
         this.overCommitMemory = overCommitMemory;
-        this.getHostInfoFromLibvirt();
+        this.getHostInfoFromLibvirt(efi);
         this.totalMemory = new MemStat(this.getReservedMemory(), this.getOverCommitMemory()).getTotal();
     }
 
@@ -87,7 +88,7 @@ public class KVMHostInfo {
         }
     }
 
-    private void getHostInfoFromLibvirt() {
+    private void getHostInfoFromLibvirt(boolean efi) {
         try {
             final Connect conn = LibvirtConnection.getConnection();
             final NodeInfo hosts = conn.nodeInfo();
@@ -124,6 +125,8 @@ public class KVMHostInfo {
                 We used to check if this was supported, but that is no longer required
             */
             this.capabilities.add("snapshot");
+            if(efi)
+                capabilities.add(VmDetailConstants.BOOT_EFI);
             conn.close();
         } catch (final LibvirtException e) {
             LOGGER.error("Caught libvirt exception while fetching host information", e);

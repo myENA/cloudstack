@@ -2727,7 +2727,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
     @Override
     public StartupCommand[] initialize() {
 
-        final KVMHostInfo info = new KVMHostInfo(_dom0MinMem, _dom0OvercommitMem);
+        final KVMHostInfo info = new KVMHostInfo(_dom0MinMem, _dom0OvercommitMem, _efi);
 
         final String capabilities = String.join(",", info.getCapabilities());
 
