@@ -33,7 +33,11 @@ import javax.naming.ConfigurationException;
 import com.cloud.utils.db.Filter;
 import com.cloud.utils.fsm.StateMachine2;
 
-import com.cloud.vm.*;
+import com.cloud.vm.VMInstanceVO;
+import com.cloud.vm.VirtualMachine;
+import com.cloud.vm.VirtualMachineProfile;
+import com.cloud.vm.VmDetailConstants;
+import com.cloud.vm.DiskProfile;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.cloudstack.affinity.AffinityGroupProcessor;
@@ -130,7 +134,6 @@ import com.cloud.vm.VirtualMachine.Event;
 import com.cloud.vm.VirtualMachine.State;
 import com.cloud.vm.dao.UserVmDao;
 import com.cloud.vm.dao.VMInstanceDao;
-import org.apache.xpath.operations.Bool;
 
 public class DeploymentPlanningManagerImpl extends ManagerBase implements DeploymentPlanningManager, Manager, Listener,
 StateListener<State, VirtualMachine.Event, VirtualMachine> {
