@@ -1069,8 +1069,6 @@ StateListener<State, VirtualMachine.Event, VirtualMachine> {
                     List<Host> efiEnabledHosts = findEfiEnabledHosts(suitableHosts);
                     suitableHosts = efiEnabledHosts;
                 }
-                //if VM has EFI enabled find suitable hosts with EFI enabled
-                if(vmProfile.getVirtualMachine().getDetails().containsKey("3") && vmProfile.getVirtualMachine().getDetails().get("3").contains("true"))
                 // if found suitable hosts in this cluster, find suitable storage
                 // pools for each volume of the VM
                 if (suitableHosts != null && !suitableHosts.isEmpty()) {
@@ -1356,14 +1354,13 @@ StateListener<State, VirtualMachine.Event, VirtualMachine> {
     }
 
     protected boolean vmHasEfiEnabled(VirtualMachine vm){
+        if(vm.getDetails() == null)
+            return false;
+
         if(vm.getDetails().containsKey("EFI"))
-        {
             return Boolean.parseBoolean(vm.getDetails().get("EFI"));
-        }
         else if(vm.getDetails().containsKey("efi"))
-        {
             return Boolean.parseBoolean(vm.getDetails().get("efi"));
-        }
         else{
             s_logger.debug("Virtual machine does not have the EFI enabled");
             return false;
