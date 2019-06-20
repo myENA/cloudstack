@@ -16,12 +16,20 @@
 // under the License.
 package org.apache.cloudstack.engine.cloud.entity.api;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
 
+import com.cloud.vm.VirtualMachineManager;
+import com.cloud.vm.VirtualMachineProfile;
+import com.cloud.vm.VirtualMachine;
+import com.cloud.vm.VMInstanceVO;
+import com.cloud.vm.UserVmDetailVO;
+import com.cloud.vm.VirtualMachineProfileImpl;
+import com.cloud.vm.dao.UserVmDetailsDao;
 import org.apache.cloudstack.affinity.dao.AffinityGroupVMMapDao;
 import org.apache.cloudstack.engine.cloud.entity.api.db.VMEntityVO;
 import org.apache.cloudstack.engine.cloud.entity.api.db.VMReservationVO;
@@ -57,11 +65,6 @@ import com.cloud.storage.dao.VolumeDao;
 import com.cloud.user.dao.AccountDao;
 import com.cloud.user.dao.UserDao;
 import com.cloud.utils.exception.CloudRuntimeException;
-import com.cloud.vm.VMInstanceVO;
-import com.cloud.vm.VirtualMachine;
-import com.cloud.vm.VirtualMachineManager;
-import com.cloud.vm.VirtualMachineProfile;
-import com.cloud.vm.VirtualMachineProfileImpl;
 import com.cloud.vm.dao.VMInstanceDao;
 
 @Component
@@ -71,8 +74,12 @@ public class VMEntityManagerImpl implements VMEntityManager {
 
     @Inject
     protected VMInstanceDao _vmDao;
+
     @Inject
     protected VMTemplateDao _templateDao = null;
+
+    @Inject
+    private UserVmDetailsDao _userVmDetailsDao;
 
     @Inject
     protected ServiceOfferingDao _serviceOfferingDao;
@@ -146,6 +153,14 @@ public class VMEntityManagerImpl implements VMEntityManager {
         //load vm instance and offerings and call virtualMachineManagerImpl
         //FIXME: profile should work on VirtualMachineEntity
         VMInstanceVO vm = _vmDao.findByUuid(vmEntityVO.getUuid());
+        List<UserVmDetailVO> userVmDetails = _userVmDetailsDao.listDetails(vm.getId());
+        if (userVmDetails != null) {
+            Map<String, String> vmDetails = new HashMap<String, String>();
+            for (UserVmDetailVO userVmDetailVO : userVmDetails) {
+                vmDetails.put(userVmDetailVO.getName(), userVmDetailVO.getValue());
+            }
+            vm.setDetails(vmDetails);
+        }
         VirtualMachineProfileImpl vmProfile = new VirtualMachineProfileImpl(vm);
         vmProfile.setServiceOffering(_serviceOfferingDao.findByIdIncludingRemoved(vm.getId(), vm.getServiceOfferingId()));
         DataCenterDeployment plan = new DataCenterDeployment(vm.getDataCenterId(), vm.getPodIdToDeployIn(), null, null, null, null);
