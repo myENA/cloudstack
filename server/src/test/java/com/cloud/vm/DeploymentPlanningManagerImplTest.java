@@ -19,6 +19,7 @@ package com.cloud.vm;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -158,28 +159,28 @@ public class DeploymentPlanningManagerImplTest {
         ComponentContext.initComponentsLifeCycle();
 
         PlannerHostReservationVO reservationVO = new PlannerHostReservationVO(200L, 1L, 2L, 3L, PlannerResourceUsage.Shared);
-        Mockito.when(_plannerHostReserveDao.persist(Matchers.any(PlannerHostReservationVO.class))).thenReturn(reservationVO);
-        Mockito.when(_plannerHostReserveDao.findById(Matchers.anyLong())).thenReturn(reservationVO);
-        Mockito.when(_affinityGroupVMMapDao.countAffinityGroupsForVm(Matchers.anyLong())).thenReturn(0L);
+        when(_plannerHostReserveDao.persist(Matchers.any(PlannerHostReservationVO.class))).thenReturn(reservationVO);
+        when(_plannerHostReserveDao.findById(Matchers.anyLong())).thenReturn(reservationVO);
+        when(_affinityGroupVMMapDao.countAffinityGroupsForVm(Matchers.anyLong())).thenReturn(0L);
 
         VMInstanceVO vm = new VMInstanceVO();
-        Mockito.when(vmProfile.getVirtualMachine()).thenReturn(vm);
+        when(vmProfile.getVirtualMachine()).thenReturn(vm);
 
-        Mockito.when(vmDetailsDao.listDetailsKeyPairs(Matchers.anyLong())).thenReturn(null);
+        when(vmDetailsDao.listDetailsKeyPairs(Matchers.anyLong())).thenReturn(null);
 
-        Mockito.when(_dcDao.findById(Matchers.anyLong())).thenReturn(dc);
-        Mockito.when(dc.getId()).thenReturn(dataCenterId);
+        when(_dcDao.findById(Matchers.anyLong())).thenReturn(dc);
+        when(dc.getId()).thenReturn(dataCenterId);
 
         ClusterVO clusterVO = new ClusterVO();
         clusterVO.setHypervisorType(HypervisorType.XenServer.toString());
-        Mockito.when(_clusterDao.findById(Matchers.anyLong())).thenReturn(clusterVO);
+        when(_clusterDao.findById(Matchers.anyLong())).thenReturn(clusterVO);
 
-        Mockito.when(_planner.getName()).thenReturn("FirstFitPlanner");
+        when(_planner.getName()).thenReturn("FirstFitPlanner");
         List<DeploymentPlanner> planners = new ArrayList<DeploymentPlanner>();
         planners.add(_planner);
         _dpm.setPlanners(planners);
 
-        Mockito.when(host.getId()).thenReturn(hostId);
+        when(host.getId()).thenReturn(hostId);
     }
 
     @Test
@@ -188,11 +189,11 @@ public class DeploymentPlanningManagerImplTest {
             new ServiceOfferingVO("testOffering", 1, 512, 500, 1, 1, false, false, false, "test dpm",
                     ProvisioningType.THIN, false, false, null, false, VirtualMachine.Type.User, domainId,
                 null, "FirstFitPlanner");
-        Mockito.when(vmProfile.getServiceOffering()).thenReturn(svcOffering);
+        when(vmProfile.getServiceOffering()).thenReturn(svcOffering);
 
         DataCenterDeployment plan = new DataCenterDeployment(dataCenterId);
 
-        Mockito.when(avoids.shouldAvoid((DataCenterVO)Matchers.anyObject())).thenReturn(true);
+        when(avoids.shouldAvoid((DataCenterVO)Matchers.anyObject())).thenReturn(true);
         DeployDestination dest = _dpm.planDeployment(vmProfile, plan, avoids, null);
         assertNull("DataCenter is in avoid set, destination should be null! ", dest);
     }
@@ -203,12 +204,12 @@ public class DeploymentPlanningManagerImplTest {
             new ServiceOfferingVO("testOffering", 1, 512, 500, 1, 1, false, false, false, "test dpm",
                     ProvisioningType.THIN, false, false, null, false, VirtualMachine.Type.User, domainId,
                 null, "UserDispersingPlanner");
-        Mockito.when(vmProfile.getServiceOffering()).thenReturn(svcOffering);
+        when(vmProfile.getServiceOffering()).thenReturn(svcOffering);
 
         DataCenterDeployment plan = new DataCenterDeployment(dataCenterId);
-        Mockito.when(avoids.shouldAvoid((DataCenterVO)Matchers.anyObject())).thenReturn(false);
+        when(avoids.shouldAvoid((DataCenterVO)Matchers.anyObject())).thenReturn(false);
 
-        Mockito.when(_planner.canHandle(vmProfile, plan, avoids)).thenReturn(false);
+        when(_planner.canHandle(vmProfile, plan, avoids)).thenReturn(false);
         DeployDestination dest = _dpm.planDeployment(vmProfile, plan, avoids, null);
         assertNull("Planner cannot handle, destination should be null! ", dest);
     }
@@ -219,15 +220,45 @@ public class DeploymentPlanningManagerImplTest {
             new ServiceOfferingVO("testOffering", 1, 512, 500, 1, 1, false, false, false, "test dpm",
                 ProvisioningType.THIN, false, false, null, false, VirtualMachine.Type.User, domainId,
                 null, "FirstFitPlanner");
-        Mockito.when(vmProfile.getServiceOffering()).thenReturn(svcOffering);
+        when(vmProfile.getServiceOffering()).thenReturn(svcOffering);
 
         DataCenterDeployment plan = new DataCenterDeployment(dataCenterId);
-        Mockito.when(avoids.shouldAvoid((DataCenterVO)Matchers.anyObject())).thenReturn(false);
-        Mockito.when(_planner.canHandle(vmProfile, plan, avoids)).thenReturn(true);
+        when(avoids.shouldAvoid((DataCenterVO)Matchers.anyObject())).thenReturn(false);
+        when(_planner.canHandle(vmProfile, plan, avoids)).thenReturn(true);
 
-        Mockito.when(((DeploymentClusterPlanner)_planner).orderClusters(vmProfile, plan, avoids)).thenReturn(null);
+        when(((DeploymentClusterPlanner)_planner).orderClusters(vmProfile, plan, avoids)).thenReturn(null);
         DeployDestination dest = _dpm.planDeployment(vmProfile, plan, avoids, null);
         assertNull("Planner cannot handle, destination should be null! ", dest);
+    }
+
+    @Test
+    public void emptyEfiHostListTest() {
+        Host host1 = Mockito.mock(Host.class);
+        Host host2 = Mockito.mock(Host.class);
+        when(host1.getCapabilities()).thenReturn("hvm");
+        when(host2.getCapabilities()).thenReturn("snapshot");
+        List<Host> hosts = new ArrayList<>();
+        hosts.add(host1);
+        hosts.add(host2);
+
+        assertTrue(_dpm.findHostsBasedOnEfi(hosts, true).isEmpty());
+    }
+
+    @Test
+    public void checkEfiEnabledHostsTest() {
+        Host host1 = Mockito.mock(Host.class);
+        Host host2 = Mockito.mock(Host.class);
+        Host host3 = Mockito.mock(Host.class);
+        when(host1.getCapabilities()).thenReturn("efi");
+        when(host2.getCapabilities()).thenReturn("hvm");
+        when(host3.getCapabilities()).thenReturn("efi");
+
+        List<Host> hosts = new ArrayList<>();
+        hosts.add(host1);
+        hosts.add(host2);
+        hosts.add(host3);
+
+        assertTrue(_dpm.findHostsBasedOnEfi(hosts, true).size() == 2);
     }
 
     @Test

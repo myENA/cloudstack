@@ -43,10 +43,10 @@ public class KVMHostInfo {
     private long overCommitMemory;
     private List<String> capabilities = new ArrayList<>();
 
-    public KVMHostInfo(long reservedMemory, long overCommitMemory, boolean efi) {
+    public KVMHostInfo(long reservedMemory, long overCommitMemory, boolean efiEnabled) {
         this.reservedMemory = reservedMemory;
         this.overCommitMemory = overCommitMemory;
-        this.getHostInfoFromLibvirt(efi);
+        this.getHostInfoFromLibvirt(efiEnabled);
         this.totalMemory = new MemStat(this.getReservedMemory(), this.getOverCommitMemory()).getTotal();
     }
 
@@ -88,7 +88,7 @@ public class KVMHostInfo {
         }
     }
 
-    private void getHostInfoFromLibvirt(boolean efi) {
+    private void getHostInfoFromLibvirt(boolean efiEnabled) {
         try {
             final Connect conn = LibvirtConnection.getConnection();
             final NodeInfo hosts = conn.nodeInfo();
@@ -125,7 +125,7 @@ public class KVMHostInfo {
                 We used to check if this was supported, but that is no longer required
             */
             this.capabilities.add("snapshot");
-            if(efi)
+            if(efiEnabled)
                 capabilities.add(VmDetailConstants.BOOT_EFI);
             conn.close();
         } catch (final LibvirtException e) {

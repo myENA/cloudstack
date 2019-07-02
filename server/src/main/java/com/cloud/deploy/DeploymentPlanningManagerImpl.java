@@ -1063,12 +1063,9 @@ StateListener<State, VirtualMachine.Event, VirtualMachine> {
             if (pod.getAllocationState() == Grouping.AllocationState.Enabled ) {
                 // find suitable hosts under this cluster, need as many hosts as we
                 // get.
-                List<Host> suitableHosts = findSuitableHosts(vmProfile, potentialPlan, avoid, HostAllocator.RETURN_UPTO_ALL);
-                //if the Virtual Machine has EFI enabled we need to keep only the hosts with EFI capability
-                if(vmHasEfiEnabled(vmProfile.getVirtualMachine())) {
-                    List<Host> efiEnabledHosts = findEfiEnabledHosts(suitableHosts);
-                    suitableHosts = efiEnabledHosts;
-                }
+                List<Host> allSuitableHosts = findSuitableHosts(vmProfile, potentialPlan, avoid, HostAllocator.RETURN_UPTO_ALL);
+                //find suitable hosts based on the EFI property
+                List<Host> suitableHosts = findHostsBasedOnEfi(allSuitableHosts, vmHasEfiEnabled(vmProfile.getVirtualMachine()));
                 // if found suitable hosts in this cluster, find suitable storage
                 // pools for each volume of the VM
                 if (suitableHosts != null && !suitableHosts.isEmpty()) {
@@ -1325,7 +1322,7 @@ StateListener<State, VirtualMachine.Event, VirtualMachine> {
         return hostCanAccessSPool;
     }
 
-    protected List<Host> findSuitableHosts(VirtualMachineProfile vmProfile, DeploymentPlan plan, ExcludeList avoid, int returnUpTo) {
+    public List<Host> findSuitableHosts(VirtualMachineProfile vmProfile, DeploymentPlan plan, ExcludeList avoid, int returnUpTo) {
         List<Host> suitableHosts = new ArrayList<Host>();
         for (HostAllocator allocator : _hostAllocators) {
             suitableHosts = allocator.allocateTo(vmProfile, plan, Host.Type.Routing, avoid, returnUpTo);
@@ -1340,17 +1337,34 @@ StateListener<State, VirtualMachine.Event, VirtualMachine> {
         return suitableHosts;
     }
 
-    protected List<Host> findEfiEnabledHosts(List<Host> suitableHosts){
-        List<Host> efiEnabledHosts = new ArrayList<Host>();
-        for(Host host : suitableHosts){
-            if(host.getCapabilities().contains(VmDetailConstants.BOOT_EFI))
-                efiEnabledHosts.add(host);
+    public List<Host> findHostsBasedOnEfi(List<Host> suitableHosts, boolean hasEfiEnabled){
+        if(suitableHosts.isEmpty())
+            return suitableHosts;
+
+        List<Host> hosts = new ArrayList<Host>();
+        //If the vm has EFI details return only the hosts with EFI capability
+        if(hasEfiEnabled) {
+            for (Host host : suitableHosts) {
+                if (host.getCapabilities().contains(VmDetailConstants.BOOT_EFI))
+                    hosts.add(host);
+            }
+
+            if (hosts.isEmpty())
+                s_logger.debug("No hosts with EFI enabled found");
+            return hosts;
         }
+        //Return the hosts without EFI capability
+        else
+        {
+            for (Host host : suitableHosts) {
+                if (!host.getCapabilities().contains(VmDetailConstants.BOOT_EFI))
+                    hosts.add(host);
+            }
 
-        if(efiEnabledHosts.isEmpty())
-            s_logger.debug("No hosts with EFI enabled found");
-
-        return efiEnabledHosts;
+            if (hosts.isEmpty())
+                s_logger.debug("No hosts with EFI disabled found");
+            return hosts;
+        }
     }
 
     protected boolean vmHasEfiEnabled(VirtualMachine vm){

@@ -110,6 +110,7 @@ env:
              smoke/test_vpc_vpn"
 
     - TESTS="smoke/misc/test_deploy_vm
+             smoke/misc/test_deploy_efi_vm
              smoke/misc/test_escalations_templates
              smoke/misc/test_vm_ha
              smoke/misc/test_vm_sync
