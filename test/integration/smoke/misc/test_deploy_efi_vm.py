@@ -83,17 +83,21 @@ class TestDeployEfiVm(cloudstackTestCase):
             if self.template.details["efi"] == "true":
                 templateWithEfi = True
 
-        self.assertTrue(hostWithEfi is False, msg="The hosts doesn't have EFI capabilities")
-        self.assertTrue(templateWithEfi is True, msg="The template has EFI details")
+        if(hostWithEfi is True and templateWithEfi is True):
+            self.skipTest(
+                "vm has efi details and there is at least a host with efi enabled so the test will be skipped")
+        if(hostWithEfi is False and templateWithEfi is False):
+            self.skipTest(
+                "vm doesn't have efi details and there is at least a host without efi enabled so the test will be skipped")
 
         try:
             self.virtual_machine = VirtualMachine.create(
                 self.apiclient,
                 self.testdata["virtual_machine"],
-            zoneid=self.zone.id,
-            domainid=self.account.domainid,
-            serviceofferingid=self.service_offering.id,
-            templateid=self.template.id)
+                zoneid=self.zone.id,
+                domainid=self.account.domainid,
+                serviceofferingid=self.service_offering.id,
+                templateid=self.template.id)
         except:
             list_vms = VirtualMachine.list(self.apiclient)
             self.assertTrue(isinstance(list_vms, list) and len(list_vms) > 0, msg="List VM response empty")
@@ -128,8 +132,15 @@ class TestDeployEfiVm(cloudstackTestCase):
             if self.template.details["efi"] == "true":
                 templateWithEfi = True
 
-        self.assertTrue(hostWithEfi is True, msg="At least one host has EFI capabilities")
-        self.assertTrue(templateWithEfi is True, msg="The template has EFI details")
+        if(templateWithEfi is True and hostWithEfi is False):
+            self.skipTest(
+                "the vm has efi details and there is no host with efi enabled so this test will be skipped")
+        if(templateWithEfi is False and hostWithEfi is True):
+            self.skipTest(
+                "the vm doesn't have efi details and there is a host with efi enabled. This scenario is not relevant for our case. The test will be skipped")
+        if(templateWithEfi is False and hostWithEfi is False):
+            self.skipTest(
+                "the vm doesn't have efi details and there is no host with efi enabled so this test will be skipped")
 
         self.virtual_machine = VirtualMachine.create(
             self.apiclient,
