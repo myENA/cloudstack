@@ -1353,18 +1353,9 @@ StateListener<State, VirtualMachine.Event, VirtualMachine> {
                 s_logger.debug("No hosts with EFI enabled found");
             return hosts;
         }
-        //Return the hosts without EFI capability
+        //Return the hosts
         else
-        {
-            for (Host host : suitableHosts) {
-                if (!host.getCapabilities().contains(VmDetailConstants.BOOT_EFI))
-                    hosts.add(host);
-            }
-
-            if (hosts.isEmpty())
-                s_logger.debug("No hosts with EFI disabled found");
-            return hosts;
-        }
+            return suitableHosts;
     }
 
     protected boolean vmHasEfiEnabled(VirtualMachine vm){

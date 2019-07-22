@@ -65,10 +65,9 @@ class TestDeployEfiVm(cloudstackTestCase):
             self.account
         ]
 
-    @attr(tags = ['advanced'], required_hardware="simulator only")
+    @attr(tags = ['advanced'], required_hardware="false")
     def test_deploy_efi_vm_failure(self):
         hostWithEfi = False
-        templateWithEfi = False
 
         #check if any host has EFI enabled
         for host in self.hosts:
@@ -78,17 +77,16 @@ class TestDeployEfiVm(cloudstackTestCase):
                 if "efi" in host.capabilities:
                     hostWithEfi = True
                     break
-        #check if the template has EFI details
+        #check if the template has EFI details if not add the EFI details
         if self.template.details is not None:
-            if self.template.details["efi"] == "true":
-                templateWithEfi = True
+            if (self.template.details["efi"] == "true") is not True:
+                self.template.details={"efi":"true"}
+        else:
+            self.template.details={"efi":"true"}
 
-        if(hostWithEfi is True and templateWithEfi is True):
+        if(hostWithEfi is True):
             self.skipTest(
-                "vm has efi details and there is at least a host with efi enabled so the test will be skipped")
-        if(hostWithEfi is False and templateWithEfi is False):
-            self.skipTest(
-                "vm doesn't have efi details and there is at least a host without efi enabled so the test will be skipped")
+                "There is at least a host with efi enabled so the test will be skipped")
 
         try:
             self.virtual_machine = VirtualMachine.create(
@@ -114,10 +112,9 @@ class TestDeployEfiVm(cloudstackTestCase):
             raise Exception("Warning: Exception during cleanup : %s" % e)
 
 
-    @attr(tags = ['advanced'], required_hardware="simulator only")
+    @attr(tags = ['advanced'], required_hardware="false")
     def test_deploy_efi_vm_succes(self):
         hostWithEfi = False
-        templateWithEfi = False
 
         #check if any host has EFI enabled
         for host in self.hosts:
@@ -127,20 +124,16 @@ class TestDeployEfiVm(cloudstackTestCase):
                 if "efi" in host.capabilities:
                     hostWithEfi = True
                     break
-        #check if the template has EFI details
+        #check if the template has EFI details if not add the EFI details
         if self.template.details is not None:
-            if self.template.details["efi"] == "true":
-                templateWithEfi = True
+            if (self.template.details["efi"] == "true") is not True:
+                self.template.details={"efi":"true"}
+        else:
+            self.template.details={"efi":"true"}
 
-        if(templateWithEfi is True and hostWithEfi is False):
+        if(hostWithEfi is False):
             self.skipTest(
-                "the vm has efi details and there is no host with efi enabled so this test will be skipped")
-        if(templateWithEfi is False and hostWithEfi is True):
-            self.skipTest(
-                "the vm doesn't have efi details and there is a host with efi enabled. This scenario is not relevant for our case. The test will be skipped")
-        if(templateWithEfi is False and hostWithEfi is False):
-            self.skipTest(
-                "the vm doesn't have efi details and there is no host with efi enabled so this test will be skipped")
+                "the vm has EFI details and there is no host with efi enabled so this test will be skipped")
 
         self.virtual_machine = VirtualMachine.create(
             self.apiclient,
