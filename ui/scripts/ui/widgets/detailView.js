@@ -488,7 +488,7 @@
                     if ($(this).closest('.tagger').length) return true;
 
                     var $input = $(this);
-                    var $value = $input.closest('td.value span');
+                    var $value = $input.closest('td.value div');
 
                     if ($input.is('input[type=text]'))
                     {
@@ -551,7 +551,7 @@
                     if ($(this).closest('.tagger').length) return true;
 
                     var $input = $(this);
-                    var $value = $input.closest('td.value span');
+                    var $value = $input.closest('td.value div');
                     var originalValue = $input.data('original-value');
 
                     if ($input.attr('id') === 'token-input-')
@@ -680,7 +680,7 @@
                 $detailView.find('td.value .copypasteicon').show();
             };
 
-            $detailView.find('td.value span').each(function() {
+            $detailView.find('td.value div').each(function() {
                 var name = $(this).closest('tr').data('detail-view-field');
                 var $value = $(this);
                 if (!$value.data('detail-view-is-editable')) return true;
@@ -805,7 +805,7 @@
                 return true;
             });
 
-            if ($detailView.find('td.value span:data(detail-view-is-editable)').length) {
+            if ($detailView.find('td.value div:data(detail-view-is-editable)').length) {
                 var $detailsEdit = $detailView.find('div.main-groups').detach(),
                     $detailsEditForm = $('<form>').append($detailsEdit);
 
@@ -818,7 +818,7 @@
             });
             $form.validate();
             $form.find('input, select').each(function() {
-                var data = $(this).parent('span').data('validation-rules');
+                var data = $(this).parent('div').data('validation-rules');
                 if (data) {
                     $(this).rules('add', data);
                 } else {
@@ -1070,7 +1070,7 @@
 
                 var $detail = $('<tr></tr>').addClass(key + '-row').appendTo($detailTable);
                 var $name = $('<td></td>').addClass('name').appendTo($detail);
-                var $value = $('<span>').appendTo($('<td></td>').addClass('value').appendTo($detail));
+                var $value = $('<div>').appendTo($('<td></td>').addClass('value').appendTo($detail));
                 var content = data[key];
 
                 if (this.converter) content = this.converter(content);

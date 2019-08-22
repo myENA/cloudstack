@@ -168,6 +168,10 @@ public class VpcOfferingVO implements VpcOffering {
         return serviceOfferingId;
     }
 
+    public void setServiceOfferingId(Long serviceOfferingId) {
+        this.serviceOfferingId = serviceOfferingId;
+    }
+
     @Override
     public boolean supportsDistributedRouter() {
         return supportsDistributedRouter;

@@ -16,6 +16,7 @@
 // under the License.
 package com.cloud.api;
 
+import com.cloud.service.dao.ServiceOfferingDao;
 import org.apache.cloudstack.management.ManagementServerHost;
 import com.cloud.utils.crypt.DBEncryptionUtil;
 import com.cloud.tags.dao.ResourceTagDao;
@@ -363,6 +364,8 @@ public class ApiResponseHelper implements ResponseGenerator {
     private NicExtraDhcpOptionDao _nicExtraDhcpOptionDao;
     @Inject
     private IPAddressDao userIpAddressDao;
+    @Inject
+    private ServiceOfferingDao serviceOfferingDao;
 
     @Override
     public UserResponse createUserResponse(User user) {
@@ -2821,6 +2824,10 @@ public class ApiResponseHelper implements ResponseGenerator {
         response.setState(offering.getState().name());
         response.setSupportsDistributedRouter(offering.supportsDistributedRouter());
         response.setSupportsRegionLevelVpc(offering.offersRegionLevelVPC());
+        if(offering.getServiceOfferingId() != null)
+            response.setServiceOfferingId(serviceOfferingDao.findById(offering.getServiceOfferingId()).getUuid());
+        else
+            response.setServiceOfferingId(null);
 
         Map<Service, Set<Provider>> serviceProviderMap = ApiDBUtils.listVpcOffServices(offering.getId());
         List<ServiceResponse> serviceResponses = new ArrayList<ServiceResponse>();
