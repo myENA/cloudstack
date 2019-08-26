@@ -130,6 +130,9 @@ public class CreateDiskOfferingCmd extends BaseCmd {
             description = "Hypervisor snapshot reserve space as a percent of a volume (for managed storage using Xen or VMware)")
     private Integer hypervisorSnapshotReserve;
 
+    @Parameter(name = ApiConstants.CACHE_MODE, type = CommandType.STRING, required = true ,description = "the cache mode to use for this disk offering. none, writeback or writethrough")
+    private String cacheMode;
+
 /////////////////////////////////////////////////////
     /////////////////// Accessors ///////////////////////
     /////////////////////////////////////////////////////
@@ -232,6 +235,10 @@ public class CreateDiskOfferingCmd extends BaseCmd {
 
     public Integer getHypervisorSnapshotReserve() {
         return hypervisorSnapshotReserve;
+    }
+
+    public String getCacheMode() {
+        return cacheMode;
     }
 
     /////////////////////////////////////////////////////
