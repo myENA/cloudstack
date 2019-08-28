@@ -701,7 +701,7 @@ public class VpcManagerImpl extends ManagerBase implements VpcManager, VpcProvis
 
     @Override
     @ActionEvent(eventType = EventTypes.EVENT_VPC_OFFERING_UPDATE, eventDescription = "updating vpc offering")
-    public VpcOffering updateVpcOffering(final long vpcOffId, final String vpcOfferingName, final String displayText, final String state) {
+    public VpcOffering updateVpcOffering(final long vpcOffId, final String vpcOfferingName, final String displayText, final String state, final Long serviceOfferingId) {
         CallContext.current().setEventDetails(" Id: " + vpcOffId);
 
         // Verify input parameters
@@ -718,6 +718,10 @@ public class VpcManagerImpl extends ManagerBase implements VpcManager, VpcProvis
 
         if (displayText != null) {
             offering.setDisplayText(displayText);
+        }
+
+        if (serviceOfferingId != null) {
+            offering.setServiceOfferingId(serviceOfferingId);
         }
 
         if (state != null) {

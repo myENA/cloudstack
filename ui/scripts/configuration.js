@@ -4288,6 +4288,34 @@
                                         }
                                     }, //end of supportedservices field
 
+                                    serviceOfferingId: {
+                                        label: 'label.menu.service.offerings',
+                                        select: function(args) {
+                                            $.ajax({
+                                                url: createURL('listServiceOfferings'),
+                                                dataType: "json",
+                                                data: {
+                                                    issystem: true,
+                                                    listAll: true,
+                                                    systemvmtype: 'domainrouter'
+                                                },
+                                                success: function (json) {
+                                                    var serviceofferings = json.listserviceofferingsresponse.serviceoffering;
+                                                    var items =[];
+                                                    $(serviceofferings).each(function () {
+                                                        items.push({
+                                                            id : this.id,
+                                                            description: this.name
+                                                        });
+                                                    });
+                                                    args.response.success({
+                                                        data: items
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    },
+
                                     "service.Connectivity.regionLevelVpcCapabilityCheckbox": {
                                         label: 'label.regionlevelvpc',
                                         isHidden: true,
@@ -4410,7 +4438,8 @@
                                         id: args.context.vpcOfferings[0].id,
                                         name: args.data.name,
                                         displaytext: args.data.displaytext,
-                                        availability: args.data.availability
+                                        availability: args.data.availability,
+                                        serviceofferingid: args.data.serviceofferingid
                                     };
 
                                     $.ajax({
@@ -4418,6 +4447,10 @@
                                         data: data,
                                         success: function(json) {
                                             var item = json.updatevpcofferingresponse.vpcoffering;
+                                            if(args.context.vpcOfferings[0].serviceofferingid.localeCompare(args.data.serviceofferingid) != 0)
+                                            {
+                                                alert("Please restart the management server in order to apply the new VPC Service Offering.");
+                                            }
                                             args.response.success({
                                                 data: item
                                             });
@@ -4567,6 +4600,39 @@
                                         converter: cloudStack.converters.toBooleanText
                                     },
 
+                                    serviceofferingid: {
+                                        label: 'label.service.offering',
+                                        isEditable: true,
+                                        validation: {
+                                            required: true
+                                        },
+                                        select: function(args) {
+                                            var serviceofferings;
+                                            $.ajax({
+                                                url: createURL('listServiceOfferings'),
+                                                dataType: "json",
+                                                data: {
+                                                    issystem: true,
+                                                    listAll: true,
+                                                    systemvmtype: 'domainrouter'
+                                                },
+                                                success: function (json) {
+                                                    serviceofferings = json.listserviceofferingsresponse.serviceoffering;
+                                                    var items =[];
+                                                    $(serviceofferings).each(function () {
+                                                        items.push({
+                                                            id : this.id,
+                                                            description: this.name
+                                                        });
+                                                    });
+                                                    args.response.success({
+                                                        data: items
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    },
+
                                     supportedServices: {
                                         label: 'label.supported.services'
                                     },
@@ -4597,20 +4663,43 @@
                                         async: true,
                                         success: function(json) {
                                             var item = json.listvpcofferingsresponse.vpcoffering[0];
-                                            args.response.success({
-                                                actionFilter: vpcOfferingActionfilter,
-                                                data: $.extend(item, {
-                                                    supportedServices: $.map(item.service, function(service) {
-                                                        return service.name;
-                                                    }).join(', '),
+                                            if(args.context.vpcOfferings[0].serviceofferingid !== undefined)
+                                                $.ajax({
+                                                    url: createURL('listServiceOfferings&issystem=true&id=' + args.context.vpcOfferings[0].serviceofferingid),
+                                                    dataType: "json",
+                                                    async: true,
+                                                    success: function(json) {
+                                                        var itemService = json.listserviceofferingsresponse.serviceoffering[0];
+                                                        args.response.success({
+                                                            data: $.extend(item, {
+                                                                serviceofferingid: itemService.id,
+                                                                supportedServices: $.map(item.service, function(service) {
+                                                                    return service.name;
+                                                                }).join(', '),
 
-                                                    serviceCapabilities: $.map(item.service, function(service) {
-                                                        return service.provider ? $.map(service.provider, function(capability) {
-                                                            return service.name + ': ' + capability.name;
-                                                        }).join(', ') : null;
-                                                    }).join(', ')
-                                                })
-                                            });
+                                                                serviceCapabilities: $.map(item.service, function(service) {
+                                                                    return service.provider ? $.map(service.provider, function(capability) {
+                                                                        return service.name + ': ' + capability.name;
+                                                                    }).join(', ') : null;
+                                                                }).join(', ')
+                                                            })
+                                                        });
+                                                    }
+                                                });
+                                            else
+                                                args.response.success({
+                                                    data: $.extend(item, {
+                                                        supportedServices: $.map(item.service, function(service) {
+                                                            return service.name;
+                                                        }).join(', '),
+
+                                                        serviceCapabilities: $.map(item.service, function(service) {
+                                                            return service.provider ? $.map(service.provider, function(capability) {
+                                                                return service.name + ': ' + capability.name;
+                                                            }).join(', ') : null;
+                                                        }).join(', ')
+                                                    })
+                                                });
                                         }
                                     });
                                 }

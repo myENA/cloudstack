@@ -67,6 +67,10 @@ public class VpcOfferingResponse extends BaseResponse {
     @Param(description = " indicated if the offering can support region level vpc", since = "4.4")
     private Boolean supportsRegionLevelVpc;
 
+    @SerializedName(ApiConstants.SERVICE_OFFERING_ID)
+    @Param(description = "the service offering which was used to create vpc offering")
+    private String serviceOfferingId;
+
     public void setId(String id) {
         this.id = id;
     }
@@ -101,5 +105,9 @@ public class VpcOfferingResponse extends BaseResponse {
 
     public void setSupportsRegionLevelVpc(Boolean supports) {
         this.supportsRegionLevelVpc = supports;
+    }
+
+    public void setServiceOfferingId(String serviceOfferingId) {
+        this.serviceOfferingId = serviceOfferingId;
     }
 }
