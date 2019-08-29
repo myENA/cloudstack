@@ -47,6 +47,6 @@ public interface VpcProvisioningService {
      * @param state
      * @return
      */
-    public VpcOffering updateVpcOffering(long vpcOffId, String vpcOfferingName, String displayText, String state);
+    public VpcOffering updateVpcOffering(long vpcOffId, String vpcOfferingName, String displayText, String state, final Long serviceOfferingId);
 
 }
