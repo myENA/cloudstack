@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 
 import javax.inject.Inject;
 
+import com.cloud.offering.DiskOffering;
 import org.apache.log4j.Logger;
 
 import org.apache.cloudstack.acl.ControlledEntity;
@@ -343,6 +344,10 @@ public class ParamProcessWorker implements DispatchWorker {
             case UUID:
                 final Long internalId = translateUuidToInternalId(paramObj.toString(), annotation);
                 field.set(cmdObj, internalId);
+                break;
+            case CACHE_MODE_ENUM:
+                DiskOffering.DiskCacheMode diskCacheMode = DiskOffering.DiskCacheMode.valueOf(paramObj.toString().toUpperCase());
+                field.set(cmdObj, diskCacheMode);
                 break;
             case LONG:
                 field.set(cmdObj, Long.valueOf(paramObj.toString()));

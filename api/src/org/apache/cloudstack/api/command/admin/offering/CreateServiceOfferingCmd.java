@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.cloud.offering.DiskOffering;
 import com.cloud.storage.Storage;
 import org.apache.cloudstack.api.APICommand;
 import org.apache.cloudstack.api.ApiConstants;
@@ -164,8 +165,8 @@ public class CreateServiceOfferingCmd extends BaseCmd {
             since = "4.4")
     private Integer hypervisorSnapshotReserve;
 
-    @Parameter(name = ApiConstants.CACHE_MODE, type = CommandType.STRING, required = true ,description = "the cache mode to use for this disk offering. none, writeback or writethrough")
-    private String cacheMode;
+    @Parameter(name = ApiConstants.CACHE_MODE, type = CommandType.CACHE_MODE_ENUM, required = true ,description = "the cache mode to use for this disk offering. none, writeback or writethrough")
+    private DiskOffering.DiskCacheMode cacheMode;
 
     /////////////////////////////////////////////////////
     /////////////////// Accessors ///////////////////////
@@ -321,7 +322,7 @@ public class CreateServiceOfferingCmd extends BaseCmd {
         return hypervisorSnapshotReserve;
     }
 
-    public String getCacheMode() {
+    public DiskOffering.DiskCacheMode getCacheMode() {
         return cacheMode;
     }
 
