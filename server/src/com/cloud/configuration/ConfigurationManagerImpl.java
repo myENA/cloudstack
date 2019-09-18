@@ -34,6 +34,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.naming.ConfigurationException;
 
+import com.google.common.base.Enums;
 import org.apache.log4j.Logger;
 
 import org.apache.cloudstack.acl.SecurityChecker;
@@ -1947,6 +1948,11 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
             throw new InvalidParameterValueException("Please specify a valid domain id");
         }
 
+        // check if valid cache_mode parameter
+        if(!Enums.getIfPresent(DiskOffering.DiskCacheMode.class, cmd.getCacheMode()).isPresent()){
+            throw new InvalidParameterValueException("Please specify a valid cache mode parameter");
+        }
+
         final Boolean offerHA = cmd.getOfferHa();
 
         boolean localStorageRequired = false;
@@ -2478,6 +2484,11 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
 
         if (isCustomized && numGibibytes != null) {
             throw new InvalidParameterValueException("Disksize is not allowed for a customized disk offering");
+        }
+
+        // check if valid cache_mode parameter
+        if(!Enums.getIfPresent(DiskOffering.DiskCacheMode.class, cmd.getCacheMode()).isPresent()){
+            throw new InvalidParameterValueException("Please specify a valid cache mode parameter");
         }
 
         boolean localStorageRequired = false;
