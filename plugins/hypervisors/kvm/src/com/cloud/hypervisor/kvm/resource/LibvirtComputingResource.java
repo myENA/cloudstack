@@ -2463,9 +2463,6 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
                 if (iopsWriteRateMax != null && iopsWriteRateMax > 0) {
                     diskdef.setIopsWriteRateMax(iopsWriteRateMax);
                 }
-                if ((iopsWriteRateMaxLength != null) && (iopsWriteRateMaxLength > 0)) {
-                    diskdef.setIopsWriteRateMaxLength(iopsWriteRateMaxLength);
-                }
 
                 if (cacheMode != null) {
                     diskdef.setCacheMode(DiskDef.DiskCacheMode.valueOf(cacheMode.toUpperCase()));

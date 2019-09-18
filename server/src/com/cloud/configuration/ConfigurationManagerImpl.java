@@ -2024,7 +2024,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
             Long bytesWriteRate,  Long bytesWriteRateMax, Long bytesWriteRateMaxLength,
             Long iopsReadRate, Long iopsReadRateMax, Long iopsReadRateMaxLength,
             Long iopsWriteRate, Long iopsWriteRateMax, Long iopsWriteRateMaxLength,
-            final Integer hypervisorSnapshotReserve, DiskOffering.DiskCacheMode cacheMode) {
+            final Integer hypervisorSnapshotReserve, String cacheMode) {
 
         // Check if user exists in the system
         final User user = _userDao.findById(userId);
@@ -2097,7 +2097,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         offering.setCustomizedIops(isCustomizedIops);
         offering.setMinIops(minIops);
         offering.setMaxIops(maxIops);
-        offering.setCacheMode(cacheMode);
+        offering.setCacheMode(DiskOffering.DiskCacheMode.valueOf(cacheMode.toUpperCase()));
 
         if (bytesReadRate != null && bytesReadRate > 0) {
             offering.setBytesReadRate(bytesReadRate);
@@ -2314,7 +2314,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
             Long bytesWriteRate, Long bytesWriteRateMax, Long bytesWriteRateMaxLength,
             Long iopsReadRate, Long iopsReadRateMax, Long iopsReadRateMaxLength,
             Long iopsWriteRate, Long iopsWriteRateMax, Long iopsWriteRateMaxLength,
-            final Integer hypervisorSnapshotReserve, DiskOffering.DiskCacheMode cacheMode) {
+            final Integer hypervisorSnapshotReserve, String cacheMode) {
         long diskSize = 0;// special case for custom disk offerings
         if (numGibibytes != null && numGibibytes <= 0) {
             throw new InvalidParameterValueException("Please specify a disk size of at least 1 Gb.");
@@ -2439,7 +2439,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         }
 
         if(cacheMode != null){
-            newDiskOffering.setCacheMode(cacheMode);
+            newDiskOffering.setCacheMode(DiskOffering.DiskCacheMode.valueOf(cacheMode.toUpperCase()));
         }
 
         newDiskOffering.setHypervisorSnapshotReserve(hypervisorSnapshotReserve);
@@ -2506,7 +2506,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         final Long iopsWriteRateMax = cmd.getIopsWriteRateMax();
         final Long iopsWriteRateMaxLength = cmd.getIopsWriteRateMaxLength();
         final Integer hypervisorSnapshotReserve = cmd.getHypervisorSnapshotReserve();
-        final DiskOffering.DiskCacheMode cacheMode = cmd.getCacheMode();
+        final String cacheMode = cmd.getCacheMode();
 
         final Long userId = CallContext.current().getCallingUserId();
         return createDiskOffering(userId, domainId, name, description, provisioningType, numGibibytes, tags, isCustomized,

@@ -953,7 +953,7 @@ public class KVMStorageProcessor implements StorageProcessor {
             final Long bytesReadRate, final Long bytesReadRateMax, final Long bytesReadRateMaxLength,
             final Long bytesWriteRate, final Long bytesWriteRateMax, final Long bytesWriteRateMaxLength,
             final Long iopsReadRate, final Long iopsReadRateMax, final Long iopsReadRateMaxLength,
-            final Long iopsWriteRate, final Long iopsWriteRateMax, final Long iopsWriteRateMaxLength, final String cacheMode) throws LibvirtException, InternalErrorException {
+            final Long iopsWriteRate, final Long iopsWriteRateMax, final Long iopsWriteRateMaxLength) throws LibvirtException, InternalErrorException {
         List<DiskDef> disks = null;
         Domain dm = null;
         DiskDef diskdef = null;
@@ -1063,10 +1063,6 @@ public class KVMStorageProcessor implements StorageProcessor {
                 if ((iopsWriteRateMaxLength != null) && (iopsWriteRateMaxLength > 0)) {
                     diskdef.setIopsWriteRateMaxLength(iopsWriteRateMaxLength);
                 }
-
-                if (cacheMode != null) {
-                    diskdef.setCacheMode(DiskDef.DiskCacheMode.valueOf(cacheMode.toUpperCase()));
-                }
             }
 
             final String xml = diskdef.toString();
@@ -1096,7 +1092,7 @@ public class KVMStorageProcessor implements StorageProcessor {
                     vol.getBytesReadRate(), vol.getBytesReadRateMax(), vol.getBytesReadRateMaxLength(),
                     vol.getBytesWriteRate(), vol.getBytesWriteRateMax(), vol.getBytesWriteRateMaxLength(),
                     vol.getIopsReadRate(), vol.getIopsReadRateMax(), vol.getIopsReadRateMaxLength(),
-                    vol.getIopsWriteRate(), vol.getIopsWriteRateMax(), vol.getIopsWriteRateMaxLength(), vol.getCacheMode().toString());
+                    vol.getIopsWriteRate(), vol.getIopsWriteRateMax(), vol.getIopsWriteRateMaxLength());
 
             return new AttachAnswer(disk);
         } catch (final LibvirtException e) {
@@ -1125,7 +1121,7 @@ public class KVMStorageProcessor implements StorageProcessor {
                     vol.getBytesReadRate(), vol.getBytesReadRateMax(), vol.getBytesReadRateMaxLength(),
                     vol.getBytesWriteRate(), vol.getBytesWriteRateMax(), vol.getBytesWriteRateMaxLength(),
                     vol.getIopsReadRate(), vol.getIopsReadRateMax(), vol.getIopsReadRateMaxLength(),
-                    vol.getIopsWriteRate(), vol.getIopsWriteRateMax(), vol.getIopsWriteRateMaxLength(), vol.getCacheMode().toString());
+                    vol.getIopsWriteRate(), vol.getIopsWriteRateMax(), vol.getIopsWriteRateMaxLength());
 
             storagePoolMgr.disconnectPhysicalDisk(primaryStore.getPoolType(), primaryStore.getUuid(), vol.getPath());
 
