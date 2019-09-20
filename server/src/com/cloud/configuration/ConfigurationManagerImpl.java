@@ -1949,7 +1949,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         }
 
         // check if valid cache_mode parameter
-        if(!Enums.getIfPresent(DiskOffering.DiskCacheMode.class, cmd.getCacheMode()).isPresent()){
+        if(!Enums.getIfPresent(DiskOffering.DiskCacheMode.class, cmd.getCacheMode().toUpperCase()).isPresent()){
             throw new InvalidParameterValueException("Please specify a valid cache mode parameter");
         }
 
@@ -2487,7 +2487,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         }
 
         // check if valid cache_mode parameter
-        if(!Enums.getIfPresent(DiskOffering.DiskCacheMode.class, cmd.getCacheMode()).isPresent()){
+        if(!Enums.getIfPresent(DiskOffering.DiskCacheMode.class, cmd.getCacheMode().toUpperCase()).isPresent()){
             throw new InvalidParameterValueException("Please specify a valid cache mode parameter");
         }
 
