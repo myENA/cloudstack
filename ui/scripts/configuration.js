@@ -4449,7 +4449,7 @@
                                             var item = json.updatevpcofferingresponse.vpcoffering;
                                             if(args.context.vpcOfferings[0].serviceofferingid.localeCompare(args.data.serviceofferingid) != 0)
                                             {
-                                                alert("Please restart the management server in order to apply the new VPC Service Offering.");
+                                                alert("Please restart the VPC Networks which uses this offering in order to apply the new VPC Service Offering.");
                                             }
                                             args.response.success({
                                                 data: item

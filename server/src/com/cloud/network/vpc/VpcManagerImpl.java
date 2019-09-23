@@ -38,6 +38,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.naming.ConfigurationException;
 
+import com.cloud.alert.AlertManager;
 import org.apache.cloudstack.acl.ControlledEntity.ACLType;
 import org.apache.cloudstack.api.command.user.vpc.ListPrivateGatewaysCmd;
 import org.apache.cloudstack.api.command.user.vpc.ListStaticRoutesCmd;
@@ -216,6 +217,8 @@ public class VpcManagerImpl extends ManagerBase implements VpcManager, VpcProvis
     IpAddressManager _ipAddrMgr;
     @Inject
     ConfigDepot _configDepot;
+    @Inject
+    private AlertManager _alertMgr;
 
     @Inject
     private VpcPrivateGatewayTransactionCallable vpcTxCallable;
@@ -703,6 +706,7 @@ public class VpcManagerImpl extends ManagerBase implements VpcManager, VpcProvis
     @ActionEvent(eventType = EventTypes.EVENT_VPC_OFFERING_UPDATE, eventDescription = "updating vpc offering")
     public VpcOffering updateVpcOffering(final long vpcOffId, final String vpcOfferingName, final String displayText, final String state, final Long serviceOfferingId) {
         CallContext.current().setEventDetails(" Id: " + vpcOffId);
+        boolean serviceOfferingUpdated = false;
 
         // Verify input parameters
         final VpcOfferingVO offeringToUpdate = _vpcOffDao.findById(vpcOffId);
@@ -719,6 +723,12 @@ public class VpcManagerImpl extends ManagerBase implements VpcManager, VpcProvis
         if (displayText != null) {
             offering.setDisplayText(displayText);
         }
+
+        if(offeringToUpdate.getServiceOfferingId().compareTo(serviceOfferingId) != 0)
+        {
+            serviceOfferingUpdated = true;
+        }
+
 
         if (serviceOfferingId != null) {
             offering.setServiceOfferingId(serviceOfferingId);
@@ -738,10 +748,25 @@ public class VpcManagerImpl extends ManagerBase implements VpcManager, VpcProvis
         }
 
         if (_vpcOffDao.update(vpcOffId, offering)) {
-            s_logger.debug("Updated VPC offeirng id=" + vpcOffId);
+            s_logger.debug("Updated VPC offering id=" + vpcOffId);
+            if(serviceOfferingUpdated) {
+                sendRestartVpcAlert(vpcOffId);
+            }
             return _vpcOffDao.findById(vpcOffId);
         } else {
             return null;
+        }
+    }
+
+    public void sendRestartVpcAlert(long vpcOffId){
+        List<VpcVO> vpcVOList = _vpcDao.listByVpcOffering(vpcOffId);
+        if(!vpcVOList.isEmpty() && vpcVOList.size() > 0){
+            for (VpcVO item : vpcVOList) {
+                item.setRestartRequired(true);
+                _vpcDao.update(item.getId(), item);
+                _alertMgr.sendAlert(AlertManager.AlertType.ALERT_TYPE_VPC_RESTART_REQUIRED, 0, new Long(0), "The underlying offering for the vpc "
+                        + item.getName() + " have been changed. Please restart the vpc with clean up to apply the new offering!", "");
+            }
         }
     }
 

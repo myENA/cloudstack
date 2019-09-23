@@ -854,6 +854,7 @@ under the License.
 'label.routing.host': '<fmt:message key="label.routing.host" />',
 'label.usage.server': '<fmt:message key="label.usage.server" />',
 'label.management.server': '<fmt:message key="label.management.server" />',
+'label.alert.restart.vpc.network': '<fmt:message key="label.alert.restart.vpc.network" />',
 'label.domain.router': '<fmt:message key="label.domain.router" />',
 'label.console.proxy': '<fmt:message key="label.console.proxy" />',
 'label.user.vm': '<fmt:message key="label.user.vm" />',
