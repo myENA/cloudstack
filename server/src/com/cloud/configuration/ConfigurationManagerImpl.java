@@ -2103,7 +2103,6 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         offering.setCustomizedIops(isCustomizedIops);
         offering.setMinIops(minIops);
         offering.setMaxIops(maxIops);
-        offering.setCacheMode(DiskOffering.DiskCacheMode.valueOf(cacheMode.toUpperCase()));
 
         if (bytesReadRate != null && bytesReadRate > 0) {
             offering.setBytesReadRate(bytesReadRate);
@@ -2140,6 +2139,9 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         }
         if (iopsWriteRateMaxLength != null && iopsWriteRateMaxLength > 0) {
             offering.setIopsWriteRateMaxLength(iopsWriteRateMaxLength);
+        }
+        if(cacheMode != null){
+            offering.setCacheMode(DiskOffering.DiskCacheMode.valueOf(cacheMode.toUpperCase()));
         }
 
         if (hypervisorSnapshotReserve != null && hypervisorSnapshotReserve < 0) {
