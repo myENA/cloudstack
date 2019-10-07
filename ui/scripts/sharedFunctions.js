@@ -1170,6 +1170,8 @@ cloudStack.converters = {
                 return _l('label.local.storage');
             case 26:
                 return _l('label.resource.limit.exceeded');
+            case 29:
+                return _l('label.alert.restart.vpc.network');
         }
     },
 

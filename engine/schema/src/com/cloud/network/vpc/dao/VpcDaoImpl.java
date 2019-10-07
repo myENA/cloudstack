@@ -43,6 +43,7 @@ import com.cloud.utils.db.TransactionLegacy;
 public class VpcDaoImpl extends GenericDaoBase<VpcVO, Long> implements VpcDao {
     final GenericSearchBuilder<VpcVO, Integer> CountByOfferingId;
     final SearchBuilder<VpcVO> AllFieldsSearch;
+    final SearchBuilder<VpcVO> GetAllByOfferingId;
     final GenericSearchBuilder<VpcVO, Long> CountByAccountId;
 
     @Inject
@@ -64,6 +65,10 @@ public class VpcDaoImpl extends GenericDaoBase<VpcVO, Long> implements VpcDao {
         AllFieldsSearch.and("state", AllFieldsSearch.entity().getState(), Op.EQ);
         AllFieldsSearch.and("accountId", AllFieldsSearch.entity().getAccountId(), Op.EQ);
         AllFieldsSearch.done();
+
+        GetAllByOfferingId = createSearchBuilder();
+        GetAllByOfferingId.and("offeringId", GetAllByOfferingId.entity().getVpcOfferingId(), Op.EQ);
+        GetAllByOfferingId.done();
 
         CountByAccountId = createSearchBuilder(Long.class);
         CountByAccountId.select(null, Func.COUNT, CountByAccountId.entity().getId());
@@ -92,6 +97,13 @@ public class VpcDaoImpl extends GenericDaoBase<VpcVO, Long> implements VpcDao {
     public List<? extends Vpc> listByAccountId(long accountId) {
         SearchCriteria<VpcVO> sc = AllFieldsSearch.create();
         sc.setParameters("accountId", accountId);
+        return listBy(sc, null);
+    }
+
+    @Override
+    public List<VpcVO> listByVpcOffering(long vpcOfferingId){
+        SearchCriteria<VpcVO> sc = GetAllByOfferingId.create();
+        sc.setParameters("offeringId", vpcOfferingId);
         return listBy(sc, null);
     }
 

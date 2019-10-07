@@ -42,4 +42,6 @@ public interface VpcDao extends GenericDao<VpcVO, Long> {
     VpcVO persist(VpcVO vpc, Map<String, List<String>> serviceProviderMap);
 
     void persistVpcServiceProviders(long vpcId, Map<String, List<String>> serviceProviderMap);
+
+    public List<VpcVO> listByVpcOffering(long vpcOfferingId);
 }
