@@ -164,6 +164,9 @@ public class CreateServiceOfferingCmd extends BaseCmd {
             since = "4.4")
     private Integer hypervisorSnapshotReserve;
 
+    @Parameter(name = ApiConstants.CACHE_MODE, type = CommandType.STRING, required = false ,description = "the cache mode to use for this disk offering. none, writeback or writethrough")
+    private String cacheMode;
+
     /////////////////////////////////////////////////////
     /////////////////// Accessors ///////////////////////
     /////////////////////////////////////////////////////
@@ -316,6 +319,10 @@ public class CreateServiceOfferingCmd extends BaseCmd {
 
     public Integer getHypervisorSnapshotReserve() {
         return hypervisorSnapshotReserve;
+    }
+
+    public String getCacheMode() {
+        return cacheMode;
     }
 
     /////////////////////////////////////////////////////

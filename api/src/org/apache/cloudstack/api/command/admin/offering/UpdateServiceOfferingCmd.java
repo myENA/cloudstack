@@ -111,86 +111,50 @@ public class UpdateServiceOfferingCmd extends BaseCmd {
     }
 
     public Long getDiskBytesReadRate() {
-        if(diskBytesReadRate != null && diskBytesReadRate == 0) {
-            return null;
-        }
         return diskBytesReadRate;
     }
 
     public Long getDiskBytesReadRateMax() {
-        if(diskBytesReadRateMax != null && diskBytesReadRateMax == 0) {
-            return null;
-        }
         return diskBytesReadRateMax;
     }
 
     public Long getDiskBytesReadRateMaxLength() {
-        if(diskBytesReadRateMaxLength != null && diskBytesReadRateMaxLength == 0) {
-            return null;
-        }
         return diskBytesReadRateMaxLength;
     }
 
     public Long getDiskBytesWriteRate() {
-        if(diskBytesWriteRate != null && diskBytesWriteRate == 0) {
-            return null;
-        }
         return diskBytesWriteRate;
     }
 
     public Long getDiskBytesWriteRateMax() {
-        if(diskBytesWriteRateMax != null && diskBytesWriteRateMax == 0) {
-            return null;
-        }
         return diskBytesWriteRateMax;
     }
 
     public Long getDiskBytesWriteRateMaxLength() {
-        if(diskBytesWriteRateMaxLength != null && diskBytesWriteRateMaxLength == 0) {
-            return null;
-        }
         return diskBytesWriteRateMaxLength;
     }
 
     public Long getDiskIopsReadRate() {
-        if(diskIopsReadRate != null && diskIopsReadRate == 0) {
-            return null;
-        }
         return diskIopsReadRate;
     }
 
     public Long getDiskIopsReadRateMax() {
-        if(diskIopsReadRateMax != null && diskIopsReadRateMax == 0) {
-            return null;
-        }
         return diskIopsReadRateMax;
     }
 
     public Long getDiskIopsReadRateMaxLength() {
-        if(diskIopsReadRateMaxLength != null && diskIopsReadRateMaxLength == 0) {
-            return null;
-        }
         return diskIopsReadRateMaxLength;
     }
 
     public Long getDiskIopsWriteRate() {
-        if(diskIopsWriteRate != null && diskIopsWriteRate == 0) {
-            return null;
-        }
         return diskIopsWriteRate;
     }
 
     public Long getDiskIopsWriteRateMax() {
-        if(diskIopsWriteRateMax != null && diskIopsWriteRateMax == 0) {
-            return null;
-        }
         return diskIopsWriteRateMax;
     }
 
     public Long getDiskIopsWriteRateMaxLength() {
-        if(diskIopsWriteRateMaxLength != null && diskIopsWriteRateMaxLength == 0) {
-            return null;
-        }
         return diskIopsWriteRateMaxLength;
     }
 

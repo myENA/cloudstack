@@ -164,6 +164,9 @@ public class ServiceOfferingJoinVO extends BaseViewVO implements InternalIdentit
     @Column(name = "deployment_planner")
     private String deploymentPlanner;
 
+    @Column(name = "cache_mode")
+    String cacheMode;
+
     public ServiceOfferingJoinVO() {
     }
 
@@ -343,5 +346,9 @@ public class ServiceOfferingJoinVO extends BaseViewVO implements InternalIdentit
 
     public boolean isDynamic() {
         return cpu == null || speed == null || ramSize == null;
+    }
+
+    public String getCacheMode() {
+        return cacheMode;
     }
 }
