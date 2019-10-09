@@ -2591,6 +2591,10 @@ public class QueryManagerImpl extends ManagerBase implements QueryService, Confi
             sc.addAnd("name", SearchCriteria.Op.EQ, name);
         }
 
+        if(cmd.isCustomized() == true){
+            sc.addAnd("customized", SearchCriteria.Op.EQ, true);
+        }
+
         // FIXME: disk offerings should search back up the hierarchy for
         // available disk offerings...
         /*

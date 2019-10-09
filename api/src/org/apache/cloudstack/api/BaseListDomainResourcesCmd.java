@@ -34,6 +34,10 @@ public abstract class BaseListDomainResourcesCmd extends BaseListCmd implements 
         + " but if true, lists all resources from the parent specified by the domainId till leaves.")
     private Boolean recursive;
 
+    @Parameter(name = "iscustomized", type = CommandType.BOOLEAN, description = "defaults to false,"
+        + " but if true, lists all resources which are custom.")
+    private Boolean customized;
+
     @Override
     public boolean listAll() {
         return listAll == null ? false : listAll;
@@ -47,5 +51,9 @@ public abstract class BaseListDomainResourcesCmd extends BaseListCmd implements 
     @Override
     public Long getDomainId() {
         return domainId;
+    }
+
+    public boolean isCustomized() {
+        return customized == null ? false : customized;
     }
 }

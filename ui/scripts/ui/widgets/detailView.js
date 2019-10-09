@@ -603,6 +603,7 @@
                                     );
                                     replaceListViewItem($detailView, data);
                                     removeEditForm();
+                                    $detailView.find('.refresh').click();
                                 } else {
                                     $loading.appendTo($detailView);
                                     cloudStack.ui.notifications.add(
@@ -612,6 +613,7 @@
 
                                             convertInputs($inputs);
                                             removeEditForm();
+                                            $detailView.find('.refresh').click();
                                             $loading.remove();
                                         }, [],
                                         function() {

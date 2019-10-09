@@ -16,26 +16,25 @@
 // under the License.
 package org.apache.cloudstack.api.command.user.volume;
 
-import org.apache.log4j.Logger;
-
-import org.apache.cloudstack.acl.RoleType;
-import org.apache.cloudstack.acl.SecurityChecker.AccessType;
-import org.apache.cloudstack.api.ACL;
-import org.apache.cloudstack.api.APICommand;
-import org.apache.cloudstack.api.ApiCommandJobType;
-import org.apache.cloudstack.api.ApiConstants;
-import org.apache.cloudstack.api.ApiErrorCode;
-import org.apache.cloudstack.api.BaseAsyncCustomIdCmd;
-import org.apache.cloudstack.api.Parameter;
-import org.apache.cloudstack.api.ResponseObject.ResponseView;
-import org.apache.cloudstack.api.ServerApiException;
-import org.apache.cloudstack.api.response.StoragePoolResponse;
-import org.apache.cloudstack.api.response.VolumeResponse;
-import org.apache.cloudstack.context.CallContext;
-
 import com.cloud.event.EventTypes;
 import com.cloud.exception.InvalidParameterValueException;
 import com.cloud.storage.Volume;
+import org.apache.cloudstack.acl.RoleType;
+import org.apache.cloudstack.acl.SecurityChecker.AccessType;
+import org.apache.cloudstack.api.APICommand;
+import org.apache.cloudstack.api.ApiConstants;
+import org.apache.cloudstack.api.ApiCommandJobType;
+import org.apache.cloudstack.api.BaseAsyncCustomIdCmd;
+import org.apache.cloudstack.api.ServerApiException;
+import org.apache.cloudstack.api.ApiErrorCode;
+import org.apache.cloudstack.api.Parameter;
+import org.apache.cloudstack.api.ACL;
+import org.apache.cloudstack.api.ResponseObject.ResponseView;
+import org.apache.cloudstack.api.response.DiskOfferingResponse;
+import org.apache.cloudstack.api.response.StoragePoolResponse;
+import org.apache.cloudstack.api.response.VolumeResponse;
+import org.apache.cloudstack.context.CallContext;
+import org.apache.log4j.Logger;
 
 @APICommand(name = "updateVolume", description = "Updates the volume.", responseObject = VolumeResponse.class, responseView = ResponseView.Restricted, entityType = {Volume.class},
         requestHasSensitiveInfo = false, responseHasSensitiveInfo = false)
@@ -48,7 +47,7 @@ public class UpdateVolumeCmd extends BaseAsyncCustomIdCmd {
     /////////////////////////////////////////////////////
 
     @ACL(accessType = AccessType.OperateEntry)
-    @Parameter(name=ApiConstants.ID, type=CommandType.UUID, entityType=VolumeResponse.class, description="the ID of the disk volume")
+    @Parameter(name= ApiConstants.ID, type=CommandType.UUID, entityType=VolumeResponse.class, description="the ID of the disk volume")
     private Long id;
 
     @Parameter(name = ApiConstants.PATH, type = CommandType.STRING, description = "The path of the volume")
@@ -74,6 +73,12 @@ public class UpdateVolumeCmd extends BaseAsyncCustomIdCmd {
                type = CommandType.BOOLEAN,
  description = "an optional field, whether to the display the volume to the end user or not.", authorized = {RoleType.Admin})
     private Boolean displayVolume;
+
+    @Parameter(name = ApiConstants.DISK_OFFERING_ID, type = CommandType.UUID, entityType = DiskOfferingResponse.class, description = "Disk offering UUID for the datadisk volume")
+    private Long diskOfferingId;
+
+    @Parameter(name = ApiConstants.SERVICE_OFFERING_ID, type = CommandType.UUID, entityType = DiskOfferingResponse.class, description = "Disk offering UUID for the root volume")
+    private Long serviceOfferingId;
 
     /////////////////////////////////////////////////////
     /////////////////// Accessors ///////////////////////
@@ -102,6 +107,15 @@ public class UpdateVolumeCmd extends BaseAsyncCustomIdCmd {
     public String getChainInfo() {
         return chainInfo;
     }
+
+    public Long getDiskOfferingId() {
+        if(diskOfferingId != null)
+            return diskOfferingId;
+        if(serviceOfferingId != null)
+            return serviceOfferingId;
+        return null;
+    }
+
     /////////////////////////////////////////////////////
     /////////////// API Implementation///////////////////
     /////////////////////////////////////////////////////
@@ -156,7 +170,7 @@ public class UpdateVolumeCmd extends BaseAsyncCustomIdCmd {
     public void execute() {
         CallContext.current().setEventDetails("Volume Id: " + getId());
         Volume result = _volumeService.updateVolume(getId(), getPath(), getState(), getStorageId(), getDisplayVolume(),
-                getCustomId(), getEntityOwnerId(), getChainInfo());
+                getCustomId(), getEntityOwnerId(), getChainInfo(), getDiskOfferingId());
         if (result != null) {
             VolumeResponse response = _responseGenerator.createVolumeResponse(ResponseView.Restricted, result);
             response.setResponseName(getCommandName());

@@ -722,7 +722,6 @@
                             label: 'label.snapshots'
                         },
                         actions: {
-
                             migrateVolume: {
                                 label: 'label.migrate.volume',
                                 messages: {
@@ -788,6 +787,30 @@
                                     poll: pollAsyncJobResult
                                 }
 
+                            },
+
+                            edit: {
+                                label: 'label.edit',
+                                action: function(args) {
+                                    var data = {
+                                        id: args.context.volumes[0].id,
+                                        name: args.data.name,
+                                        diskofferingid: args.data.diskofferingid,
+                                        serviceofferingid: args.data.serviceofferingid
+                                    };
+
+                                    $.ajax({
+                                        url: createURL('updateVolume'),
+                                        data: data,
+                                        async: true,
+                                        success: function(json) {
+                                            var item = json.updatevolumeresponse.volume
+                                            args.response.success({
+                                                data: item
+                                            });
+                                        }
+                                    });
+                                },
                             },
 
                             takeSnapshot: {
@@ -1725,6 +1748,11 @@
                                     } else {
                                         hiddenFields = ['storage', 'hypervisor'];
                                     }
+                                    if(args.context.volumes[0].type === "ROOT") {
+                                        hiddenFields.push('diskofferingid')
+                                    } else {
+                                        hiddenFields.push('serviceofferingid')
+                                    }
                                     return hiddenFields;
                                 },
 
@@ -1764,8 +1792,49 @@
                                     status: {
                                         label: 'label.status'
                                     },
-                                    diskofferingdisplaytext: {
-                                        label: 'label.disk.offering'
+                                    diskofferingid: {
+                                        label: 'label.disk.offering',
+                                        isEditable: true,
+                                        select: function (args) {
+                                            var items = [];
+                                            $(diskOfferings).each(function () {
+                                                items.push({
+                                                    id: this.id,
+                                                    description: this.displaytext
+                                                });
+                                            });
+                                            if(items.filter(e => e.id === args.context.volumes[0].diskofferingid).length === 0){
+                                                items.push({
+                                                    id: args.context.volumes[0].diskofferingid,
+                                                    description: args.context.volumes[0].diskofferingdisplaytext
+                                                })
+                                            }
+                                            args.response.success({
+                                                data: items
+                                            })
+                                        }
+                                    },
+                                    serviceofferingid: {
+                                        label: 'label.disk.offering',
+                                        isEditable: true,
+                                        select: function (args) {
+                                            var items = [];
+                                            $(diskOfferings).each(function () {
+                                                items.push({
+                                                    id: this.id,
+                                                    description: this.displaytext
+                                                });
+                                            });
+                                            if(items.filter(e => e.id === args.context.volumes[0].serviceofferingid).length === 0){
+                                                items.push({
+                                                    id: args.context.volumes[0].serviceofferingid,
+                                                    description: args.context.volumes[0].serviceofferingdisplaytext
+                                                });
+                                            }
+                                            args.response.success({
+                                                data: items
+                                            })
+                                        }
                                     },
                                     type: {
                                         label: 'label.type'
@@ -1853,6 +1922,20 @@
                                         async: true,
                                         success: function(json) {
                                             var jsonObj = json.listvolumesresponse.volume[0];
+
+                                            $.ajax({
+                                                url: createURL('listDiskOfferings'),
+                                                dataType: "json",
+                                                async: false,
+                                                data: {
+                                                    listAll: true,
+                                                    isrecursive: true,
+                                                    iscustomized: true
+                                                },
+                                                success: function (json) {
+                                                    diskOfferings = json.listdiskofferingsresponse.diskoffering;
+                                                }
+                                            });
 
                                             $(window).trigger('cloudStack.module.sharedFunctions.addExtraProperties', {
                                                 obj: jsonObj,
@@ -2338,6 +2421,8 @@
         var jsonObj = args.context.item;
         var allowedActions = [];
 
+        if(diskOfferings != null && diskOfferings.length > 0)
+            allowedActions.push("edit");
 
         if (jsonObj.state == 'Destroyed' || jsonObj.state == 'Migrating' || jsonObj.state == 'Uploading') {
             return [];

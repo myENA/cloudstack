@@ -109,7 +109,8 @@ public class DeployVMCmd extends BaseAsyncCreateCustomIdCmd {
 
     //DataDisk information
     @ACL
-    @Parameter(name = ApiConstants.DISK_OFFERING_ID, type = CommandType.UUID, entityType = DiskOfferingResponse.class, description = "the ID of the disk offering for the virtual machine. If the template is of ISO format,"
+    @Parameter(name = ApiConstants.DISK_OFFERING_ID, type = CommandType.UUID, entityType = DiskOfferingResponse.class, description = "the ID of the disk offering for the virtual machine. " +
+            "If the template is of ISO format,"
             + " the diskOfferingId is for the root disk volume. Otherwise this parameter is used to indicate the "
             + "offering for the data disk volume. If the templateId parameter passed is from a Template object,"
             + " the diskOfferingId refers to a DATA Disk Volume created. If the templateId parameter passed is "

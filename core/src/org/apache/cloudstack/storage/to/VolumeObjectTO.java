@@ -94,7 +94,10 @@ public class VolumeObjectTO implements DataTO {
         iopsWriteRate = volume.getIopsWriteRate();
         iopsWriteRateMax = volume.getIopsWriteRateMax();
         iopsWriteRateMaxLength = volume.getIopsWriteRateMaxLength();
-        cacheMode = volume.getCacheMode();
+        if(volume.getCacheMode() == null)
+            cacheMode = DiskCacheMode.NONE;
+        else
+            cacheMode = volume.getCacheMode();
         hypervisorType = volume.getHypervisorType();
         setDeviceId(volume.getDeviceId());
     }

@@ -1557,7 +1557,7 @@ public class VolumeApiServiceImpl extends ManagerBase implements VolumeApiServic
 
     @Override
     @ActionEvent(eventType = EventTypes.EVENT_VOLUME_UPDATE, eventDescription = "updating volume", async = true)
-    public Volume updateVolume(long volumeId, String path, String state, Long storageId, Boolean displayVolume, String customId, long entityOwnerId, String chainInfo) {
+    public Volume updateVolume(long volumeId, String path, String state, Long storageId, Boolean displayVolume, String customId, long entityOwnerId, String chainInfo, Long diskOfferingId) {
 
         VolumeVO volume = _volsDao.findById(volumeId);
 
@@ -1591,6 +1591,13 @@ public class VolumeApiServiceImpl extends ManagerBase implements VolumeApiServic
 
         if (customId != null) {
             volume.setUuid(customId);
+        }
+
+        if(diskOfferingId != null) {
+           DiskOfferingVO newDiskOffering = _diskOfferingDao.findById(diskOfferingId);
+           volume.setMinIops(newDiskOffering.getMinIops());
+           volume.setMaxIops(newDiskOffering.getMaxIops());
+           volume.setDiskOfferingId(diskOfferingId);
         }
 
         updateDisplay(volume, displayVolume);
