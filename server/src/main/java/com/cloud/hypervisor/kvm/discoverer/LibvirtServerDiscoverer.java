@@ -295,6 +295,7 @@ public abstract class LibvirtServerDiscoverer extends DiscovererBase implements 
 
             _connection = new NioClient("Agent", StringUtils.toCSVList(indirectAgentLB.getManagementServerList(null, dcId, null)),
                    8250, 5, null);
+            _connection.start();
             String parameters = " -m " + StringUtils.toCSVList(indirectAgentLB.getManagementServerList(null, dcId, null)) + " -z " + dcId + " -p " + podId     + " -c " + clusterId + " -g " + guid + " -a -s ";
 
             parameters += " --pubNic=" + kvmPublicNic;
