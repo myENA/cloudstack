@@ -28,7 +28,6 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.naming.ConfigurationException;
 
-import com.cloud.utils.nio.NioConnection;
 import org.apache.cloudstack.agent.lb.IndirectAgentLB;
 import org.apache.cloudstack.ca.CAManager;
 import org.apache.cloudstack.ca.SetupCertificateCommand;
