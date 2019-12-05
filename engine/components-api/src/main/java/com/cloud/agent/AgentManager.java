@@ -16,6 +16,7 @@
 // under the License.
 package com.cloud.agent;
 
+import com.cloud.utils.nio.HandlerFactory;
 import org.apache.cloudstack.framework.config.ConfigKey;
 
 import com.cloud.agent.api.Answer;
@@ -34,7 +35,7 @@ import com.cloud.resource.ServerResource;
 /**
  * AgentManager manages hosts. It directly coordinates between the DAOs and the connections it manages.
  */
-public interface AgentManager {
+public interface AgentManager extends HandlerFactory {
     static final ConfigKey<Integer> Wait = new ConfigKey<Integer>("Advanced", Integer.class, "wait", "1800", "Time in seconds to wait for control commands to return",
             true);
 
