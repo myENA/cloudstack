@@ -28,8 +28,6 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.naming.ConfigurationException;
 
-import com.cloud.utils.nio.HandlerFactory;
-import com.cloud.utils.nio.NioClient;
 import com.cloud.utils.nio.NioConnection;
 import org.apache.cloudstack.agent.lb.IndirectAgentLB;
 import org.apache.cloudstack.ca.CAManager;
@@ -70,13 +68,12 @@ import com.cloud.utils.exception.CloudRuntimeException;
 import com.cloud.utils.ssh.SSHCmdHelper;
 import com.trilead.ssh2.Connection;
 
-public abstract class LibvirtServerDiscoverer extends DiscovererBase implements Discoverer, Listener, ResourceStateAdapter, HandlerFactory {
+public abstract class LibvirtServerDiscoverer extends DiscovererBase implements Discoverer, Listener, ResourceStateAdapter {
     private static final Logger s_logger = Logger.getLogger(LibvirtServerDiscoverer.class);
     private final int _waitTime = 5; /* wait for 5 minutes */
     private String _kvmPrivateNic;
     private String _kvmPublicNic;
     private String _kvmGuestNic;
-    NioConnection _connection;
     @Inject
     private AgentManager agentMgr;
     @Inject
@@ -294,9 +291,6 @@ public abstract class LibvirtServerDiscoverer extends DiscovererBase implements 
 
             setupAgentSecurity(sshConnection, agentIp, hostname);
 
-            _connection = new NioClient("Agent", StringUtils.toCSVList(indirectAgentLB.getManagementServerList(null, dcId, null)),
-                   8250, 5, this);
-            _connection.start();
             String parameters = " -m " + StringUtils.toCSVList(indirectAgentLB.getManagementServerList(null, dcId, null)) + " -z " + dcId + " -p " + podId     + " -c " + clusterId + " -g " + guid + " -a -s ";
 
             parameters += " --pubNic=" + kvmPublicNic;
