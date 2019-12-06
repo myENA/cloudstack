@@ -28,8 +28,6 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.naming.ConfigurationException;
 
-import com.cloud.utils.nio.NioClient;
-import com.cloud.utils.nio.NioConnection;
 import org.apache.cloudstack.agent.lb.IndirectAgentLB;
 import org.apache.cloudstack.ca.CAManager;
 import org.apache.cloudstack.ca.SetupCertificateCommand;
@@ -75,7 +73,6 @@ public abstract class LibvirtServerDiscoverer extends DiscovererBase implements 
     private String _kvmPrivateNic;
     private String _kvmPublicNic;
     private String _kvmGuestNic;
-    NioConnection _connection;
     @Inject
     private AgentManager agentMgr;
     @Inject
@@ -293,9 +290,6 @@ public abstract class LibvirtServerDiscoverer extends DiscovererBase implements 
 
             setupAgentSecurity(sshConnection, agentIp, hostname);
 
-            _connection = new NioClient("Agent", StringUtils.toCSVList(indirectAgentLB.getManagementServerList(null, dcId, null)),
-                   8250, 5, agentMgr);
-            _connection.start();
             String parameters = " -m " + StringUtils.toCSVList(indirectAgentLB.getManagementServerList(null, dcId, null)) + " -z " + dcId + " -p " + podId     + " -c " + clusterId + " -g " + guid + " -a -s ";
 
             parameters += " --pubNic=" + kvmPublicNic;
