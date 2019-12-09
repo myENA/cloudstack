@@ -27,7 +27,6 @@ EnvironmentFile=/etc/default/cloudstack-agent
 ExecStart=/usr/bin/java $JAVA_OPTS $JAVA_DEBUG -cp $CLASSPATH $JAVA_CLASS
 Restart=always
 RestartSec=10s
-SuccessExitStatus=143
 
 [Install]
 WantedBy=multi-user.target
