@@ -116,7 +116,7 @@ if __name__ == '__main__':
     if not options.auto and options.secure:
         configureLibvirtConfig(True)
         print "Libvirtd with TLS configured"
-        sys.exit(0)
+        # sys.exit(0)
 
     if options.auto is None:
         userInputs = getUserInputs()
