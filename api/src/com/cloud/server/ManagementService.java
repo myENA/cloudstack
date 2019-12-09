@@ -16,6 +16,9 @@
 // under the License.
 package com.cloud.server;
 
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +41,7 @@ import org.apache.cloudstack.api.command.admin.resource.DeleteAlertsCmd;
 import org.apache.cloudstack.api.command.admin.resource.ListAlertsCmd;
 import org.apache.cloudstack.api.command.admin.resource.ListCapacityCmd;
 import org.apache.cloudstack.api.command.admin.resource.UploadCustomCertificateCmd;
+import org.apache.cloudstack.api.command.admin.resource.UploadCustomCertificateWithValidationCmd;
 import org.apache.cloudstack.api.command.admin.systemvm.DestroySystemVmCmd;
 import org.apache.cloudstack.api.command.admin.systemvm.ListSystemVMsCmd;
 import org.apache.cloudstack.api.command.admin.systemvm.RebootSystemVmCmd;
@@ -324,6 +328,15 @@ public interface ManagementService {
      * @return -- returns a string on success
      */
     String uploadCertificate(UploadCustomCertificateCmd cmd);
+
+     /**
+     * This method uploads a custom cert to the db and performs the proper validations on it, and patches every cpvm with it on the current ms
+     *
+     * @param cmd
+     *            -- upload certificate cmd
+     * @return -- returns a string on success
+     */
+    String uploadCertificateWithValidation(UploadCustomCertificateWithValidationCmd cmd) throws KeyStoreException, CertificateException, IOException;
 
     String getVersion();
 
