@@ -803,7 +803,7 @@ public class VpcManagerImpl extends ManagerBase implements VpcManager, VpcProvis
     @Override
     @ActionEvent(eventType = EventTypes.EVENT_VPC_OFFERING_UPDATE, eventDescription = "updating vpc offering")
     public VpcOffering updateVpcOffering(long vpcOffId, String vpcOfferingName, String displayText, String state) {
-        return updateVpcOfferingInternal(vpcOffId, vpcOfferingName, displayText, state, null, null, null);
+        return updateVpcOfferingInternal(vpcOffId, vpcOfferingName, displayText, state, null, null, null, null);
     }
 
     @Override
@@ -816,6 +816,7 @@ public class VpcManagerImpl extends ManagerBase implements VpcManager, VpcProvis
         final List<Long> domainIds = cmd.getDomainIds();
         final List<Long> zoneIds = cmd.getZoneIds();
         final Integer sortKey = cmd.getSortKey();
+        final Long serviceOfferingId = cmd.getServiceOfferingId();
 
         // check if valid domain
         if (CollectionUtils.isNotEmpty(domainIds)) {
@@ -834,10 +835,10 @@ public class VpcManagerImpl extends ManagerBase implements VpcManager, VpcProvis
             }
         }
 
-        return updateVpcOfferingInternal(offeringId, vpcOfferingName, displayText, state, sortKey, domainIds, zoneIds);
+        return updateVpcOfferingInternal(offeringId, vpcOfferingName, displayText, state, sortKey, domainIds, zoneIds, serviceOfferingId);
     }
 
-    private VpcOffering updateVpcOfferingInternal(long vpcOffId, String vpcOfferingName, String displayText, String state, Integer sortKey, final List<Long> domainIds, final List<Long> zoneIds) {
+    private VpcOffering updateVpcOfferingInternal(long vpcOffId, String vpcOfferingName, String displayText, String state, Integer sortKey, final List<Long> domainIds, final List<Long> zoneIds, final Long serviceOfferingId) {
         CallContext.current().setEventDetails(" Id: " + vpcOffId);
 
         // Verify input parameters
@@ -873,6 +874,9 @@ public class VpcManagerImpl extends ManagerBase implements VpcManager, VpcProvis
             }
             if (displayText != null) {
                 offering.setDisplayText(displayText);
+            }
+            if (serviceOfferingId != null) {
+                offering.setServiceOfferingId(serviceOfferingId);
             }
             if (state != null) {
                 boolean validState = false;

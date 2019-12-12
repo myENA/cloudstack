@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import com.cloud.service.dao.ServiceOfferingDao;
 import com.cloud.vm.snapshot.VMSnapshotVO;
 import com.cloud.vm.snapshot.dao.VMSnapshotDao;
 import org.apache.cloudstack.acl.ControlledEntity;
@@ -376,6 +377,8 @@ public class ApiResponseHelper implements ResponseGenerator {
     NetworkDetailsDao networkDetailsDao;
     @Inject
     private VMSnapshotDao vmSnapshotDao;
+    @Inject
+    private ServiceOfferingDao serviceOfferingDao;
 
     @Override
     public UserResponse createUserResponse(User user) {
@@ -2860,6 +2863,7 @@ public class ApiResponseHelper implements ResponseGenerator {
             serviceResponses.add(svcRsp);
         }
         response.setServices(serviceResponses);
+        response.setServiceOfferingId(serviceOfferingDao.findById(offering.getServiceOfferingId()).getUuid());
         return response;
     }
 
