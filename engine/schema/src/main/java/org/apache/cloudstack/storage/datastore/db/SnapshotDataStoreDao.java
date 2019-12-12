@@ -71,4 +71,8 @@ StateDao<ObjectInDataStoreStateMachine.State, ObjectInDataStoreStateMachine.Even
     List<SnapshotDataStoreVO> listAllByVolumeAndDataStore(long volumeId, DataStoreRole role);
 
     List<SnapshotDataStoreVO> listByState(ObjectInDataStoreStateMachine.State... states);
+
+    List<SnapshotDataStoreVO> listAllSnapshotsOnSecondary(DataStoreRole role);
+
+    void deleteSnapshotFromSecondary(long id);
 }

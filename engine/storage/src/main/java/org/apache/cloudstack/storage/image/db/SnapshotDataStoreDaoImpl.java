@@ -246,6 +246,16 @@ public class SnapshotDataStoreDaoImpl extends GenericDaoBase<SnapshotDataStoreVO
         txn.commit();
     }
 
+    public void deleteSnapshotFromSecondary(long id){
+        SearchCriteria<SnapshotDataStoreVO> sc = snapshotSearch.create();
+        sc.setParameters("store_id", id);
+        sc.setParameters("store_role", DataStoreRole.Image);
+        TransactionLegacy txn = TransactionLegacy.currentTxn();
+        txn.start();
+        remove(sc);
+        txn.commit();
+    }
+
     @Override
     public void deleteSnapshotRecordsOnPrimary() {
         SearchCriteria<SnapshotDataStoreVO> sc = storeSearch.create();
@@ -333,6 +343,14 @@ public class SnapshotDataStoreDaoImpl extends GenericDaoBase<SnapshotDataStoreVO
         sc.setParameters("state", State.Ready);
         return findOneBy(sc);
     }
+
+    public List<SnapshotDataStoreVO> listAllSnapshotsOnSecondary(DataStoreRole role) {
+        SearchCriteria<SnapshotDataStoreVO> sc = snapshotSearch.create();
+        sc.setParameters("store_role", role);
+        sc.setParameters("state", State.Ready);
+        return listBy(sc);
+    }
+
 
     @Override
     public List<SnapshotDataStoreVO> listAllByVolumeAndDataStore(long volumeId, DataStoreRole role) {

@@ -17,16 +17,25 @@
 package com.cloud.storage.snapshot;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Calendar;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.naming.ConfigurationException;
 
+import com.cloud.storage.VolumeVO;
+import com.cloud.storage.Snapshot;
+import com.cloud.storage.DataStoreRole;
+import com.cloud.storage.SnapshotPolicyVO;
+import com.cloud.storage.SnapshotScheduleVO;
+import com.cloud.storage.SnapshotVO;
+import org.apache.cloudstack.storage.datastore.db.SnapshotDataStoreDao;
+import org.apache.cloudstack.storage.datastore.db.SnapshotDataStoreVO;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -45,11 +54,6 @@ import com.cloud.event.ActionEventUtils;
 import com.cloud.event.EventTypes;
 import com.cloud.server.ResourceTag;
 import com.cloud.server.TaggedResourceService;
-import com.cloud.storage.Snapshot;
-import com.cloud.storage.SnapshotPolicyVO;
-import com.cloud.storage.SnapshotScheduleVO;
-import com.cloud.storage.SnapshotVO;
-import com.cloud.storage.VolumeVO;
 import com.cloud.storage.dao.SnapshotDao;
 import com.cloud.storage.dao.SnapshotPolicyDao;
 import com.cloud.storage.dao.SnapshotScheduleDao;
@@ -101,6 +105,8 @@ public class SnapshotSchedulerImpl extends ManagerBase implements SnapshotSchedu
     protected VMSnapshotManager _vmSnaphostManager;
     @Inject
     public TaggedResourceService taggedResourceService;
+    @Inject
+    public SnapshotDataStoreDao _snapshotStoreDao;
 
     protected AsyncJobDispatcher _asyncDispatcher;
 
@@ -170,6 +176,10 @@ public class SnapshotSchedulerImpl extends ManagerBase implements SnapshotSchedu
 
         try {
             deleteExpiredVMSnapshots();
+            boolean backupSnapToSecondary = SnapshotManager.BackupSnapshotAfterTakingSnapshot.value() == null || SnapshotManager.BackupSnapshotAfterTakingSnapshot.value();
+            if(!backupSnapToSecondary) {
+                deleteOldSnapshotsFromSecondary();
+            }
         }
         catch (Exception e) {
             s_logger.warn("Error in expiring vm snapshots", e);
@@ -259,6 +269,24 @@ public class SnapshotSchedulerImpl extends ManagerBase implements SnapshotSchedu
                 _vmSnaphostManager.deleteVMSnapshot(vmSnapshot.getId());
             }
         }
+    }
+
+    @DB
+    protected void deleteOldSnapshotsFromSecondary() {
+        Date now = new Date();
+        List<SnapshotDataStoreVO> list = _snapshotStoreDao.listAllSnapshotsOnSecondary(DataStoreRole.Image);
+        for(SnapshotDataStoreVO snapshot : list){
+            if(now.after(getSecondarySnapshotRemovalDate(snapshot)))
+                _snapshotStoreDao.deleteSnapshotFromSecondary(snapshot.getId());
+        }
+    }
+
+    protected Date getSecondarySnapshotRemovalDate(SnapshotDataStoreVO snapshot){
+        Calendar calendar = Calendar.getInstance();
+        int daysUntilRemoval = SnapshotManager.RemoveOldSnapshotsFromSecondary.value();
+        calendar.setTime(snapshot.getCreated());
+        calendar.add(Calendar.DATE, daysUntilRemoval);
+        return calendar.getTime();
     }
 
     @DB
