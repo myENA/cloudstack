@@ -742,6 +742,8 @@ public class ApiConstants {
     public static final String TARGET_ID = "targetid";
     public static final String VOLUME_IDS = "volumeids";
 
+    public static final String CACHE_MODE = "cachemode";
+
     public enum HostDetails {
         all, capacity, events, stats, min;
     }

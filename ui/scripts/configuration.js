@@ -27,12 +27,12 @@
         id: 'configuration',
         sectionSelect: {
             preFilter: function(args) {
-               if(isAdmin())
-                   return ["serviceOfferings", "systemServiceOfferings", "diskOfferings", "networkOfferings", "vpcOfferings"];
-               else if(isDomainAdmin())
-                   return ["serviceOfferings", "diskOfferings"];
-               else
-                   return null;
+                if(isAdmin())
+                    return ["serviceOfferings", "systemServiceOfferings", "diskOfferings", "networkOfferings", "vpcOfferings"];
+                else if(isDomainAdmin())
+                    return ["serviceOfferings", "diskOfferings"];
+                else
+                    return null;
             },
             label: 'label.select.offering'
         },
@@ -135,6 +135,28 @@
                                             args.response.success({
                                                 data: items
                                             });
+                                        }
+                                    },
+                                    cacheMode: {
+                                        label: 'label.cache.mode',
+                                        docID: 'helpDiskOfferingCacheMode',
+                                        select: function (args) {
+                                            var items = [];
+                                            items.push({
+                                                id: 'none',
+                                                description: 'No disk cache'
+                                            });
+                                            items.push({
+                                                id: 'writeback',
+                                                description: 'Write-back disk caching'
+                                            });
+                                            items.push({
+                                                id: "writethrough",
+                                                description: 'Write-through'
+                                            });
+                                            args.response.success({
+                                                data: items
+                                            })
                                         }
                                     },
                                     offeringType: {
@@ -298,20 +320,35 @@
                                                 var $maxIops = $form.find('.form-item[rel=maxIops]');
                                                 var $hypervisorSnapshotReserve = $form.find('.form-item[rel=hypervisorSnapshotReserve]');
                                                 var $diskBytesReadRate = $form.find('.form-item[rel=diskBytesReadRate]');
+                                                var $diskBytesReadRateMax = $form.find('.form-item[rel=diskBytesReadRateMax]');
+                                                var $diskBytesReadRateMaxLength = $form.find('.form-item[rel=diskBytesReadRateMaxLength]');
                                                 var $diskBytesWriteRate = $form.find('.form-item[rel=diskBytesWriteRate]');
+                                                var $diskBytesWriteRateMax = $form.find('.form-item[rel=diskBytesWriteRateMax]');
+                                                var $diskBytesWriteRateMaxLength = $form.find('.form-item[rel=diskBytesWriteRateMaxLength]');
                                                 var $diskIopsReadRate = $form.find('.form-item[rel=diskIopsReadRate]');
+                                                var $diskIopsReadRateMax = $form.find('.form-item[rel=diskIopsReadRateMax]');
+                                                var $diskIopsReadRateMaxLength = $form.find('.form-item[rel=diskIopsReadRateMaxLength]');
                                                 var $diskIopsWriteRate = $form.find('.form-item[rel=diskIopsWriteRate]');
+                                                var $diskIopsWriteRateMax = $form.find('.form-item[rel=diskIopsWriteRateMax]');
+                                                var $diskIopsWriteRateMaxLength = $form.find('.form-item[rel=diskIopsWriteRateMaxLength]');
 
                                                 var qosId = $(this).val();
 
                                                 if (qosId == 'storage') { // Storage QoS
                                                     $diskBytesReadRate.hide();
+                                                    $diskBytesReadRateMax.hide();
+                                                    $diskBytesReadRateMaxLength.hide();
                                                     $diskBytesWriteRate.hide();
+                                                    $diskBytesWriteRateMax.hide();
+                                                    $diskBytesWriteRateMaxLength.hide();
                                                     $diskIopsReadRate.hide();
+                                                    $diskIopsReadRateMax.hide();
+                                                    $diskIopsReadRateMaxLength.hide();
                                                     $diskIopsWriteRate.hide();
+                                                    $diskIopsWriteRateMax.hide();
+                                                    $diskIopsWriteRateMaxLength.hide();
 
                                                     $isCustomizedIops.css('display', 'inline-block');
-
                                                     if ($isCustomizedIops.find('input[type=checkbox]').is(':checked')) {
                                                         $minIops.hide();
                                                         $maxIops.hide();
@@ -328,14 +365,30 @@
                                                     $hypervisorSnapshotReserve.hide();
 
                                                     $diskBytesReadRate.css('display', 'inline-block');
+                                                    $diskBytesReadRateMax.css('display', 'inline-block');
+                                                    $diskBytesReadRateMaxLength.css('display', 'inline-block');
                                                     $diskBytesWriteRate.css('display', 'inline-block');
+                                                    $diskBytesWriteRateMax.css('display', 'inline-block');
+                                                    $diskBytesWriteRateMaxLength.css('display', 'inline-block');
                                                     $diskIopsReadRate.css('display', 'inline-block');
+                                                    $diskIopsReadRateMax.css('display', 'inline-block');
+                                                    $diskIopsReadRateMaxLength.css('display', 'inline-block');
                                                     $diskIopsWriteRate.css('display', 'inline-block');
+                                                    $diskIopsWriteRateMax.css('display', 'inline-block');
+                                                    $diskIopsWriteRateMaxLength.css('display', 'inline-block');
                                                 } else { // No Qos
                                                     $diskBytesReadRate.hide();
+                                                    $diskBytesReadRateMax.hide();
+                                                    $diskBytesReadRateMaxLength.hide();
                                                     $diskBytesWriteRate.hide();
+                                                    $diskBytesWriteRateMax.hide();
+                                                    $diskBytesWriteRateMaxLength.hide()
                                                     $diskIopsReadRate.hide();
+                                                    $diskIopsReadRateMax.hide();
+                                                    $diskIopsReadRateMaxLength.hide();
                                                     $diskIopsWriteRate.hide();
+                                                    $diskIopsWriteRateMax.hide();
+                                                    $diskIopsWriteRateMaxLength.hide();
                                                     $isCustomizedIops.hide();
                                                     $minIops.hide();
                                                     $maxIops.hide();
@@ -385,9 +438,41 @@
                                             number: true
                                         }
                                     },
+                                    diskBytesReadRateMax: {
+                                        label: 'label.disk.bytes.read.rate.max',
+                                        docID: 'helpComputeOfferingDiskBytesReadRateMax',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },
+                                    diskBytesReadRateMaxLength: {
+                                        label: 'label.disk.bytes.read.rate.max.length',
+                                        docID: 'helpComputeOfferingDiskBytesReadRateMaxLength',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },
                                     diskBytesWriteRate: {
                                         label: 'label.disk.bytes.write.rate',
                                         docID: 'helpComputeOfferingDiskBytesWriteRate',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },
+                                    diskBytesWriteRateMax: {
+                                        label: 'label.disk.bytes.write.rate.max',
+                                        docID: 'helpComputeOfferingDiskBytesWriteRateMax',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },
+                                    diskBytesWriteRateMaxLength: {
+                                        label: 'label.disk.bytes.write.rate.max.length',
+                                        docID: 'helpComputeOfferingDiskBytesWriteRateMaxLength',
                                         validation: {
                                             required: false, //optional
                                             number: true
@@ -401,9 +486,41 @@
                                             number: true
                                         }
                                     },
+                                    diskIopsReadRateMax: {
+                                        label: 'label.disk.iops.read.rate.max',
+                                        docID: 'helpComputeOfferingDiskIopsReadRateMax',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },
+                                    diskIopsReadRateMaxLength: {
+                                        label: 'label.disk.iops.read.rate.max.length',
+                                        docID: 'helpComputeOfferingDiskIopsReadRateMaxLength',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },
                                     diskIopsWriteRate: {
                                         label: 'label.disk.iops.write.rate',
                                         docID: 'helpComputeOfferingDiskIopsWriteRate',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },
+                                    diskIopsWriteRateMax: {
+                                        label: 'label.disk.iops.write.rate.max',
+                                        docID: 'helpComputeOfferingDiskIopsWriteRateMax',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },
+                                    diskIopsWriteRateMaxLength: {
+                                        label: 'label.disk.iops.write.rate.max.length',
+                                        docID: 'helpComputeOfferingDiskIopsWriteRateMaxLength',
                                         validation: {
                                             required: false, //optional
                                             number: true
@@ -431,9 +548,9 @@
                                                     {
                                                         tags = $.map(item, function(tag) {
                                                             return {
-                                                                       id: tag.name,
-                                                                       name: tag.name
-                                                                   };
+                                                                id: tag.name,
+                                                                name: tag.name
+                                                            };
                                                         });
                                                     }
 
@@ -479,37 +596,37 @@
                                     deploymentPlanner: {
                                         label: 'label.deployment.planner',
                                         select: function(args) {
-                                          if (isAdmin()) {
-                                            $.ajax({
-                                                url: createURL('listDeploymentPlanners'),
-                                                dataType: 'json',
-                                                success: function(json) {
-                                                    var items = [{
-                                                        id: '',
-                                                        description: ''
-                                                    }];
-                                                    var plannerObjs = json.listdeploymentplannersresponse.deploymentPlanner;
-                                                    $(plannerObjs).each(function() {
-                                                        items.push({
-                                                            id: this.name,
-                                                            description: this.name
+                                            if (isAdmin()) {
+                                                $.ajax({
+                                                    url: createURL('listDeploymentPlanners'),
+                                                    dataType: 'json',
+                                                    success: function(json) {
+                                                        var items = [{
+                                                            id: '',
+                                                            description: ''
+                                                        }];
+                                                        var plannerObjs = json.listdeploymentplannersresponse.deploymentPlanner;
+                                                        $(plannerObjs).each(function() {
+                                                            items.push({
+                                                                id: this.name,
+                                                                description: this.name
+                                                            });
                                                         });
-                                                    });
-                                                    args.response.success({
-                                                        data: items
-                                                    });
-                                                    args.$select.change(function() {
-                                                        var $form = $(this).closest('form');
-                                                        var $fields = $form.find('.field');
-                                                        if ($(this).val() == "ImplicitDedicationPlanner") {
-                                                            $form.find('[rel=plannerMode]').css('display', 'block');
-                                                        } else {
-                                                            $form.find('[rel=plannerMode]').hide();
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                          }
+                                                        args.response.success({
+                                                            data: items
+                                                        });
+                                                        args.$select.change(function() {
+                                                            var $form = $(this).closest('form');
+                                                            var $fields = $form.find('.field');
+                                                            if ($(this).val() == "ImplicitDedicationPlanner") {
+                                                                $form.find('[rel=plannerMode]').css('display', 'block');
+                                                            } else {
+                                                                $form.find('[rel=plannerMode]').hide();
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
                                         }
                                     },
 
@@ -731,7 +848,8 @@
                                     displaytext: args.data.description,
                                     storageType: args.data.storageType,
                                     provisioningType :args.data.provisioningType,
-                                    customized: !isFixedOfferingType
+                                    customized: !isFixedOfferingType,
+                                    cacheMode: args.data.cacheMode
                                 };
 
                                 //custom fields (begin)
@@ -825,11 +943,27 @@
                                         $.extend(data, {
                                             bytesreadrate: args.data.diskBytesReadRate
                                         });
+                                    }if (args.data.diskBytesReadRateMax != null && args.data.diskBytesReadRateMax.length > 0) {
+                                        $.extend(data, {
+                                            bytesreadratemax: args.data.diskBytesReadRateMax
+                                        });
+                                    }if (args.data.diskBytesReadRateMaxLength != null && args.data.diskBytesReadRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength
+                                        });
                                     }
 
                                     if (args.data.diskBytesWriteRate != null && args.data.diskBytesWriteRate.length > 0) {
                                         $.extend(data, {
                                             byteswriterate: args.data.diskBytesWriteRate
+                                        });
+                                    }if (args.data.diskBytesWriteRateMax != null && args.data.diskBytesWriteRateMax.length > 0) {
+                                        $.extend(data, {
+                                            byteswriteratemax: args.data.diskBytesWriteRateMax
+                                        });
+                                    }if (args.data.diskBytesWriteRateMaxLength != null && args.data.diskBytesWriteRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength
                                         });
                                     }
 
@@ -837,11 +971,27 @@
                                         $.extend(data, {
                                             iopsreadrate: args.data.diskIopsReadRate
                                         });
+                                    }if (args.data.diskIopsReadRateMax != null && args.data.diskIopsReadRateMax.length > 0) {
+                                        $.extend(data, {
+                                            iopsreadratemax: args.data.diskIopsReadRateMax
+                                        });
+                                    }if (args.data.diskIopsReadRateMaxLength != null && args.data.diskIopsReadRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength
+                                        });
                                     }
 
                                     if (args.data.diskIopsWriteRate != null && args.data.diskIopsWriteRate.length > 0) {
                                         $.extend(data, {
                                             iopswriterate: args.data.diskIopsWriteRate
+                                        });
+                                    }if (args.data.diskIopsWriteRateMax != null && args.data.diskIopsWriteRateMax.length > 0) {
+                                        $.extend(data, {
+                                            iopswriteratemax: args.data.diskIopsWriteRateMax
+                                        });
+                                    }if (args.data.diskIopsWriteRateMaxLength != null && args.data.diskIopsWriteRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength
                                         });
                                     }
                                 }
@@ -939,11 +1089,178 @@
                             edit: {
                                 label: 'label.edit',
                                 action: function(args) {
+                                    var oldServiceDetails = args.context.serviceOfferings[0];
                                     var data = {
-                                        id: args.context.serviceOfferings[0].id,
-                                        name: args.data.name,
-                                        displaytext: args.data.displaytext
+                                        id: args.context.serviceOfferings[0].id
                                     };
+                                    if (oldServiceDetails.name !== args.data.name){
+                                        $.extend(data, {
+                                            name: args.data.name
+                                        });
+                                    }
+                                    if (oldServiceDetails.displayText !== args.data.displayText){
+                                        $.extend(data, {
+                                            displaytext: args.data.displaytext
+                                        });
+                                    }
+                                    //Disk Bytes Read Rate
+                                    if(oldServiceDetails.diskBytesReadRate == null && args.data.diskBytesReadRate.length > 0) {
+                                        $.extend(data, {
+                                            bytesreadrate: args.data.diskBytesReadRate
+                                        });
+                                    }
+                                    else
+                                    {
+                                        if (oldServiceDetails.diskBytesReadRate != args.data.diskBytesReadRate && oldServiceDetails.diskBytesReadRate != null)
+                                        {
+                                            $.extend(data, {
+                                                bytesreadrate: args.data.diskBytesReadRate == "" ? "0" : args.data.diskBytesReadRate
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Read Rate Max
+                                    if(oldServiceDetails.diskBytesReadRateMax == null && args.data.diskBytesReadRateMax.length > 0){
+                                        $.extend(data, {
+                                            bytesreadratemax: args.data.diskBytesReadRateMax
+                                        });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskBytesReadRateMax != args.data.diskBytesReadRateMax && oldServiceDetails.diskBytesReadRateMax != null) {
+                                            $.extend(data, {
+                                                bytesreadratemax: args.data.diskBytesReadRateMax == "" ? "0" : args.data.diskBytesReadRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Read Rate Max Length
+                                    if(oldServiceDetails.diskBytesReadRateMaxLength == null && args.data.diskBytesReadRateMaxLength.length > 0){
+                                        $.extend(data, {
+                                            bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength
+                                        });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskBytesReadRateMaxLength != args.data.diskBytesReadRateMaxLength && oldServiceDetails.diskBytesReadRateMaxLength != null) {
+                                            $.extend(data, {
+                                                bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength == "" ? "0" : args.data.diskBytesReadRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Write Rate
+                                    if(oldServiceDetails.diskBytesWriteRate == null && args.data.diskBytesWriteRate.length > 0){
+                                        $.extend(data, {
+                                            byteswriterate: args.data.diskBytesWriteRate
+                                        });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskBytesWriteRate != args.data.diskBytesWriteRate && oldServiceDetails.diskBytesWriteRate != null) {
+                                            $.extend(data, {
+                                                byteswriterate: args.data.diskBytesWriteRate == "" ? "0" : args.data.diskBytesWriteRate
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Write Rate Max
+                                    if(oldServiceDetails.diskBytesWriteRateMax == null && args.data.diskBytesWriteRateMax.length > 0){
+                                        $.extend(data, {
+                                            byteswriteratemax: args.data.diskBytesWriteRateMax
+                                        });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskBytesWriteRateMax != args.data.diskBytesWriteRateMax && oldServiceDetails.diskBytesWriteRateMax != null) {
+                                            $.extend(data, {
+                                                byteswriteratemax: args.data.diskBytesWriteRateMax == "" ? "0" : args.data.diskBytesWriteRateMax
+                                            });
+                                        }
+                                    }
+                                    // Disk Bytes Write Rate Max Length
+                                    if(oldServiceDetails.diskBytesWriteRateMaxLength == null && args.data.diskBytesWriteRateMaxLength.length > 0){
+                                        $.extend(data, {
+                                            byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength
+                                        });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskBytesWriteRateMaxLength != args.data.diskBytesWriteRateMaxLength && oldServiceDetails.diskBytesWriteRateMaxLength != null) {
+                                            $.extend(data, {
+                                                byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength == "" ? "0" : args.data.diskBytesWriteRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate
+                                    if(oldServiceDetails.diskIopsReadRate == null && args.data.diskIopsReadRate.length > 0){
+                                        $.extend(data, {
+                                            iopsreadrate: args.data.diskIopsReadRate
+                                        });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsReadRate != args.data.diskIopsReadRate && oldServiceDetails.diskIopsReadRate != null) {
+                                            $.extend(data, {
+                                                iopsreadrate: args.data.diskIopsReadRate == "" ? "0" : args.data.diskIopsReadRate
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate Max
+                                    if(oldServiceDetails.diskIopsReadRateMax == null && args.data.diskIopsReadRateMax.length > 0){
+                                        $.extend(data, {
+                                            iopsreadratemax: args.data.diskIopsReadRateMax
+                                        });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsReadRateMax != args.data.diskIopsReadRateMax && oldServiceDetails.diskIopsReadRateMax != null) {
+                                            $.extend(data, {
+                                                iopsreadratemax: args.data.diskIopsReadRateMax == "" ? "0" : args.data.diskIopsReadRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate Max Length
+                                    if(oldServiceDetails.diskIopsReadRateMaxLength == null && args.data.diskIopsReadRateMaxLength.length > 0){
+                                        $.extend(data, {
+                                            iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength
+                                        });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsReadRateMaxLength != args.data.diskIopsReadRateMaxLength && oldServiceDetails.diskIopsReadRateMaxLength != null) {
+                                            $.extend(data, {
+                                                iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength == "" ? "0" : args.data.diskIopsReadRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate
+                                    if(oldServiceDetails.diskIopsWriteRate == null && args.data.diskIopsWriteRate.length > 0){
+                                        $.extend(data, {
+                                            iopswriterate: args.data.diskIopsWriteRate
+                                        });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsWriteRate != args.data.diskIopsWriteRate && oldServiceDetails.diskIopsWriteRate != null) {
+                                            $.extend(data, {
+                                                iopswriterate: args.data.diskIopsWriteRate == "" ? "0" : args.data.diskIopsWriteRate
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate Max
+                                    if(oldServiceDetails.diskIopsWriteRateMax == null && args.data.diskIopsWriteRateMax.length > 0){
+                                        $.extend(data, {
+                                            iopswriteratemax: args.data.diskIopsWriteRateMax
+                                        });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsWriteRateMax != args.data.diskIopsWriteRateMax && oldServiceDetails.diskIopsWriteRateMax != null) {
+                                            $.extend(data, {
+                                                iopswriteratemax: args.data.diskIopsWriteRateMax == "" ? "0" : args.data.diskIopsWriteRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate Max Length
+                                    if(oldServiceDetails.diskIopsWriteRateMaxLength == null && args.data.diskIopsWriteRateMaxLength.length > 0){
+                                        $.extend(data, {
+                                            iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength
+                                        });
+                                    }
+                                    else {
+                                        if (oldServiceDetails.diskIopsWriteRateMaxLength != args.data.diskIopsWriteRateMaxLength && oldServiceDetails.diskIopsWriteRateMaxLength != null) {
+                                            $.extend(data, {
+                                                iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength == "" ? "0" : args.data.diskIopsWriteRateMaxLength
+                                            });
+                                        }
+                                    }
                                     $.ajax({
                                         url: createURL('updateServiceOffering'),
                                         data: data,
@@ -1221,6 +1538,9 @@
                                     provisioningtype: {
                                         label: 'label.disk.provisioningtype'
                                     },
+                                    cacheMode: {
+                                        label: 'label.cache.mode'
+                                    },
                                     cpunumber: {
                                         label: 'label.num.cpu.cores'
                                     },
@@ -1274,16 +1594,81 @@
                                         }
                                     },
                                     diskBytesReadRate: {
-                                        label: 'label.disk.bytes.read.rate'
+                                        label: 'label.disk.bytes.read.rate',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+
+                                    },diskBytesReadRateMax: {
+                                        label: 'label.disk.bytes.read.rate.max',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskBytesReadRateMaxLength: {
+                                        label: 'label.disk.bytes.read.rate.max.length',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
                                     },
                                     diskBytesWriteRate: {
-                                        label: 'label.disk.bytes.write.rate'
+                                        label: 'label.disk.bytes.write.rate',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskBytesWriteRateMax: {
+                                        label: 'label.disk.bytes.write.rate.max',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskBytesWriteRateMaxLength: {
+                                        label: 'label.disk.bytes.write.rate.max.length',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
                                     },
                                     diskIopsReadRate: {
-                                        label: 'label.disk.iops.read.rate'
+                                        label: 'label.disk.iops.read.rate',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskIopsReadRateMax: {
+                                        label: 'label.disk.iops.read.rate.max',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskIopsReadRateMaxLength: {
+                                        label: 'label.disk.iops.read.rate.max.length',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
                                     },
                                     diskIopsWriteRate: {
-                                        label: 'label.disk.iops.write.rate'
+                                        label: 'label.disk.iops.write.rate',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskIopsWriteRateMax: {
+                                        label: 'label.disk.iops.write.rate.max',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskIopsWriteRateMaxLength: {
+                                        label: 'label.disk.iops.write.rate.max.length',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
                                     },
                                     offerha: {
                                         label: 'label.offer.ha',
@@ -1479,6 +1864,28 @@
                                             args.response.success({
                                                 data: items
                                             });
+                                        }
+                                    },
+                                    cacheMode: {
+                                        label: 'label.cache.mode',
+                                        docID: 'helpDiskOfferingCacheMode',
+                                        select: function(args) {
+                                            var items = [];
+                                            items.push({
+                                                id: 'none',
+                                                description: 'No disk cache'
+                                            });
+                                            items.push({
+                                                id: 'writeback',
+                                                description: 'Write-back disk caching'
+                                            });
+                                            items.push({
+                                                id: 'writethrough',
+                                                description: 'Write-through disk caching'
+                                            });
+                                            args.response.success({
+                                                data: items
+                                            })
                                         }
                                     },
                                     cpuNumber: {
@@ -1694,7 +2101,8 @@
                                     provisioningType: args.data.provisioningType,
                                     cpuNumber: args.data.cpuNumber,
                                     cpuSpeed: args.data.cpuSpeed,
-                                    memory: args.data.memory
+                                    memory: args.data.memory,
+                                    cacheMode: args.data.cacheMode
                                 };
 
                                 if (args.data.networkRate != null && args.data.networkRate.length > 0) {
@@ -1824,6 +2232,55 @@
                                         name: args.data.name,
                                         displaytext: args.data.displaytext
                                     };
+                                    if (args.data.diskBytesReadRate != null && args.data.diskBytesReadRate.length > 0) {
+                                        $.extend(data, {
+                                            bytesreadrate: args.data.diskBytesReadRate
+                                        });
+                                    }if (args.data.diskBytesReadRateMax != null && args.data.diskBytesReadRateMax.length > 0) {
+                                        $.extend(data, {
+                                            bytesreadratemax: args.data.diskBytesReadRateMax
+                                        });
+                                    }if (args.data.diskBytesReadRateMaxLength != null && args.data.diskBytesReadRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength
+                                        });
+                                    }if (args.data.diskBytesWriteRate != null && args.data.diskBytesWriteRate.length > 0) {
+                                        $.extend(data, {
+                                            byteswriterate: args.data.diskBytesWriteRate
+                                        });
+                                    }if (args.data.diskBytesWriteRateMax != null && args.data.diskBytesWriteRateMax.length > 0) {
+                                        $.extend(data, {
+                                            byteswriteratemax: args.data.diskBytesWriteRateMax
+                                        });
+                                    }if (args.data.diskBytesWriteRateMaxLength != null && args.data.diskBytesWriteRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength
+                                        });
+                                    }if (args.data.diskIopsReadRate != null && args.data.diskIopsReadRate.length > 0) {
+                                        $.extend(data, {
+                                            iopsreadrate: args.data.diskIopsReadRate
+                                        });
+                                    }if (args.data.diskIopsReadRateMax != null && args.data.diskIopsReadRateMax.length > 0) {
+                                        $.extend(data, {
+                                            iopsreadratemax: args.data.diskIopsReadRateMax
+                                        });
+                                    }if (args.data.diskIopsReadRateMaxLength != null && args.data.diskIopsReadRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength
+                                        });
+                                    }if (args.data.diskIopsWriteRate != null && args.data.diskIopsWriteRate.length > 0) {
+                                        $.extend(data, {
+                                            iopswriterate: args.data.diskIopsWriteRate
+                                        });
+                                    }if (args.data.diskIopsWriteRateMax != null && args.data.diskIopsWriteRateMax.length > 0) {
+                                        $.extend(data, {
+                                            iopswriteratemax: args.data.diskIopsWriteRateMax
+                                        });
+                                    }if (args.data.diskIopsWriteRateMaxLength != null && args.data.diskIopsWriteRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength
+                                        });
+                                    }
                                     $.ajax({
                                         url: createURL('updateServiceOffering'),
                                         data: data,
@@ -1919,6 +2376,9 @@
                                     },
                                     provisioningtype: {
                                         label: 'label.disk.provisioningtype'
+                                    },
+                                    cacheMode: {
+                                        label: 'label.cache.mode'
                                     },
                                     cpunumber: {
                                         label: 'label.num.cpu.cores'
@@ -2186,17 +2646,33 @@
                                                 var $maxIops = $form.find('.form-item[rel=maxIops]');
                                                 var $hypervisorSnapshotReserve = $form.find('.form-item[rel=hypervisorSnapshotReserve]');
                                                 var $diskBytesReadRate = $form.find('.form-item[rel=diskBytesReadRate]');
+                                                var $diskBytesReadRateMax = $form.find('.form-item[rel=diskBytesReadRateMax]');
+                                                var $diskBytesReadRateMaxLength = $form.find('.form-item[rel=diskBytesReadRateMaxLength]');
                                                 var $diskBytesWriteRate = $form.find('.form-item[rel=diskBytesWriteRate]');
+                                                var $diskBytesWriteRateMax = $form.find('.form-item[rel=diskBytesWriteRateMax]');
+                                                var $diskBytesWriteRateMaxLength = $form.find('.form-item[rel=diskBytesWriteRateMaxLength]');
                                                 var $diskIopsReadRate = $form.find('.form-item[rel=diskIopsReadRate]');
+                                                var $diskIopsReadRateMax = $form.find('.form-item[rel=diskIopsReadRateMax]');
+                                                var $diskIopsReadRateMaxLength = $form.find('.form-item[rel=diskIopsReadRateMaxLength]');
                                                 var $diskIopsWriteRate = $form.find('.form-item[rel=diskIopsWriteRate]');
+                                                var $diskIopsWriteRateMax = $form.find('.form-item[rel=diskIopsWriteRateMax]');
+                                                var $diskIopsWriteRateMaxLength = $form.find('.form-item[rel=diskIopsWriteRateMaxLength]');
 
                                                 var qosId = $(this).val();
 
                                                 if (qosId == 'storage') { // Storage QoS
                                                     $diskBytesReadRate.hide();
+                                                    $diskBytesReadRateMax.hide();
+                                                    $diskBytesReadRateMaxLength.hide();
                                                     $diskBytesWriteRate.hide();
+                                                    $diskBytesWriteRateMax.hide();
+                                                    $diskBytesWriteRateMaxLength.hide();
                                                     $diskIopsReadRate.hide();
+                                                    $diskIopsReadRateMax.hide();
+                                                    $diskIopsReadRateMaxLength.hide();
                                                     $diskIopsWriteRate.hide();
+                                                    $diskIopsWriteRateMax.hide();
+                                                    $diskIopsWriteRateMaxLength.hide();
 
                                                     $isCustomizedIops.css('display', 'inline-block');
 
@@ -2216,14 +2692,30 @@
                                                     $hypervisorSnapshotReserve.hide();
 
                                                     $diskBytesReadRate.css('display', 'inline-block');
+                                                    $diskBytesReadRateMax.css('display', 'inline-block');
+                                                    $diskBytesReadRateMaxLength.css('display', 'inline-block');
                                                     $diskBytesWriteRate.css('display', 'inline-block');
+                                                    $diskBytesWriteRateMax.css('display', 'inline-block');
+                                                    $diskBytesWriteRateMaxLength.css('display', 'inline-block');
                                                     $diskIopsReadRate.css('display', 'inline-block');
+                                                    $diskIopsReadRateMax.css('display', 'inline-block');
+                                                    $diskIopsReadRateMaxLength.css('display', 'inline-block');
                                                     $diskIopsWriteRate.css('display', 'inline-block');
+                                                    $diskIopsWriteRateMax.css('display', 'inline-block');
+                                                    $diskIopsWriteRateMaxLength.css('display', 'inline-block');
                                                 } else { // No Qos
                                                     $diskBytesReadRate.hide();
+                                                    $diskBytesReadRateMax.hide();
+                                                    $diskBytesReadRateMaxLength.hide();
                                                     $diskBytesWriteRate.hide();
+                                                    $diskBytesWriteRateMax.hide();
+                                                    $diskBytesWriteRateMaxLength.hide();
                                                     $diskIopsReadRate.hide();
+                                                    $diskIopsReadRateMax.hide();
+                                                    $diskIopsReadRateMaxLength.hide();
                                                     $diskIopsWriteRate.hide();
+                                                    $diskIopsWriteRateMax.hide();
+                                                    $diskIopsWriteRateMaxLength.hide();
                                                     $isCustomizedIops.hide();
                                                     $minIops.hide();
                                                     $maxIops.hide();
@@ -2272,10 +2764,38 @@
                                             required: false, //optional
                                             number: true
                                         }
+                                    },diskBytesReadRateMax: {
+                                        label: 'label.disk.bytes.read.rate.max',
+                                        docID: 'helpDiskOfferingDiskBytesReadRateMax',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },diskBytesReadRateMaxLength: {
+                                        label: 'label.disk.bytes.read.rate.max.length',
+                                        docID: 'helpDiskOfferingDiskBytesReadRateMaxLength',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
                                     },
                                     diskBytesWriteRate: {
                                         label: 'label.disk.bytes.write.rate',
                                         docID: 'helpDiskOfferingDiskBytesWriteRate',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },diskBytesWriteRateMax: {
+                                        label: 'label.disk.bytes.write.rate.max',
+                                        docID: 'helpDiskOfferingDiskBytesWriteRateMax',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },diskBytesWriteRateMaxLength: {
+                                        label: 'label.disk.bytes.write.rate.max.length',
+                                        docID: 'helpDiskOfferingDiskBytesWriteRateMaxLength',
                                         validation: {
                                             required: false, //optional
                                             number: true
@@ -2288,10 +2808,38 @@
                                             required: false, //optional
                                             number: true
                                         }
+                                    },diskIopsReadRateMax: {
+                                        label: 'label.disk.iops.read.rate.max',
+                                        docID: 'helpDiskOfferingDiskIopsReadRateMax',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },diskIopsReadRateMaxLength: {
+                                        label: 'label.disk.iops.read.rate.max.length',
+                                        docID: 'helpDiskOfferingDiskIopsReadRateMaxLength',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
                                     },
                                     diskIopsWriteRate: {
                                         label: 'label.disk.iops.write.rate',
                                         docID: 'helpDiskOfferingDiskIopsWriteRate',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },diskIopsWriteRateMax: {
+                                        label: 'label.disk.iops.write.rate.max',
+                                        docID: 'helpDiskOfferingDiskIopsWriteRateMax',
+                                        validation: {
+                                            required: false, //optional
+                                            number: true
+                                        }
+                                    },diskIopsWriteRateMaxLength: {
+                                        label: 'label.disk.iops.write.rate.max.length',
+                                        docID: 'helpDiskOfferingDiskIopsWriteRateMaxLength',
                                         validation: {
                                             required: false, //optional
                                             number: true
@@ -2335,9 +2883,9 @@
                                                     {
                                                         tags = $.map(item, function(tag) {
                                                             return {
-                                                                       id: tag.name,
-                                                                       name: tag.name
-                                                                   };
+                                                                id: tag.name,
+                                                                name: tag.name
+                                                            };
                                                         });
                                                     }
 
@@ -2486,11 +3034,27 @@
                                         $.extend(data, {
                                             bytesreadrate: args.data.diskBytesReadRate
                                         });
+                                    }if (args.data.diskBytesReadRateMax != null && args.data.diskBytesReadRateMax.length > 0) {
+                                        $.extend(data, {
+                                            bytesreadratemax: args.data.diskBytesReadRateMax
+                                        });
+                                    }if (args.data.diskBytesReadRateMaxLength != null && args.data.diskBytesReadRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength
+                                        });
                                     }
 
                                     if (args.data.diskBytesWriteRate != null && args.data.diskBytesWriteRate.length > 0) {
                                         $.extend(data, {
                                             byteswriterate: args.data.diskBytesWriteRate
+                                        });
+                                    }if (args.data.diskBytesWriteRateMax != null && args.data.diskBytesWriteRateMax.length > 0) {
+                                        $.extend(data, {
+                                            byteswriteratemax: args.data.diskBytesWriteRateMax
+                                        });
+                                    }if (args.data.diskBytesWriteRateMaxLength != null && args.data.diskBytesWriteRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength
                                         });
                                     }
 
@@ -2498,11 +3062,27 @@
                                         $.extend(data, {
                                             iopsreadrate: args.data.diskIopsReadRate
                                         });
+                                    }if (args.data.diskIopsReadRateMax != null && args.data.diskIopsReadRateMax.length > 0) {
+                                        $.extend(data, {
+                                            iopsreadratemax: args.data.diskIopsReadRateMax
+                                        });
+                                    }if (args.data.diskIopsReadRateMaxLength != null && args.data.diskIopsReadRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength
+                                        });
                                     }
 
                                     if (args.data.diskIopsWriteRate != null && args.data.diskIopsWriteRate.length > 0) {
                                         $.extend(data, {
                                             iopswriterate: args.data.diskIopsWriteRate
+                                        });
+                                    }if (args.data.diskIopsWriteRateMax != null && args.data.diskIopsWriteRateMax.length > 0) {
+                                        $.extend(data, {
+                                            iopswriteratemax: args.data.diskIopsWriteRateMax
+                                        });
+                                    }if (args.data.diskIopsWriteRateMaxLength != null && args.data.diskIopsWriteRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength
                                         });
                                     }
                                 }
@@ -2558,11 +3138,178 @@
                             edit: {
                                 label: 'label.edit',
                                 action: function(args) {
+                                    var oldDiskDetails = args.context.diskOfferings[0];
                                     var data = {
-                                        id: args.context.diskOfferings[0].id,
-                                        name: args.data.name,
-                                        displaytext: args.data.displaytext
+                                        id: args.context.diskOfferings[0].id
                                     };
+                                    if (oldDiskDetails.name !== args.data.name){
+                                        $.extend(data, {
+                                            name: args.data.name
+                                        });
+                                    }
+                                    if (oldDiskDetails.displayText !== args.data.displayText){
+                                        $.extend(data, {
+                                            displaytext: args.data.displayText
+                                        });
+                                    }
+                                    //Disk Bytes Read Rate
+                                    if(oldDiskDetails.diskBytesReadRate == null && args.data.diskBytesReadRate.length > 0){
+                                        $.extend(data, {
+                                            bytesreadrate: args.data.diskBytesReadRate
+                                        });
+                                    }
+                                    else
+                                    {
+                                        if (oldDiskDetails.diskBytesReadRate != args.data.diskBytesReadRate && oldDiskDetails.diskBytesReadRate != null)
+                                        {
+                                            $.extend(data, {
+                                                bytesreadrate: args.data.diskBytesReadRate == "" ? "0" : args.data.diskBytesReadRate
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Read Rate Max
+                                    if(oldDiskDetails.diskBytesReadRateMax == null && args.data.diskBytesReadRateMax.length > 0){
+                                        $.extend(data, {
+                                            bytesreadratemax: args.data.diskBytesReadRateMax
+                                        });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskBytesReadRateMax != args.data.diskBytesReadRateMax && oldDiskDetails.diskBytesReadRateMax != null) {
+                                            $.extend(data, {
+                                                bytesreadratemax: args.data.diskBytesReadRateMax == "" ? "0" : args.data.diskBytesReadRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Read Rate Max Length
+                                    if(oldDiskDetails.diskBytesReadRateMaxLength == null && args.data.diskBytesReadRateMaxLength.length > 0){
+                                        $.extend(data, {
+                                            bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength
+                                        });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskBytesReadRateMaxLength != args.data.diskBytesReadRateMaxLength && oldDiskDetails.diskBytesReadRateMaxLength != null) {
+                                            $.extend(data, {
+                                                bytesreadratemaxlength: args.data.diskBytesReadRateMaxLength == "" ? "0" : args.data.diskBytesReadRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Write Rate
+                                    if(oldDiskDetails.diskBytesWriteRate == null && args.data.diskBytesWriteRate.length > 0){
+                                        $.extend(data, {
+                                            byteswriterate: args.data.diskBytesWriteRate
+                                        });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskBytesWriteRate != args.data.diskBytesWriteRate && oldDiskDetails.diskBytesWriteRate != null) {
+                                            $.extend(data, {
+                                                byteswriterate: args.data.diskBytesWriteRate == "" ? "0" : args.data.diskBytesWriteRate
+                                            });
+                                        }
+                                    }
+                                    //Disk Bytes Write Rate Max
+                                    if(oldDiskDetails.diskBytesWriteRateMax == null && args.data.diskBytesWriteRateMax.length > 0){
+                                        $.extend(data, {
+                                            byteswriteratemax: args.data.diskBytesWriteRateMax
+                                        });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskBytesWriteRateMax != args.data.diskBytesWriteRateMax && oldDiskDetails.diskBytesWriteRateMax != null) {
+                                            $.extend(data, {
+                                                byteswriteratemax: args.data.diskBytesWriteRateMax == "" ? "0" : args.data.diskBytesWriteRateMax
+                                            });
+                                        }
+                                    }
+                                    // Disk Bytes Write Rate Max Length
+                                    if(oldDiskDetails.diskBytesWriteRateMaxLength == null && args.data.diskBytesWriteRateMaxLength.length > 0){
+                                        $.extend(data, {
+                                            byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength
+                                        });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskBytesWriteRateMaxLength != args.data.diskBytesWriteRateMaxLength && oldDiskDetails.diskBytesWriteRateMaxLength != null) {
+                                            $.extend(data, {
+                                                byteswriteratemaxlength: args.data.diskBytesWriteRateMaxLength == "" ? "0" : args.data.diskBytesWriteRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate
+                                    if(oldDiskDetails.diskIopsReadRate == null && args.data.diskIopsReadRate.length > 0){
+                                        $.extend(data, {
+                                            iopsreadrate: args.data.diskIopsReadRate
+                                        });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsReadRate != args.data.diskIopsReadRate && oldDiskDetails.diskIopsReadRate != null) {
+                                            $.extend(data, {
+                                                iopsreadrate: args.data.diskIopsReadRate == "" ? "0" : args.data.diskIopsReadRate
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate Max
+                                    if(oldDiskDetails.diskIopsReadRateMax == null && args.data.diskIopsReadRateMax.length > 0){
+                                        $.extend(data, {
+                                            iopsreadratemax: args.data.diskIopsReadRateMax
+                                        });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsReadRateMax != args.data.diskIopsReadRateMax && oldDiskDetails.diskIopsReadRateMax != null) {
+                                            $.extend(data, {
+                                                iopsreadratemax: args.data.diskIopsReadRateMax == "" ? "0" : args.data.diskIopsReadRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Read Rate Max Length
+                                    if(oldDiskDetails.diskIopsReadRateMaxLength == null && args.data.diskIopsReadRateMaxLength.length > 0){
+                                        $.extend(data, {
+                                            iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength
+                                        });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsReadRateMaxLength != args.data.diskIopsReadRateMaxLength && oldDiskDetails.diskIopsReadRateMaxLength != null) {
+                                            $.extend(data, {
+                                                iopsreadratemaxlength: args.data.diskIopsReadRateMaxLength == "" ? "0" : args.data.diskIopsReadRateMaxLength
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate
+                                    if(oldDiskDetails.diskIopsWriteRate == null && args.data.diskIopsWriteRate.length > 0){
+                                        $.extend(data, {
+                                            iopswriterate: args.data.diskIopsWriteRate
+                                        });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsWriteRate != args.data.diskIopsWriteRate && oldDiskDetails.diskIopsWriteRate != null) {
+                                            $.extend(data, {
+                                                iopswriterate: args.data.diskIopsWriteRate == "" ? "0" : args.data.diskIopsWriteRate
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate Max
+                                    if(oldDiskDetails.diskIopsWriteRateMax == null && args.data.diskIopsWriteRateMax.length > 0){
+                                        $.extend(data, {
+                                            iopswriteratemax: args.data.diskIopsWriteRateMax
+                                        });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsWriteRateMax != args.data.diskIopsWriteRateMax && oldDiskDetails.diskIopsWriteRateMax != null) {
+                                            $.extend(data, {
+                                                iopswriteratemax: args.data.diskIopsWriteRateMax == "" ? "0" : args.data.diskIopsWriteRateMax
+                                            });
+                                        }
+                                    }
+                                    //Disk IOPS Write Rate Max Length
+                                    if(oldDiskDetails.diskIopsWriteRateMaxLength == null && args.data.diskIopsWriteRateMaxLength.length > 0){
+                                        $.extend(data, {
+                                            iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength
+                                        });
+                                    }
+                                    else {
+                                        if (oldDiskDetails.diskIopsWriteRateMaxLength != args.data.diskIopsWriteRateMaxLength && oldDiskDetails.diskIopsWriteRateMaxLength != null) {
+                                            $.extend(data, {
+                                                iopswriteratemaxlength: args.data.diskIopsWriteRateMaxLength == "" ? "0" : args.data.diskIopsWriteRateMaxLength
+                                            });
+                                        }
+                                    }
                                     $.ajax({
                                         url: createURL('updateDiskOffering'),
                                         data: data,
@@ -2638,7 +3385,7 @@
                                             dataType: "json",
                                             async: false,
                                             success: function (json) {
-                                            var item = json.listdiskofferingsresponse.diskoffering[0];
+                                                var item = json.listdiskofferingsresponse.diskoffering[0];
                                                 formOffering = item;
                                                 args.response.success({
                                                     data: item
@@ -2872,16 +3619,81 @@
                                         }
                                     },
                                     diskBytesReadRate: {
-                                        label: 'label.disk.bytes.read.rate'
+                                        label: 'label.disk.bytes.read.rate',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+
+                                    },diskBytesReadRateMax: {
+                                        label: 'label.disk.bytes.read.rate.max',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskBytesReadRateMaxLength: {
+                                        label: 'label.disk.bytes.read.rate.max.length',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
                                     },
                                     diskBytesWriteRate: {
-                                        label: 'label.disk.bytes.write.rate'
+                                        label: 'label.disk.bytes.write.rate',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskBytesWriteRateMax: {
+                                        label: 'label.disk.bytes.write.rate.max',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskBytesWriteRateMaxLength: {
+                                        label: 'label.disk.bytes.write.rate.max.length',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
                                     },
                                     diskIopsReadRate: {
-                                        label: 'label.disk.iops.read.rate'
+                                        label: 'label.disk.iops.read.rate',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskIopsReadRateMax: {
+                                        label: 'label.disk.iops.read.rate.max',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskIopsReadRateMaxLength: {
+                                        label: 'label.disk.iops.read.rate.max.length',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
                                     },
                                     diskIopsWriteRate: {
-                                        label: 'label.disk.iops.write.rate'
+                                        label: 'label.disk.iops.write.rate',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskIopsWriteRateMax: {
+                                        label: 'label.disk.iops.write.rate.max',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
+                                    },diskIopsWriteRateMaxLength: {
+                                        label: 'label.disk.iops.write.rate.max.length',
+                                        isEditable: true,
+                                        validation: {
+                                            number: true
+                                        }
                                     },
                                     cacheMode: {
                                         label: 'label.cache.mode'
@@ -2904,12 +3716,61 @@
                                 }],
 
                                 dataProvider: function(args) {
+                                    var diskData = args.context.diskOfferings[0];
                                     var data = {
-                                        isrecursive: true,
                                         id: args.context.diskOfferings[0].id
                                     };
+                                    if (diskData.diskBytesReadRate != null && diskData.diskBytesReadRate.length > 0) {
+                                        $.extend(data, {
+                                            bytesreadrate: diskData.diskBytesReadRate
+                                        });
+                                    }if (diskData.diskBytesReadRateMax != null && diskData.diskBytesReadRateMax.length > 0) {
+                                        $.extend(data, {
+                                            bytesreadratemax: diskData.diskBytesReadRateMax
+                                        });
+                                    }if (diskData.diskBytesReadRateMaxLength != null && diskData.diskBytesReadRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            bytesreadratemaxlength: diskData.diskBytesReadRateMaxLength
+                                        });
+                                    }if (diskData.diskBytesWriteRate != null && diskData.diskBytesWriteRate.length > 0) {
+                                        $.extend(data, {
+                                            byteswriterate: diskData.diskBytesWriteRate
+                                        });
+                                    }if (diskData.diskBytesWriteRateMax != null && diskData.diskBytesWriteRateMax.length > 0) {
+                                        $.extend(data, {
+                                            byteswriteratemax: diskData.diskBytesWriteRateMax
+                                        });
+                                    }if (diskData.diskBytesWriteRateMaxLength != null && diskData.diskBytesWriteRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            byteswriteratemaxlength: diskData.diskBytesWriteRateMaxLength
+                                        });
+                                    }if (diskData.diskIopsReadRate != null && diskData.diskIopsReadRate.length > 0) {
+                                        $.extend(data, {
+                                            iopsreadrate: diskData.diskIopsReadRate
+                                        });
+                                    }if (diskData.diskIopsReadRateMax != null && diskData.diskIopsReadRateMax.length > 0) {
+                                        $.extend(data, {
+                                            iopsreadratemax: diskData.diskIopsReadRateMax
+                                        });
+                                    }if (diskData.diskIopsReadRateMaxLength != null && diskData.diskIopsReadRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            iopsreadratemaxlength: diskData.diskIopsReadRateMaxLength
+                                        });
+                                    }if (diskData.diskIopsWriteRate != null && diskData.diskIopsWriteRate.length > 0) {
+                                        $.extend(data, {
+                                            iopswriterate: diskData.diskIopsWriteRate
+                                        });
+                                    }if (diskData.diskIopsWriteRateMax != null && diskData.diskIopsWriteRateMax.length > 0) {
+                                        $.extend(data, {
+                                            iopswriteratemax: diskData.diskIopsWriteRateMax
+                                        });
+                                    }if (diskData.diskIopsWriteRateMaxLength != null && diskData.diskIopsWriteRateMaxLength.length > 0) {
+                                        $.extend(data, {
+                                            iopswriteratemaxlength: diskData.diskIopsWriteRateMaxLength
+                                        });
+                                    }
                                     $.ajax({
-                                        url: createURL('listDiskOfferings'),
+                                        url: createURL('listDiskOfferings&isrecursive=true'),
                                         dataType: "json",
                                         data: data,
                                         success: function(json) {
@@ -3940,8 +4801,8 @@
                                     var serviceData = key.split('.');
 
                                     if (key == 'service.Lb.Netscaler.servicePackages' && value != "") {
-                                       inputData['details[' + 0 + '].servicepackageuuid'] = value;
-                                       inputData['details[' + 1 + '].servicepackagedescription'] = args.$form.find('#label_netscaler_service_packages option:selected').data().jsonObj.desc;
+                                        inputData['details[' + 0 + '].servicepackageuuid'] = value;
+                                        inputData['details[' + 1 + '].servicepackagedescription'] = args.$form.find('#label_netscaler_service_packages option:selected').data().jsonObj.desc;
                                     }
 
 
@@ -3951,8 +4812,8 @@
                                             value == 'on') { // Services field
 
                                             serviceProviderMap[serviceData[1]] = formData[
-                                                'service.' + serviceData[1] + '.provider'
-                                            ];
+                                            'service.' + serviceData[1] + '.provider'
+                                                ];
                                         } else if ((key == 'service.SourceNat.redundantRouterCapabilityCheckbox') && ("SourceNat" in serviceProviderMap)) { //if checkbox is unchecked, it won't be included in formData in the first place. i.e. it won't fall into this section
                                             inputData['serviceCapabilityList[' + serviceCapabilityIndex + '].service'] = 'SourceNat';
                                             inputData['serviceCapabilityList[' + serviceCapabilityIndex + '].capabilitytype'] = "RedundantRouter";
@@ -4092,7 +4953,7 @@
 
                                 if (inputData['forvpc'] == 'on') {
                                     inputData['forvpc'] = true;
-                                   } else {
+                                } else {
                                     delete inputData.forvpc; //if forVpc checkbox is unchecked, do not pass forVpc parameter to API call since we need to keep API call's size as small as possible (p.s. forVpc is defaulted as false at server-side)
                                 }
 
@@ -4364,7 +5225,7 @@
                                             dataType: "json",
                                             async: false,
                                             success: function (json) {
-                                            var item = json.listnetworkofferingsresponse.networkoffering[0];
+                                                var item = json.listnetworkofferingsresponse.networkoffering[0];
                                                 formOffering = item;
                                                 args.response.success({
                                                     data: item
@@ -4793,7 +5654,7 @@
                                             networkServiceObjs.push({
                                                 name: 'Dhcp',
                                                 provider: [
-                                                       {name: 'VpcVirtualRouter'}
+                                                    {name: 'VpcVirtualRouter'}
                                                 ]
                                             });
                                             networkServiceObjs.push({
@@ -4803,32 +5664,32 @@
                                             networkServiceObjs.push({
                                                 name: 'Lb',
                                                 provider: [
-                                                       {name: 'VpcVirtualRouter'},
-                                                       {name: 'InternalLbVm'}
+                                                    {name: 'VpcVirtualRouter'},
+                                                    {name: 'InternalLbVm'}
                                                 ]
                                             });
                                             networkServiceObjs.push({
                                                 name: 'Gateway',
                                                 provider: [{name: 'VpcVirtualRouter'},
-                                                           {name: 'BigSwitchBcf'}]
+                                                    {name: 'BigSwitchBcf'}]
                                             });
                                             networkServiceObjs.push({
                                                 name: 'StaticNat',
                                                 provider: [
-                                                       {name: 'VpcVirtualRouter'},
-                                                       {name: 'BigSwitchBcf'}]
+                                                    {name: 'VpcVirtualRouter'},
+                                                    {name: 'BigSwitchBcf'}]
                                             });
                                             networkServiceObjs.push({
                                                 name: 'SourceNat',
                                                 provider: [
-                                                       {name: 'VpcVirtualRouter'},
-                                                       {name: 'BigSwitchBcf'}]
+                                                    {name: 'VpcVirtualRouter'},
+                                                    {name: 'BigSwitchBcf'}]
                                             });
                                             networkServiceObjs.push({
                                                 name: 'NetworkACL',
                                                 provider: [
-                                                       {name: 'VpcVirtualRouter'},
-                                                       {name: 'BigSwitchBcf'}]
+                                                    {name: 'VpcVirtualRouter'},
+                                                    {name: 'BigSwitchBcf'}]
                                             });
                                             networkServiceObjs.push({
                                                 name: 'PortForwarding',
@@ -4837,12 +5698,12 @@
                                             networkServiceObjs.push({
                                                 name: 'UserData',
                                                 provider: [{name: 'VpcVirtualRouter'},
-                                                           {name: 'ConfigDrive'}]
+                                                    {name: 'ConfigDrive'}]
                                             });
                                             networkServiceObjs.push({
                                                 name: 'Vpn',
                                                 provider: [{name: 'VpcVirtualRouter'},
-                                                           {name: 'BigSwitchBcf'}]
+                                                    {name: 'BigSwitchBcf'}]
                                             });
 
                                             networkServiceObjs.push({
@@ -4915,10 +5776,10 @@
                                                     select: function(args) {
                                                         var items = [];
                                                         $(providerObjs).each(function() {
-                                                               items.push({
-                                                                    id: this.name,
-                                                                    description: this.name
-                                                                });
+                                                            items.push({
+                                                                id: this.name,
+                                                                description: this.name
+                                                            });
                                                         });
                                                         args.response.success({
                                                             data: items
@@ -4932,6 +5793,34 @@
                                             });
                                         }
                                     }, //end of supportedservices field
+
+                                    serviceOfferingId: {
+                                        label: "label.menu.service.offerings",
+                                        select: function(args){
+                                            $.ajax({
+                                                url: createURL("listServiceOfferings"),
+                                                dataType: "json",
+                                                data: {
+                                                    issystem: true,
+                                                    listAll: true,
+                                                    systemvmtype: 'domainrouter'
+                                                },
+                                                success: function (json){
+                                                    var serviceofferings = json.listserviceofferingsresponse.serviceoffering;
+                                                    var items = [];
+                                                    $(serviceofferings).each(function () {
+                                                        items.push({
+                                                            id: this.id,
+                                                            description: this.name
+                                                        });
+                                                    });
+                                                    args.response.success({
+                                                        data: items
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    },
 
                                     "service.Connectivity.regionLevelVpcCapabilityCheckbox": {
                                         label: 'label.regionlevelvpc',
@@ -5050,8 +5939,8 @@
                                             value == 'on') { // Services field
 
                                             serviceProviderMap[serviceData[1]] = formData[
-                                                'service.' + serviceData[1] + '.provider'
-                                            ];
+                                            'service.' + serviceData[1] + '.provider'
+                                                ];
                                         } else if ((key == 'service.Connectivity.regionLevelVpcCapabilityCheckbox') && ("Connectivity" in serviceProviderMap)) {
                                             inputData['serviceCapabilityList[' + serviceCapabilityIndex + '].service'] = 'Connectivity';
                                             inputData['serviceCapabilityList[' + serviceCapabilityIndex + '].capabilitytype'] = "RegionLevelVpc";
@@ -5152,7 +6041,8 @@
                                         id: args.context.vpcOfferings[0].id,
                                         name: args.data.name,
                                         displaytext: args.data.displaytext,
-                                        availability: args.data.availability
+                                        availability: args.data.availability,
+                                        serviceofferingid: args.data.serviceofferingid
                                     };
 
                                     $.ajax({
@@ -5160,6 +6050,10 @@
                                         data: data,
                                         success: function(json) {
                                             var item = json.updatevpcofferingresponse.vpcoffering;
+                                            if(args.context.vpcOfferings[0].serviceofferingid.localeCompare(args.data.serviceofferingid) != 0)
+                                            {
+                                                alert("Please restart the management server in order to apply the new VPC Service Offering.");
+                                            }
                                             args.response.success({
                                                 data: item
                                             });
@@ -5298,7 +6192,7 @@
                                             dataType: "json",
                                             async: false,
                                             success: function (json) {
-                                            var item = json.listvpcofferingsresponse.vpcoffering[0];
+                                                var item = json.listvpcofferingsresponse.vpcoffering[0];
                                                 formOffering = item;
                                                 args.response.success({
                                                     data: item
@@ -5495,6 +6389,39 @@
                                         converter: cloudStack.converters.toBooleanText
                                     },
 
+                                    serviceofferingid: {
+                                        label: 'label.service.offering',
+                                        isEditable: true,
+                                        validation: {
+                                            required: true
+                                        },
+                                        select: function(args) {
+                                            var serviceofferings;
+                                            $.ajax({
+                                                url: createURL('listServiceOfferings'),
+                                                dataType: "json",
+                                                data: {
+                                                    issystem: true,
+                                                    listAll: true,
+                                                    systemvmtype: 'domainrouter'
+                                                },
+                                                success: function (json) {
+                                                    serviceofferings = json.listserviceofferingsresponse.serviceoffering;
+                                                    var items =[];
+                                                    $(serviceofferings).each(function () {
+                                                        items.push({
+                                                            id : this.id,
+                                                            description: this.name
+                                                        });
+                                                    });
+                                                    args.response.success({
+                                                        data: items
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    },
+
                                     supportedServices: {
                                         label: 'label.supported.services'
                                     },
@@ -5531,20 +6458,43 @@
                                         async: true,
                                         success: function(json) {
                                             var item = json.listvpcofferingsresponse.vpcoffering[0];
-                                            args.response.success({
-                                                actionFilter: vpcOfferingActionfilter,
-                                                data: $.extend(item, {
-                                                    supportedServices: $.map(item.service, function(service) {
-                                                        return service.name;
-                                                    }).join(', '),
+                                            if(args.context.vpcOfferings[0].serviceofferingid !== undefined)
+                                                $.ajax({
+                                                    url: createURL('listServiceOfferings&issystem=true&id=' + args.context.vpcOfferings[0].serviceofferingid),
+                                                    dataType: "json",
+                                                    async: true,
+                                                    success: function(json) {
+                                                        var itemService = json.listserviceofferingsresponse.serviceoffering[0];
+                                                        args.response.success({
+                                                            data: $.extend(item, {
+                                                                serviceofferingid: itemService.id,
+                                                                supportedServices: $.map(item.service, function(service) {
+                                                                    return service.name;
+                                                                }).join(', '),
 
-                                                    serviceCapabilities: $.map(item.service, function(service) {
-                                                        return service.provider ? $.map(service.provider, function(capability) {
-                                                            return service.name + ': ' + capability.name;
-                                                        }).join(', ') : null;
-                                                    }).join(', ')
-                                                })
-                                            });
+                                                                serviceCapabilities: $.map(item.service, function(service) {
+                                                                    return service.provider ? $.map(service.provider, function(capability) {
+                                                                        return service.name + ': ' + capability.name;
+                                                                    }).join(', ') : null;
+                                                                }).join(', ')
+                                                            })
+                                                        });
+                                                    }
+                                                });
+                                            else
+                                                args.response.success({
+                                                    data: $.extend(item, {
+                                                        supportedServices: $.map(item.service, function(service) {
+                                                            return service.name;
+                                                        }).join(', '),
+
+                                                        serviceCapabilities: $.map(item.service, function(service) {
+                                                            return service.provider ? $.map(service.provider, function(capability) {
+                                                                return service.name + ': ' + capability.name;
+                                                            }).join(', ') : null;
+                                                        }).join(', ')
+                                                    })
+                                                });
                                         }
                                     });
                                 }
@@ -5554,7 +6504,7 @@
                 }
             }
         }
-}
+    }
 
 
     var serviceOfferingActionfilter = function(args) {

@@ -265,16 +265,48 @@ cloudStack.docs = {
         desc: 'Allowed disk read rate in bytes per second',
         externalLink: ''
     },
+    helpComputeOfferingDiskBytesReadRateMax: {
+        desc: 'Maximum allowed disk read rate in bytes per second',
+        externalLink: ''
+    },
+    helpComputeOfferingDiskBytesReadRateMaxLength: {
+        desc: 'Maximum allowed disk read rate in bytes per second length',
+        externalLink: ''
+    },
     helpComputeOfferingDiskBytesWriteRate: {
         desc: 'Allowed disk write rate in bytes per second',
+        externalLink: ''
+    },
+    helpComputeOfferingDiskBytesWriteRateMax: {
+        desc: 'Maximum allowed disk write rate in bytes per second',
+        externalLink: ''
+    },
+    helpComputeOfferingDiskBytesWriteRateMaxLength: {
+        desc: 'Maximum allowed disk write rate in bytes per second length',
         externalLink: ''
     },
     helpComputeOfferingDiskIopsReadRate: {
         desc: 'Allowed disk read rate in I/O requests per second',
         externalLink: ''
     },
+    helpComputeOfferingDiskIopsReadRateMax: {
+        desc: 'Maximum allowed disk read rate in I/O requests per second',
+        externalLink: ''
+    },
+    helpComputeOfferingDiskIopsReadRateMaxLength: {
+        desc: 'Maximum allowed disk read rate in I/O requests per second length',
+        externalLink: ''
+    },
     helpComputeOfferingDiskIopsWriteRate: {
         desc: 'Allowed disk write rate in I/O requests per second',
+        externalLink: ''
+    },
+    helpComputeOfferingDiskIopsWriteRateMax: {
+        desc: 'Maximum allowed disk write rate in I/O requests per second',
+        externalLink: ''
+    },
+    helpComputeOfferingDiskIopsWriteRateMaxLength: {
+        desc: 'Maximum allowed disk write rate in I/O requests per second length',
         externalLink: ''
     },
     helpComputeOfferingHA: {
@@ -354,16 +386,48 @@ cloudStack.docs = {
         desc: 'Allowed disk read rate in bytes per second',
         externalLink: ''
     },
+    helpDiskOfferingDiskBytesReadRateMax: {
+        desc: 'Maximum allowed disk read rate in bytes per second',
+        externalLink: ''
+    },
+    helpDiskOfferingDiskBytesReadRateMaxLength: {
+        desc: 'Maximum allowed disk read rate in bytes per second length',
+        externalLink: ''
+    },
     helpDiskOfferingDiskBytesWriteRate: {
         desc: 'Allowed disk write rate in bytes per second',
+        externalLink: ''
+    },
+    helpDiskOfferingDiskBytesWriteRateMax: {
+        desc: 'Maximum allowed disk write rate in bytes per second',
+        externalLink: ''
+    },
+    helpDiskOfferingDiskBytesWriteRateMaxLength: {
+        desc: 'Maximum allowed disk write rate in bytes per second length',
         externalLink: ''
     },
     helpDiskOfferingDiskIopsReadRate: {
         desc: 'Allowed disk read rate in I/O requests per second',
         externalLink: ''
     },
+    helpDiskOfferingDiskIopsReadRateMax: {
+        desc: 'Maximum allowed disk read rate in I/O requests per second',
+        externalLink: ''
+    },
+    helpDiskOfferingDiskIopsReadRateMaxLength: {
+        desc: 'Maximum allowed disk read rate in I/O requests per second length',
+        externalLink: ''
+    },
     helpDiskOfferingDiskIopsWriteRate: {
         desc: 'Allowed disk write rate in I/O requests per second',
+        externalLink: ''
+    },
+    helpDiskOfferingDiskIopsWriteRateMax: {
+        desc: 'Maximum allowed disk write rate in I/O requests per second',
+        externalLink: ''
+    },
+    helpDiskOfferingDiskIopsWriteRateMaxLength: {
+        desc: 'Maximum allowed disk write rate in I/O requests per second length',
         externalLink: ''
     },
     helpDiskOfferingCustomDiskIops: {
