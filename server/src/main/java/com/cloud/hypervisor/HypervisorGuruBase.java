@@ -22,9 +22,8 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import com.cloud.network.dao.NetworkDetailVO;
-import com.cloud.network.dao.NetworkDetailsDao;
 import org.apache.cloudstack.api.ApiConstants;
+import org.apache.cloudstack.backup.Backup;
 import org.apache.cloudstack.engine.orchestration.service.NetworkOrchestrationService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
@@ -36,6 +35,8 @@ import com.cloud.agent.api.to.VirtualMachineTO;
 import com.cloud.gpu.GPU;
 import com.cloud.network.Networks.BroadcastDomainType;
 import com.cloud.network.dao.NetworkDao;
+import com.cloud.network.dao.NetworkDetailVO;
+import com.cloud.network.dao.NetworkDetailsDao;
 import com.cloud.network.dao.NetworkVO;
 import com.cloud.offering.NetworkOffering;
 import com.cloud.offering.ServiceOffering;
@@ -46,6 +47,7 @@ import com.cloud.service.dao.ServiceOfferingDao;
 import com.cloud.service.dao.ServiceOfferingDetailsDao;
 import com.cloud.storage.StoragePool;
 import com.cloud.utils.Pair;
+import com.cloud.utils.StringUtils;
 import com.cloud.utils.component.AdapterBase;
 import com.cloud.vm.NicProfile;
 import com.cloud.vm.NicVO;
@@ -170,6 +172,11 @@ public abstract class HypervisorGuruBase extends AdapterBase implements Hypervis
                 offering.getRamSize() * 1024l * 1024l, null, null, vm.isHaEnabled(), vm.limitCpuUse(), vm.getVncPassword());
         to.setBootArgs(vmProfile.getBootArgs());
 
+        String bootType = (String)vmProfile.getParameter(new VirtualMachineProfile.Param("BootType"));
+        if (StringUtils.isNotBlank(bootType)) {
+            to.setBootType(bootType);
+        }
+
         List<NicProfile> nicProfiles = vmProfile.getNics();
         NicTO[] nics = new NicTO[nicProfiles.size()];
         int i = 0;
@@ -268,6 +275,17 @@ public abstract class HypervisorGuruBase extends AdapterBase implements Hypervis
     }
 
     @Override
+    public VirtualMachine importVirtualMachineFromBackup(long zoneId, long domainId, long accountId, long userId,
+                                                         String vmInternalName, Backup backup) throws Exception {
+        return null;
+    }
+
+    @Override
+    public boolean attachRestoredVolumeToVirtualMachine(long zoneId, String location, Backup.VolumeInfo volumeInfo,
+                                                        VirtualMachine vm, long poolId, Backup backup) throws Exception {
+        return false;
+    }
+
     public List<Command> finalizeMigrate(VirtualMachine vm, StoragePool destination) {
         return null;
     }

@@ -105,7 +105,7 @@ public interface NetworkDao extends GenericDao<NetworkVO, Long>, StateDao<State,
 
     List<NetworkVO> listByVpc(long vpcId);
 
-    NetworkVO getPrivateNetwork(String broadcastUri, String cidr, long accountId, long zoneId, Long networkOfferingId);
+    NetworkVO getPrivateNetwork(String broadcastUri, String cidr, long accountId, long zoneId, Long networkOfferingId, Long vpcId);
 
     long countVpcNetworks(long vpcId);
 
@@ -120,6 +120,8 @@ public interface NetworkDao extends GenericDao<NetworkVO, Long>, StateDao<State,
     int getNonSystemNetworkCountByVpcId(long vpcId);
 
     List<NetworkVO> listNetworkVO(List<Long> idset);
+
+    NetworkVO findByVlan(String vlan);
 
     List<NetworkVO> listByAccountIdNetworkName(long accountId, String name);
 

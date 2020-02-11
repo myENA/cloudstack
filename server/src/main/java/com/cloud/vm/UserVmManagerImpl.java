@@ -847,6 +847,7 @@ public class UserVmManagerImpl extends ManagerBase implements UserVmManager, Vir
         if (!result) {
             throw new CloudRuntimeException("Failed to reset SSH Key for the virtual machine ");
         }
+        userVm.setPassword(password);
         return userVm;
     }
 
@@ -3225,21 +3226,23 @@ public class UserVmManagerImpl extends ManagerBase implements UserVmManager, Vir
                 throw new InvalidParameterValueException("Security group feature is not supported for vmWare hypervisor");
             }
             // Only one network can be specified, and it should be security group enabled
-            if (networkIdList.size() > 1) {
+            if (networkIdList.size() > 1 && template.getHypervisorType() != HypervisorType.KVM && hypervisor != HypervisorType.KVM) {
                 throw new InvalidParameterValueException("Only support one network per VM if security group enabled");
             }
 
-            NetworkVO network = _networkDao.findById(networkIdList.get(0));
+            for (Long networkId : networkIdList) {
+                NetworkVO network = _networkDao.findById(networkId);
 
-            if (network == null) {
-                throw new InvalidParameterValueException("Unable to find network by id " + networkIdList.get(0).longValue());
+                if (network == null) {
+                    throw new InvalidParameterValueException("Unable to find network by id " + networkId);
+                }
+
+                if (!_networkModel.isSecurityGroupSupportedInNetwork(network)) {
+                    throw new InvalidParameterValueException("Network is not security group enabled: " + network.getId());
+                }
+
+                networkList.add(network);
             }
-
-            if (!_networkModel.isSecurityGroupSupportedInNetwork(network)) {
-                throw new InvalidParameterValueException("Network is not security group enabled: " + network.getId());
-            }
-
-            networkList.add(network);
             isSecurityGroupEnabledNetworkUsed = true;
 
         } else {
@@ -3253,10 +3256,6 @@ public class UserVmManagerImpl extends ManagerBase implements UserVmManager, Vir
 
                 boolean isSecurityGroupEnabled = _networkModel.isSecurityGroupSupportedInNetwork(network);
                 if (isSecurityGroupEnabled) {
-                    if (networkIdList.size() > 1) {
-                        throw new InvalidParameterValueException("Can't create a vm with multiple networks one of" + " which is Security Group enabled");
-                    }
-
                     isSecurityGroupEnabledNetworkUsed = true;
                 }
 
@@ -3965,6 +3964,11 @@ public class UserVmManagerImpl extends ManagerBase implements UserVmManager, Vir
                     } else {
                         vm.setDetail(key, customParameters.get(key));
                     }
+
+                    if (key.equalsIgnoreCase(ApiConstants.BootType.UEFI.toString())) {
+                        vm.setDetail(key, customParameters.get(key));
+                        continue;
+                    }
                 }
                 vm.setDetail(VmDetailConstants.DEPLOY_VM, "true");
 
@@ -4284,13 +4288,21 @@ public class UserVmManagerImpl extends ManagerBase implements UserVmManager, Vir
         Long podId = null;
         Long clusterId = null;
         Long hostId = cmd.getHostId();
+        Map<VirtualMachineProfile.Param, Object> additonalParams = null;
         Map<Long, DiskOffering> diskOfferingMap = cmd.getDataDiskTemplateToDiskOfferingMap();
         if (cmd instanceof DeployVMCmdByAdmin) {
             DeployVMCmdByAdmin adminCmd = (DeployVMCmdByAdmin)cmd;
             podId = adminCmd.getPodId();
             clusterId = adminCmd.getClusterId();
         }
-        return startVirtualMachine(vmId, podId, clusterId, hostId, diskOfferingMap, null, cmd.getDeploymentPlanner());
+        if (MapUtils.isNotEmpty(cmd.getDetails()) && cmd.getDetails().containsKey(ApiConstants.BootType.UEFI.toString())) {
+            additonalParams = new HashMap<VirtualMachineProfile.Param, Object>();
+            Map<String, String> map = cmd.getDetails();
+            additonalParams.put(VirtualMachineProfile.Param.UefiFlag, "Yes");
+            additonalParams.put(VirtualMachineProfile.Param.BootType, ApiConstants.BootType.UEFI.toString());
+            additonalParams.put(VirtualMachineProfile.Param.BootMode, map.get(ApiConstants.BootType.UEFI.toString()));
+        }
+        return startVirtualMachine(vmId, podId, clusterId, hostId, diskOfferingMap, additonalParams, cmd.getDeploymentPlanner());
     }
 
     private UserVm startVirtualMachine(long vmId, Long podId, Long clusterId, Long hostId, Map<Long, DiskOffering> diskOfferingMap, Map<VirtualMachineProfile.Param, Object> additonalParams, String deploymentPlannerToUse)
@@ -4749,6 +4761,7 @@ public class UserVmManagerImpl extends ManagerBase implements UserVmManager, Vir
                 throw new InvalidParameterValueException("Can't find a planner by name " + deploymentPlannerToUse);
             }
         }
+        vmEntity.setParamsToEntity(additionalParams);
 
         String reservationId = vmEntity.reserve(planner, plan, new ExcludeList(), Long.toString(callerUser.getId()));
         vmEntity.deploy(reservationId, Long.toString(callerUser.getId()), params, deployOnGivenHost);
@@ -6744,6 +6757,7 @@ public class UserVmManagerImpl extends ManagerBase implements UserVmManager, Vir
                 if (!result) {
                     throw new CloudRuntimeException("VM reset is completed but failed to reset password for the virtual machine ");
                 }
+                vm.setPassword(password);
             }
 
             if (needRestart) {
