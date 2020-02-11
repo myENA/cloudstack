@@ -2659,7 +2659,24 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
             throw new InvalidParameterValueException(String.format("Unable to update service offering: %s by id user: %s because it is not root-admin or domain-admin", offeringHandle.getUuid(), user.getUuid()));
         }
 
-        final boolean updateNeeded = name != null || displayText != null || sortKey != null;
+        final Long diskBytesReadRate = cmd.getDiskBytesReadRate();
+        final Long diskBytesReadRateMax = cmd.getDiskBytesReadRateMax();
+        final Long diskBytesReadRateMaxLength = cmd.getDiskBytesReadRateMaxLength();
+        final Long diskBytesWriteRate = cmd.getDiskBytesWriteRate();
+        final Long diskBytesWriteRateMax = cmd.getDiskBytesWriteRateMax();
+        final Long diskBytesWriteRateMaxLength = cmd.getDiskBytesWriteRateMaxLength();
+        final Long diskIopsReadRate = cmd.getDiskIopsReadRate();
+        final Long diskIopsReadRateMax = cmd.getDiskIopsReadRateMax();
+        final Long diskIopsReadRateMaxLength = cmd.getDiskIopsReadRateMaxLength();
+        final Long diskIopsWriteRate = cmd.getDiskIopsWriteRate();
+        final Long diskIopsWriteRateMax = cmd.getDiskIopsWriteRateMax();
+        final Long diskIopsWriteRateMaxLength = cmd.getDiskIopsWriteRateMaxLength();
+
+        final boolean updateNeeded = name != null || displayText != null || sortKey != null
+                || diskBytesReadRate != null || diskBytesReadRateMax != null || diskBytesReadRateMaxLength != null
+                || diskBytesWriteRate != null || diskBytesWriteRateMax != null || diskBytesWriteRateMaxLength != null
+                || diskIopsReadRate != null || diskIopsReadRateMax != null || diskIopsReadRateMaxLength != null
+                || diskIopsWriteRate != null || diskIopsWriteRateMax != null || diskIopsWriteRateMaxLength != null;
         final boolean detailsUpdateNeeded = !filteredDomainIds.equals(existingDomainIds) || !filteredZoneIds.equals(existingZoneIds);
         if (!updateNeeded && !detailsUpdateNeeded) {
             return _serviceOfferingDao.findById(id);
@@ -2678,6 +2695,23 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         if (sortKey != null) {
             offering.setSortKey(sortKey);
         }
+
+        // BPS Read Rate
+        offering.setBytesReadRate(checkValue(offeringHandle.getBytesReadRate(), diskBytesReadRate));
+        offering.setBytesReadRateMax(checkValue(offeringHandle.getBytesReadRateMax(), diskBytesReadRateMax));
+        offering.setBytesReadRateMaxLength(checkValue(offeringHandle.getBytesReadRateMaxLength(), diskBytesReadRateMaxLength));
+        // BPS Write Rate
+        offering.setBytesWriteRate(checkValue(offeringHandle.getBytesWriteRate(), diskBytesWriteRate));
+        offering.setBytesWriteRateMax(checkValue(offeringHandle.getBytesWriteRateMax(), diskBytesWriteRateMax));
+        offering.setBytesWriteRateMaxLength(checkValue(offeringHandle.getBytesWriteRateMaxLength(), diskBytesWriteRateMaxLength));
+        // IOPS Read Rate
+        offering.setIopsReadRate(checkValue(offeringHandle.getIopsReadRate(), diskIopsReadRate));
+        offering.setIopsReadRateMax(checkValue(offeringHandle.getIopsReadRateMax(), diskIopsReadRateMax));
+        offering.setIopsReadRateMaxLength(checkValue(offeringHandle.getIopsReadRateMaxLength(), diskIopsReadRateMaxLength));
+        // IOPS Write Rate
+        offering.setIopsWriteRate(checkValue(offeringHandle.getIopsWriteRate(), diskIopsWriteRate));
+        offering.setIopsWriteRateMax(checkValue(offeringHandle.getIopsWriteRateMax(), diskIopsWriteRateMax));
+        offering.setIopsWriteRateMaxLength(checkValue(offeringHandle.getIopsWriteRateMaxLength(), diskIopsWriteRateMaxLength));
 
         // Note: tag editing commented out for now; keeping the code intact,
         // might need to re-enable in next releases
@@ -3062,8 +3096,26 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
             throw new InvalidParameterValueException(String.format("Unable to update disk offering: %s by id user: %s because it is not root-admin or domain-admin", diskOfferingHandle.getUuid(), user.getUuid()));
         }
 
-        final boolean updateNeeded = name != null || displayText != null || sortKey != null || displayDiskOffering != null;
+        final Long diskBytesReadRate = cmd.getDiskBytesReadRate();
+        final Long diskBytesReadRateMax = cmd.getDiskBytesReadRateMax();
+        final Long diskBytesReadRateMaxLength = cmd.getDiskBytesReadRateMaxLength();
+        final Long diskBytesWriteRate = cmd.getDiskBytesWriteRate();
+        final Long diskBytesWriteRateMax = cmd.getDiskBytesWriteRateMax();
+        final Long diskBytesWriteRateMaxLength = cmd.getDiskBytesWriteRateMaxLength();
+        final Long diskIopsReadRate = cmd.getDiskIopsReadRate();
+        final Long diskIopsReadRateMax = cmd.getDiskIopsReadRateMax();
+        final Long diskIopsReadRateMaxLength = cmd.getDiskIopsReadRateMaxLength();
+        final Long diskIopsWriteRate = cmd.getDiskIopsWriteRate();
+        final Long diskIopsWriteRateMax = cmd.getDiskIopsWriteRateMax();
+        final Long diskIopsWriteRateMaxLength = cmd.getDiskIopsWriteRateMaxLength();
+
+        final boolean updateNeeded = name != null || displayText != null || sortKey != null || displayDiskOffering != null
+                || diskBytesReadRate != null || diskBytesReadRateMax != null || diskBytesReadRateMaxLength != null
+                || diskBytesWriteRate != null || diskBytesWriteRateMax != null || diskBytesWriteRateMaxLength != null
+                || diskIopsReadRate != null || diskIopsReadRateMax != null || diskIopsReadRateMaxLength != null
+                || diskIopsWriteRate != null || diskIopsWriteRateMax != null || diskIopsWriteRateMaxLength != null;
         final boolean detailsUpdateNeeded = !filteredDomainIds.equals(existingDomainIds) || !filteredZoneIds.equals(existingZoneIds);
+
         if (!updateNeeded && !detailsUpdateNeeded) {
             return _diskOfferingDao.findById(diskOfferingId);
         }
@@ -3085,6 +3137,23 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         if (displayDiskOffering != null) {
             diskOffering.setDisplayOffering(displayDiskOffering);
         }
+
+        // BPS Read Rate
+        diskOffering.setBytesReadRate(checkValue(diskOfferingHandle.getBytesReadRate(), diskBytesReadRate));
+        diskOffering.setBytesReadRateMax(checkValue(diskOfferingHandle.getBytesReadRateMax(), diskBytesReadRateMax));
+        diskOffering.setBytesReadRateMaxLength(checkValue(diskOfferingHandle.getBytesReadRateMaxLength(), diskBytesReadRateMaxLength));
+        // BPS Write Rate
+        diskOffering.setBytesWriteRate(checkValue(diskOfferingHandle.getBytesWriteRate(), diskBytesWriteRate));
+        diskOffering.setBytesWriteRateMax(checkValue(diskOfferingHandle.getBytesWriteRateMax(), diskBytesWriteRateMax));
+        diskOffering.setBytesWriteRateMaxLength(checkValue(diskOfferingHandle.getBytesWriteRateMaxLength(), diskBytesWriteRateMaxLength));
+        // IOPS Read Rate
+        diskOffering.setIopsReadRate(checkValue(diskOfferingHandle.getIopsReadRate(), diskIopsReadRate));
+        diskOffering.setIopsReadRateMax(checkValue(diskOfferingHandle.getIopsReadRateMax(), diskIopsReadRateMax));
+        diskOffering.setIopsReadRateMaxLength(checkValue(diskOfferingHandle.getIopsReadRateMaxLength(), diskIopsReadRateMaxLength));
+        // IOPS Write Rate
+        diskOffering.setIopsWriteRate(checkValue(diskOfferingHandle.getIopsWriteRate(), diskIopsWriteRate));
+        diskOffering.setIopsWriteRateMax(checkValue(diskOfferingHandle.getIopsWriteRateMax(), diskIopsWriteRateMax));
+        diskOffering.setIopsWriteRateMaxLength(checkValue(diskOfferingHandle.getIopsWriteRateMaxLength(), diskIopsWriteRateMaxLength));
 
         // Note: tag editing commented out for now;keeping the code intact,
         // might need to re-enable in next releases
@@ -6249,5 +6318,27 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     @Override
     public ConfigKey<?>[] getConfigKeys() {
         return new ConfigKey<?>[] {SystemVMUseLocalStorage};
+    }
+
+    /**
+     * Check if newValue is different than oldValue
+     * If true return newValue. Else return oldValue
+     * @param oldValue
+     * @param newValue
+     * @return
+     */
+    public Long checkValue(Long oldValue, Long newValue){
+        //negative value
+        if(newValue != null && newValue < 0)
+            throw new InvalidParameterValueException("Negative values are not allowed for disk read/write parameters.");
+            //the value has been changed to null
+        else if(newValue != null && newValue == 0)
+            return null;
+            //the value has not been changed
+        else if(newValue == null)
+            return oldValue;
+            //the value has been changed
+        else
+            return newValue;
     }
 }

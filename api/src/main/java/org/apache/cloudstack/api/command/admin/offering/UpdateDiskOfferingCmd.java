@@ -65,6 +65,42 @@ public class UpdateDiskOfferingCmd extends BaseCmd {
             description = "an optional field, whether to display the offering to the end user or not.")
     private Boolean displayOffering;
 
+    @Parameter(name = ApiConstants.BYTES_READ_RATE, type = CommandType.LONG, required = false, description = "bytes read rate of the disk offering, long")
+    private Long diskBytesReadRate;
+
+    @Parameter(name = ApiConstants.BYTES_READ_RATE_MAX, type = CommandType.LONG, required = false, description = "maximum bytes read rate of the disk offering, long")
+    private Long diskBytesReadRateMax;
+
+    @Parameter(name = ApiConstants.BYTES_READ_RATE_MAX_LENGTH, type = CommandType.LONG, required = false, description = "maximum bytes read rate length of the disk offering, long")
+    private Long diskBytesReadRateMaxLength;
+
+    @Parameter(name = ApiConstants.BYTES_WRITE_RATE, type = CommandType.LONG, required = false, description = "bytes write rate of the disk offering, long")
+    private Long diskBytesWriteRate;
+
+    @Parameter(name = ApiConstants.BYTES_WRITE_RATE_MAX, type = CommandType.LONG, required = false, description = "maximum bytes write rate of the disk offering, long")
+    private Long diskBytesWriteRateMax;
+
+    @Parameter(name = ApiConstants.BYTES_WRITE_RATE_MAX_LENGTH, type = CommandType.LONG, required = false, description = "maximum bytes write rate length of the disk offering, long")
+    private Long diskBytesWriteRateMaxLength;
+
+    @Parameter(name = ApiConstants.IOPS_READ_RATE, type = CommandType.LONG, required = false, description = "iops read rate of the disk offering, long")
+    private Long diskIopsReadRate;
+
+    @Parameter(name = ApiConstants.IOPS_READ_RATE_MAX, type = CommandType.LONG, required = false, description = "maximum iops read rate of the disk offering, long")
+    private Long diskIopsReadRateMax;
+
+    @Parameter(name = ApiConstants.IOPS_READ_RATE_MAX_LENGTH, type = CommandType.LONG, required = false, description = "maximum iops read rate length of the disk offering, long")
+    private Long diskIopsReadRateMaxLength;
+
+    @Parameter(name = ApiConstants.IOPS_WRITE_RATE, type = CommandType.LONG, required = false, description = "iops write rate of the disk offering, long")
+    private Long diskIopsWriteRate;
+
+    @Parameter(name = ApiConstants.IOPS_WRITE_RATE_MAX, type = CommandType.LONG, required = false, description = "maximum iops write rate of the disk offering, long")
+    private Long diskIopsWriteRateMax;
+
+    @Parameter(name = ApiConstants.IOPS_WRITE_RATE_MAX_LENGTH, type = CommandType.LONG, required = false, description = "maximum iops write rate length of the disk offering, long")
+    private Long diskIopsWriteRateMaxLength;
+
     @Parameter(name = ApiConstants.DOMAIN_ID,
             type = CommandType.STRING,
             description = "the ID of the containing domain(s) as comma separated string, public for public offerings",
@@ -99,6 +135,54 @@ public class UpdateDiskOfferingCmd extends BaseCmd {
 
     public Boolean getDisplayOffering() {
         return displayOffering;
+    }
+
+    public Long getDiskBytesReadRate() {
+        return diskBytesReadRate;
+    }
+
+    public Long getDiskBytesReadRateMax() {
+        return diskBytesReadRateMax;
+    }
+
+    public Long getDiskBytesReadRateMaxLength() {
+        return diskBytesReadRateMaxLength;
+    }
+
+    public Long getDiskBytesWriteRate() {
+        return diskBytesWriteRate;
+    }
+
+    public Long getDiskBytesWriteRateMax() {
+        return diskBytesWriteRateMax;
+    }
+
+    public Long getDiskBytesWriteRateMaxLength() {
+        return diskBytesWriteRateMaxLength;
+    }
+
+    public Long getDiskIopsReadRate() {
+        return diskIopsReadRate;
+    }
+
+    public Long getDiskIopsReadRateMax() {
+        return diskIopsReadRateMax;
+    }
+
+    public Long getDiskIopsReadRateMaxLength() {
+        return diskIopsReadRateMaxLength;
+    }
+
+    public Long getDiskIopsWriteRate() {
+        return diskIopsWriteRate;
+    }
+
+    public Long getDiskIopsWriteRateMax() {
+        return diskIopsWriteRateMax;
+    }
+
+    public Long getDiskIopsWriteRateMaxLength() {
+        return diskIopsWriteRateMaxLength;
     }
 
     public List<Long> getDomainIds() {
