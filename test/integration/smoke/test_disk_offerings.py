@@ -278,6 +278,18 @@ class TestDiskOfferings(cloudstackTestCase):
         """
         random_displaytext = random_gen()
         random_name = random_gen()
+        bytes_read_rate = 1L
+        bytes_read_rate_max = 2L
+        bytes_read_rate_max_length = 3L
+        bytes_write_rate = 4L
+        bytes_write_rate_max = 5L
+        bytes_write_rate_max_length = 6L
+        iops_read_rate = 7L
+        iops_read_rate_max = 8L
+        iops_read_rate_max_length = 9L
+        iops_write_rate = 10L
+        iops_write_rate_max = 11L
+        iops_write_rate_max_length = 12L
 
         self.debug("Updating Disk offering with ID: %s" %
                                     self.disk_offering_1.id)
@@ -286,6 +298,22 @@ class TestDiskOfferings(cloudstackTestCase):
         cmd.id = self.disk_offering_1.id
         cmd.displaytext = random_displaytext
         cmd.name = random_name
+
+        cmd.bytesreadrate = bytes_read_rate
+        cmd.bytesreadratemax = bytes_read_rate_max
+        cmd.bytesreadratemaxlength = bytes_read_rate_max_length
+
+        cmd.byteswriterate = bytes_write_rate
+        cmd.byteswriteratemax = bytes_write_rate_max
+        cmd.byteswriteratemaxlength = bytes_write_rate_max_length
+
+        cmd.iopsreadrate = iops_read_rate
+        cmd.iopsreadratemax = iops_read_rate_max
+        cmd.iopsreadratemaxlength = iops_read_rate_max_length
+
+        cmd.iopswriterate = iops_write_rate
+        cmd.iopswriteratemax = iops_write_rate_max
+        cmd.iopswriteratemaxlength = iops_write_rate_max_length
 
         self.apiclient.updateDiskOffering(cmd)
 
@@ -316,6 +344,66 @@ class TestDiskOfferings(cloudstackTestCase):
                         random_name,
                         "Check service name in updateServiceOffering"
                         )
+        self.assertEqual(
+            disk_response.diskBytesReadRate,
+            bytes_read_rate,
+            "Check service diskBytesReadRate in updateServiceOffering"
+        )
+        self.assertEqual(
+            disk_response.diskBytesReadRateMax,
+            bytes_read_rate_max,
+            "Check service diskBytesReadRateMax in updateServiceOffering"
+        )
+        self.assertEqual(
+            disk_response.diskBytesReadRateMaxLength,
+            bytes_read_rate_max_length,
+            "Check service diskBytesReadRateMaxLength in updateServiceOffering"
+        )
+        self.assertEqual(
+            disk_response.diskBytesWriteRate,
+            bytes_write_rate,
+            "Check service diskBytesWriteRate in updateServiceOffering"
+        )
+        self.assertEqual(
+            disk_response.diskBytesWriteRateMax,
+            bytes_write_rate_max,
+            "Check service diskBytesWriteRateMax in updateServiceOffering"
+        )
+        self.assertEqual(
+            disk_response.diskBytesWriteRateMaxLength,
+            bytes_write_rate_max_length,
+            "Check service diskBytesWriteRateMaxLength in updateServiceOffering"
+        )
+        self.assertEqual(
+            disk_response.diskIopsReadRate,
+            iops_read_rate,
+            "Check service diskIopsReadRate in updateServiceOffering"
+        )
+        self.assertEqual(
+            disk_response.diskIopsReadRateMax,
+            iops_read_rate_max,
+            "Check service diskIopsReadRateMax in updateServiceOffering"
+        )
+        self.assertEqual(
+            disk_response.diskIopsReadRateMaxLength,
+            iops_read_rate_max_length,
+            "Check service diskIopsReadRateMaxLength in updateServiceOffering"
+        )
+        self.assertEqual(
+            disk_response.diskIopsWriteRate,
+            iops_write_rate,
+            "Check service diskIopsWriteRate in updateServiceOffering"
+        )
+        self.assertEqual(
+            disk_response.diskIopsWriteRateMax,
+            iops_write_rate_max,
+            "Check service diskIopsWriteRateMax in updateServiceOffering"
+        )
+        self.assertEqual(
+            disk_response.diskIopsWriteRateMaxLength,
+            iops_write_rate_max_length,
+            "Check service diskIopsWriteRateMaxLength in updateServiceOffering"
+        )
         return
 
     @attr(tags=["advanced", "basic", "eip", "sg", "advancedns", "smoke"], required_hardware="false")
