@@ -4379,7 +4379,7 @@ class VpcOffering:
         self.__dict__.update(items)
 
     @classmethod
-    def create(cls, apiclient, services):
+    def create(cls, apiclient, services, serviceofferingid=None):
         """Create vpc offering"""
 
         import logging
@@ -4388,6 +4388,7 @@ class VpcOffering:
         cmd.name = "-".join([services["name"], random_gen()])
         cmd.displaytext = services["displaytext"]
         cmd.supportedServices = services["supportedservices"]
+        cmd.serviceofferingid = serviceofferingid
         if "serviceProviderList" in services:
             for service, provider in services["serviceProviderList"].items():
                 providers = provider
