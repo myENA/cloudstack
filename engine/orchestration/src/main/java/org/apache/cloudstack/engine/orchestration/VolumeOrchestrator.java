@@ -399,14 +399,18 @@ public class VolumeOrchestrator extends ManagerBase implements VolumeOrchestrati
             if (snapInfo == null) {
                 throw new CloudRuntimeException("Cannot find snapshot " + snapshot.getId());
             }
-            // We need to copy the snapshot onto secondary.
-            SnapshotStrategy snapshotStrategy = _storageStrategyFactory.getSnapshotStrategy(snapshot, SnapshotOperation.BACKUP);
-            snapshotStrategy.backupSnapshot(snapInfo);
 
-            // Attempt to grab it again.
-            snapInfo = snapshotFactory.getSnapshot(snapshot.getId(), dataStoreRole);
-            if (snapInfo == null) {
-                throw new CloudRuntimeException("Cannot find snapshot " + snapshot.getId() + " on secondary and could not create backup");
+            //Check if source and dest primary storage are different
+            if(!store.getUuid().equals(snapInfo.getDataStore().getUuid())) {
+                // We need to copy the snapshot onto secondary.
+                SnapshotStrategy snapshotStrategy = _storageStrategyFactory.getSnapshotStrategy(snapshot, SnapshotOperation.BACKUP);
+                snapshotStrategy.backupSnapshot(snapInfo);
+
+                // Attempt to grab it again.
+                snapInfo = snapshotFactory.getSnapshot(snapshot.getId(), dataStoreRole);
+                if (snapInfo == null) {
+                    throw new CloudRuntimeException("Cannot find snapshot " + snapshot.getId() + " on secondary and could not create backup");
+                }
             }
         }
         // don't try to perform a sync if the DataStoreRole of the snapshot is equal to DataStoreRole.Primary

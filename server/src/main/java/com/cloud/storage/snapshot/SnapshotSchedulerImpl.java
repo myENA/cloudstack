@@ -16,6 +16,7 @@
 // under the License.
 package com.cloud.storage.snapshot;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,9 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.naming.ConfigurationException;
 
+import com.cloud.storage.DataStoreRole;
+import org.apache.cloudstack.storage.datastore.db.SnapshotDataStoreDao;
+import org.apache.cloudstack.storage.datastore.db.SnapshotDataStoreVO;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -101,6 +105,8 @@ public class SnapshotSchedulerImpl extends ManagerBase implements SnapshotSchedu
     protected VMSnapshotManager _vmSnaphostManager;
     @Inject
     public TaggedResourceService taggedResourceService;
+    @Inject
+    public SnapshotDataStoreDao _snapshotStoreDao;
 
     protected AsyncJobDispatcher _asyncDispatcher;
 
@@ -170,6 +176,10 @@ public class SnapshotSchedulerImpl extends ManagerBase implements SnapshotSchedu
 
         try {
             deleteExpiredVMSnapshots();
+            boolean backupSnapToSecondary = SnapshotManager.BackupSnapshotAfterTakingSnapshot.value() == null || SnapshotManager.BackupSnapshotAfterTakingSnapshot.value();
+            if(!backupSnapToSecondary){
+                deleteOldSnapshotsFromSecondary();
+            }
         }
         catch (Exception e) {
             s_logger.warn("Error in expiring vm snapshots", e);
@@ -259,6 +269,24 @@ public class SnapshotSchedulerImpl extends ManagerBase implements SnapshotSchedu
                 _vmSnaphostManager.deleteVMSnapshot(vmSnapshot.getId());
             }
         }
+    }
+
+    @DB
+    protected void deleteOldSnapshotsFromSecondary(){
+        Date now = new Date();
+        List<SnapshotDataStoreVO> snapshots = _snapshotStoreDao.listAllSnapshotsOnSecondary(DataStoreRole.Image);
+        for(SnapshotDataStoreVO snapshot : snapshots){
+            if(now.after(getSecondarySnapshotRemovalDate(snapshot)))
+                _snapshotStoreDao.deleteSnapshotFromSecondary(snapshot.getId());
+        }
+    }
+
+    protected Date getSecondarySnapshotRemovalDate(SnapshotDataStoreVO snapshot){
+        Calendar calendar = Calendar.getInstance();
+        int daysUntilRemoval = SnapshotManager.RemoveOldSnapshotsFromSecondary.value();
+        calendar.setTime(snapshot.getCreated());
+        calendar.add(Calendar.DATE, daysUntilRemoval);
+        return calendar.getTime();
     }
 
     @DB
