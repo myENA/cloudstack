@@ -302,7 +302,7 @@
                                             var diskOfferings = cloudStack.listDiskOfferings({});
                                             diskOfferingsObjList = diskOfferings;
                                             var items = [];
-                                            $(diskOfferings).each(function() {
+                                            $(diskOfferingsObjList).each(function() {
                                                 items.push({
                                                     id: this.id,
                                                     description: this.displaytext
