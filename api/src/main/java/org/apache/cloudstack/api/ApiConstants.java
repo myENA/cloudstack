@@ -588,6 +588,8 @@ public class ApiConstants {
     public static final String TUNGSTEN_VM_INTERFACE_UUID = "tungstenvminterfaceuuid";
     public static final String TUNGSTEN_INSTANCE_IP_ADDRESS = "tungsteninstanceipaddress";
     public static final String TUNGSTEN_VM_INTERFACE_MAC_ADDRESSES = "tungstenvminterfacemacaddresses";
+    public static final String TUNGSTEN_VM_INTERFACE_MAC_ADDRESS = "tungstenvminterfacemacaddress";
+    public static final String TUNGSTEN_VM_NAME = "tungstenvmname";
     // Ovs controller
     public static final String OVS_DEVICE_ID = "ovsdeviceid";
     public static final String OVS_DEVICE_NAME = "ovsdevicename";
