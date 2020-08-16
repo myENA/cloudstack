@@ -64,34 +64,34 @@ public class CreateNetworkCmd extends BaseCmd implements UserCmd {
     private String displayText;
 
     @Parameter(name = ApiConstants.NETWORK_OFFERING_ID,
-               type = CommandType.UUID,
-               entityType = NetworkOfferingResponse.class,
-               required = true,
-               description = "the network offering ID")
+            type = CommandType.UUID,
+            entityType = NetworkOfferingResponse.class,
+            required = true,
+            description = "the network offering ID")
     private Long networkOfferingId;
 
     @Parameter(name = ApiConstants.ZONE_ID, type = CommandType.UUID, entityType = ZoneResponse.class, required = true, description = "the zone ID for the network")
     private Long zoneId;
 
     @Parameter(name = ApiConstants.PHYSICAL_NETWORK_ID,
-               type = CommandType.UUID,
-               entityType = PhysicalNetworkResponse.class,
-               description = "the physical network ID the network belongs to")
+            type = CommandType.UUID,
+            entityType = PhysicalNetworkResponse.class,
+            description = "the physical network ID the network belongs to")
     private Long physicalNetworkId;
 
     @Parameter(name = ApiConstants.GATEWAY, type = CommandType.STRING, description = "the gateway of the network. Required "
-        + "for shared networks and isolated networks when it belongs to VPC")
+            + "for shared networks and isolated networks when it belongs to VPC")
     private String gateway;
 
     @Parameter(name = ApiConstants.NETMASK, type = CommandType.STRING, description = "the netmask of the network. Required "
-        + "for shared networks and isolated networks when it belongs to VPC")
+            + "for shared networks and isolated networks when it belongs to VPC")
     private String netmask;
 
     @Parameter(name = ApiConstants.START_IP, type = CommandType.STRING, description = "the beginning IP address in the network IP range")
     private String startIp;
 
     @Parameter(name = ApiConstants.END_IP, type = CommandType.STRING, description = "the ending IP address in the network IP"
-        + " range. If not specified, will be defaulted to startIP")
+            + " range. If not specified, will be defaulted to startIP")
     private String endIp;
 
     @Parameter(name = ApiConstants.ISOLATED_PVLAN, type = CommandType.STRING, description = "the isolated private VLAN for this network")
@@ -105,8 +105,8 @@ public class CreateNetworkCmd extends BaseCmd implements UserCmd {
     private String networkDomain;
 
     @Parameter(name = ApiConstants.ACL_TYPE, type = CommandType.STRING, description = "Access control type; supported values"
-        + " are account and domain. In 3.0 all shared networks should have aclType=Domain, and all isolated networks"
-        + " - Account. Account means that only the account owner can use the network, domain - all accounts in the domain can use the network")
+            + " are account and domain. In 3.0 all shared networks should have aclType=Domain, and all isolated networks"
+            + " - Account. Account means that only the account owner can use the network, domain - all accounts in the domain can use the network")
     private String aclType;
 
     @Parameter(name = ApiConstants.ACCOUNT, type = CommandType.STRING, description = "account that will own the network")
@@ -119,13 +119,16 @@ public class CreateNetworkCmd extends BaseCmd implements UserCmd {
     private Long domainId;
 
     @Parameter(name = ApiConstants.SUBDOMAIN_ACCESS,
-               type = CommandType.BOOLEAN,
-               description = "Defines whether to allow"
-                   + " subdomains to use networks dedicated to their parent domain(s). Should be used with aclType=Domain, defaulted to allow.subdomain.network.access global config if not specified")
+            type = CommandType.BOOLEAN,
+            description = "Defines whether to allow"
+                    + " subdomains to use networks dedicated to their parent domain(s). Should be used with aclType=Domain, defaulted to allow.subdomain.network.access global config if not specified")
     private Boolean subdomainAccess;
 
     @Parameter(name = ApiConstants.VPC_ID, type = CommandType.UUID, entityType = VpcResponse.class, description = "the VPC network belongs to")
     private Long vpcId;
+
+    @Parameter(name = ApiConstants.TUNGSTEN_VIRTUAL_ROUTER_UUID, type = CommandType.STRING, description = "tungsten virtual router the network belongs to")
+    private String tungstenVirtualRouterUuid;
 
     @Parameter(name = ApiConstants.START_IPV6, type = CommandType.STRING, description = "the beginning IPv6 address in the IPv6 network range")
     private String startIpv6;
@@ -143,9 +146,12 @@ public class CreateNetworkCmd extends BaseCmd implements UserCmd {
     private String externalId;
 
     @Parameter(name = ApiConstants.DISPLAY_NETWORK,
-               type = CommandType.BOOLEAN,
- description = "an optional field, whether to the display the network to the end user or not.", authorized = {RoleType.Admin})
+            type = CommandType.BOOLEAN,
+            description = "an optional field, whether to the display the network to the end user or not.", authorized = {RoleType.Admin})
     private Boolean displayNetwork;
+
+    @Parameter(name = ApiConstants.IS_TUNGSTEN_NETWORK, type = CommandType.UUID, description = "tungsten network belongs to")
+    private Long tungstenNetwork;
 
     @Parameter(name = ApiConstants.ACL_ID, type = CommandType.UUID, entityType = NetworkACLResponse.class, description = "Network ACL ID associated for the network")
     private Long aclId;
@@ -223,6 +229,14 @@ public class CreateNetworkCmd extends BaseCmd implements UserCmd {
 
     public String getIsolatedPvlanType() {
         return isolatedPvlanType;
+    }
+
+    public Long isTungstenNetwork() {
+        return tungstenNetwork;
+    }
+
+    public String getTungstenVirtualRouterUuid() {
+        return tungstenVirtualRouterUuid;
     }
 
     @Override
@@ -315,8 +329,8 @@ public class CreateNetworkCmd extends BaseCmd implements UserCmd {
 
     @Override
     // an exception thrown by createNetwork() will be caught by the dispatcher.
-        public
-        void execute() throws InsufficientCapacityException, ConcurrentOperationException, ResourceAllocationException {
+    public
+    void execute() throws InsufficientCapacityException, ConcurrentOperationException, ResourceAllocationException {
         Network result = _networkService.createGuestNetwork(this);
         if (result != null) {
             NetworkResponse response = _responseGenerator.createNetworkResponse(getResponseView(), result);

@@ -190,6 +190,10 @@ public class NetworkResponse extends BaseResponse implements ControlledEntityRes
     @Param(description = "VPC the network belongs to")
     private String vpcId;
 
+    @SerializedName(ApiConstants.TUNGSTEN_VIRTUAL_ROUTER_UUID)
+    @Param(description = "Tungsten virtual router the network belongs to")
+    private String tungstenVirtualRouterUuid;
+
     @SerializedName(ApiConstants.CAN_USE_FOR_DEPLOY)
     @Param(description = "list networks available for vm deployment")
     private Boolean canUseForDeploy;
@@ -457,5 +461,13 @@ public class NetworkResponse extends BaseResponse implements ControlledEntityRes
 
     public void setRedundantRouter(Boolean redundantRouter) {
         this.redundantRouter = redundantRouter;
+    }
+
+    public String getTungstenVirtualRouterUuid() {
+        return tungstenVirtualRouterUuid;
+    }
+
+    public void setTungstenVirtualRouterUuid(String tungstenVirtualRouterUuid) {
+        this.tungstenVirtualRouterUuid = tungstenVirtualRouterUuid;
     }
 }

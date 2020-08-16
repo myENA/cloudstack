@@ -564,8 +564,8 @@ public class ApiResponseHelper implements ResponseGenerator {
             s_logger.debug("Unable to find info for image store snapshot with uuid " + snapshot.getUuid());
             snapshotResponse.setRevertable(false);
         } else {
-        snapshotResponse.setRevertable(snapshotInfo.isRevertable());
-        snapshotResponse.setPhysicaSize(snapshotInfo.getPhysicalSize());
+            snapshotResponse.setRevertable(snapshotInfo.isRevertable());
+            snapshotResponse.setPhysicaSize(snapshotInfo.getPhysicalSize());
         }
 
         // set tag information
@@ -1448,10 +1448,10 @@ public class ApiResponseHelper implements ResponseGenerator {
                         vmResponse.setGateway(singleNicProfile.getIPv4Gateway());
                     } else if (network.getTrafficType() == TrafficType.Guest) {
                         /*
-                          * In basic zone, public ip has TrafficType.Guest in case EIP service is not enabled.
-                          * When EIP service is enabled in the basic zone, system VM by default get the public
-                          * IP allocated for EIP. So return the guest/public IP accordingly.
-                          * */
+                         * In basic zone, public ip has TrafficType.Guest in case EIP service is not enabled.
+                         * When EIP service is enabled in the basic zone, system VM by default get the public
+                         * IP allocated for EIP. So return the guest/public IP accordingly.
+                         * */
                         NetworkOffering networkOffering = ApiDBUtils.findNetworkOfferingById(network.getNetworkOfferingId());
                         if (networkOffering.isElasticIp()) {
                             IpAddress ip = ApiDBUtils.findIpByAssociatedVmId(vm.getId());
@@ -2055,6 +2055,7 @@ public class ApiResponseHelper implements ResponseGenerator {
             serviceResponses.add(svcRsp);
         }
         response.setForVpc(_configMgr.isOfferingForVpc(offering));
+        response.setForTungsten(offering.isForTungsten());
         response.setServices(serviceResponses);
         //set network offering details
         Map<Detail, String> details = _ntwkModel.getNtwkOffDetails(offering.getId());
@@ -2141,10 +2142,10 @@ public class ApiResponseHelper implements ResponseGenerator {
             response.setBroadcastUri(broadcastUri);
             String vlan = "N/A";
             switch (BroadcastDomainType.getSchemeValue(network.getBroadcastUri())) {
-            case Vlan:
-            case Vxlan:
-                vlan = BroadcastDomainType.getValue(network.getBroadcastUri());
-                break;
+                case Vlan:
+                case Vxlan:
+                    vlan = BroadcastDomainType.getValue(network.getBroadcastUri());
+                    break;
             }
             // return vlan information only to Root admin
             response.setVlan(vlan);
@@ -2343,8 +2344,8 @@ public class ApiResponseHelper implements ResponseGenerator {
             response.setPublicIpAddress(ip.getAddress().addr());
         }
 
-            Network network = ApiDBUtils.findNetworkById(fwRule.getNetworkId());
-            response.setNetworkId(network.getUuid());
+        Network network = ApiDBUtils.findNetworkById(fwRule.getNetworkId());
+        response.setNetworkId(network.getUuid());
 
         FirewallRule.State state = fwRule.getState();
         String stateToSet = state.toString();
@@ -3720,7 +3721,7 @@ public class ApiResponseHelper implements ResponseGenerator {
             if (!oldFormat) {
                 VolumeVO volume = null;
                 if (vmSnapshotVO == null && usageRecord.getUsageId() != null) {
-                     volume = _entityMgr.findByIdIncludingRemoved(VolumeVO.class, usageRecord.getUsageId().toString());
+                    volume = _entityMgr.findByIdIncludingRemoved(VolumeVO.class, usageRecord.getUsageId().toString());
                 }
 
                 DiskOfferingVO diskOff = null;
@@ -3780,7 +3781,7 @@ public class ApiResponseHelper implements ResponseGenerator {
             }
         }
         if(resourceTagResponseMap != null && resourceTagResponseMap.get(resourceId + ":" + resourceType) != null) {
-             usageRecResponse.setTags(resourceTagResponseMap.get(resourceId + ":" + resourceType));
+            usageRecResponse.setTags(resourceTagResponseMap.get(resourceId + ":" + resourceType));
         }
 
         if (usageRecord.getRawUsage() != null) {

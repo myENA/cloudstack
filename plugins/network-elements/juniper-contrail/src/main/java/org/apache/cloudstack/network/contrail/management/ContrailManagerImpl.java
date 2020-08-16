@@ -193,7 +193,7 @@ public class ContrailManagerImpl extends ManagerBase implements ContrailManager 
     }
 
     private NetworkOffering locatePublicNetworkOffering(String offeringName,
-            String offeringDisplayText, Provider provider) {
+                                                        String offeringDisplayText, Provider provider) {
         List<? extends NetworkOffering> offerList = _configService.listNetworkOfferings(TrafficType.Public, false);
         for (NetworkOffering offer: offerList) {
             if (offer.getName().equals(offeringName)) {
@@ -219,7 +219,7 @@ public class ContrailManagerImpl extends ManagerBase implements ContrailManager 
         ConfigurationManager configMgr = (ConfigurationManager) _configService;
         NetworkOfferingVO voffer = configMgr.createNetworkOffering(offeringName, offeringDisplayText,
                 TrafficType.Public, null, true, Availability.Optional, null, serviceProviderMap, true,
-                Network.GuestType.Shared, false, null, false, null, true, false, null, true, null, false, false, null, null);
+                Network.GuestType.Shared, false, null, false, null, true, false, null, true, null, false, false, false,null, null);
 
         voffer.setState(NetworkOffering.State.Enabled);
         long id = voffer.getId();
@@ -228,7 +228,7 @@ public class ContrailManagerImpl extends ManagerBase implements ContrailManager 
     }
 
     private NetworkOffering locateNetworkOffering(String offeringName,
-            String offeringDisplayText, Provider provider) {
+                                                  String offeringDisplayText, Provider provider) {
         List<? extends NetworkOffering> offerList = _configService.listNetworkOfferings(TrafficType.Guest, false);
         for (NetworkOffering offer : offerList) {
             if (offer.getName().equals(offeringName)) {
@@ -256,7 +256,7 @@ public class ContrailManagerImpl extends ManagerBase implements ContrailManager 
         ConfigurationManager configMgr = (ConfigurationManager)_configService;
         NetworkOfferingVO voffer =
                 configMgr.createNetworkOffering(offeringName, offeringDisplayText, TrafficType.Guest, null, false, Availability.Optional, null, serviceProviderMap, true,
-                        Network.GuestType.Isolated, false, null, false, null, false, true, null, true, null, false, offeringName.equals(vpcRouterOfferingName), null, null);
+                        Network.GuestType.Isolated, false, null, false, null, false, true, null, true, null, false, offeringName.equals(vpcRouterOfferingName), false,null, null);
 
         voffer.setState(NetworkOffering.State.Enabled);
         if (offeringName.equals(vpcRouterOfferingName)) {

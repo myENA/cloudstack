@@ -253,7 +253,7 @@ public class MockConfigurationManagerImpl extends ManagerBase implements Configu
      */
     @Override
     public Vlan createVlanAndPublicIpRange(CreateVlanIpRangeCmd cmd) throws InsufficientCapacityException, ConcurrentOperationException, ResourceUnavailableException,
-        ResourceAllocationException {
+            ResourceAllocationException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -447,7 +447,7 @@ public class MockConfigurationManagerImpl extends ManagerBase implements Configu
      */
     @Override
     public HostPodVO createPod(long userId, String podName, long zoneId, String gateway, String cidr, String startIp, String endIp, String allocationState,
-        boolean skipGatewayOverlapCheck) {
+                               boolean skipGatewayOverlapCheck) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -486,7 +486,7 @@ public class MockConfigurationManagerImpl extends ManagerBase implements Configu
     public NetworkOfferingVO createNetworkOffering(String name, String displayText, TrafficType trafficType, String tags, boolean specifyVlan, Availability availability,
                                                    Integer networkRate, Map<Service, Set<Provider>> serviceProviderMap, boolean isDefault, GuestType type, boolean systemOnly, Long serviceOfferingId,
                                                    boolean conserveMode, Map<Service, Map<Capability, String>> serviceCapabilityMap, boolean specifyIpRanges, boolean isPersistent,
-                                                   Map<NetworkOffering.Detail, String> details, boolean egressDefaultPolicy, Integer maxconn, boolean enableKeepAlive, Boolean forVpc, List<Long> domainIds, List<Long> zoneIds) {
+                                                   Map<NetworkOffering.Detail, String> details, boolean egressDefaultPolicy, Integer maxconn, boolean enableKeepAlive, Boolean forVpc, Boolean forTungsten, List<Long> domainIds, List<Long> zoneIds) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -496,8 +496,8 @@ public class MockConfigurationManagerImpl extends ManagerBase implements Configu
      */
     @Override
     public Vlan createVlanAndPublicIpRange(long zoneId, long networkId, long physicalNetworkId, boolean forVirtualNetwork, boolean forSystemVms, Long podId, String startIP, String endIP,
-        String vlanGateway, String vlanNetmask, String vlanId, boolean bypassVlanOverlapCheck, Domain domain, Account vlanOwner, String startIPv6, String endIPv6, String vlanGatewayv6, String vlanCidrv6)
-        throws InsufficientCapacityException, ConcurrentOperationException, InvalidParameterValueException {
+                                           String vlanGateway, String vlanNetmask, String vlanId, boolean bypassVlanOverlapCheck, Domain domain, Account vlanOwner, String startIPv6, String endIPv6, String vlanGatewayv6, String vlanCidrv6)
+            throws InsufficientCapacityException, ConcurrentOperationException, InvalidParameterValueException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -570,8 +570,8 @@ public class MockConfigurationManagerImpl extends ManagerBase implements Configu
      */
     @Override
     public DataCenterVO createZone(long userId, String zoneName, String dns1, String dns2, String internalDns1, String internalDns2, String guestCidr, String domain,
-        Long domainId, NetworkType zoneType, String allocationState, String networkDomain, boolean isSecurityGroupEnabled, boolean isLocalStorageEnabled, String ip6Dns1,
-        String ip6Dns2) {
+                                   Long domainId, NetworkType zoneType, String allocationState, String networkDomain, boolean isSecurityGroupEnabled, boolean isLocalStorageEnabled, String ip6Dns1,
+                                   String ip6Dns2) {
         // TODO Auto-generated method stub
         return null;
     }

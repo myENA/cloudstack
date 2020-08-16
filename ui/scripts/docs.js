@@ -629,6 +629,10 @@ cloudStack.docs = {
         desc: 'Specify whether this offering is for a virtual private cloud',
         externalLink: ''
     },
+    helpNetworkOfferingTungsten: {
+        desc: 'Specify whether this offering is for tungsten SDN',
+        externalLink: ''
+    },
     helpNetworkOfferingSystemOffering: {
         desc: 'Choose the system service offering that you want the virtual routers to use in this network',
         externalLink: ''

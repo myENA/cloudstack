@@ -104,7 +104,7 @@ public class ExternalGuestNetworkGuru extends GuestNetworkGuru {
     @Override
     public Network design(NetworkOffering offering, DeploymentPlan plan, Network userSpecified, Account owner) {
 
-        if (_networkModel.areServicesSupportedByNetworkOffering(offering.getId(), Network.Service.Connectivity)) {
+        if (_networkModel.areServicesSupportedByNetworkOffering(offering.getId(), Network.Service.Connectivity) || offering.isForTungsten()) {
             return null;
         }
 
@@ -121,7 +121,7 @@ public class ExternalGuestNetworkGuru extends GuestNetworkGuru {
 
     @Override
     public Network implement(Network config, NetworkOffering offering, DeployDestination dest, ReservationContext context)
-        throws InsufficientVirtualNetworkCapacityException {
+            throws InsufficientVirtualNetworkCapacityException {
         assert (config.getState() == State.Implementing) : "Why are we implementing " + config;
 
         if (_networkModel.areServicesSupportedInNetwork(config.getId(), Network.Service.Connectivity)) {
@@ -134,15 +134,15 @@ public class ExternalGuestNetworkGuru extends GuestNetworkGuru {
 
         DataCenter zone = dest.getDataCenter();
         NetworkVO implemented =
-            new NetworkVO(config.getTrafficType(), config.getMode(), config.getBroadcastDomainType(), config.getNetworkOfferingId(), State.Allocated,
-                config.getDataCenterId(), config.getPhysicalNetworkId(), offering.isRedundantRouter());
+                new NetworkVO(config.getTrafficType(), config.getMode(), config.getBroadcastDomainType(), config.getNetworkOfferingId(), State.Allocated,
+                        config.getDataCenterId(), config.getPhysicalNetworkId(), offering.isRedundantRouter());
 
         // Get a vlan tag
         int vlanTag;
         if (config.getBroadcastUri() == null) {
             String vnet =
-                _dcDao.allocateVnet(zone.getId(), config.getPhysicalNetworkId(), config.getAccountId(), context.getReservationId(),
-                    UseSystemGuestVlans.valueIn(config.getAccountId()));
+                    _dcDao.allocateVnet(zone.getId(), config.getPhysicalNetworkId(), config.getAccountId(), context.getReservationId(),
+                            UseSystemGuestVlans.valueIn(config.getAccountId()));
 
             try {
                 // when supporting more types of networks this need to become
@@ -154,7 +154,7 @@ public class ExternalGuestNetworkGuru extends GuestNetworkGuru {
 
             implemented.setBroadcastUri(BroadcastDomainType.Vlan.toUri(vlanTag));
             ActionEventUtils.onCompletedActionEvent(CallContext.current().getCallingUserId(), config.getAccountId(), EventVO.LEVEL_INFO,
-                EventTypes.EVENT_ZONE_VLAN_ASSIGN, "Assigned Zone Vlan: " + vnet + " Network Id: " + config.getId(), 0);
+                    EventTypes.EVENT_ZONE_VLAN_ASSIGN, "Assigned Zone Vlan: " + vnet + " Network Id: " + config.getId(), 0);
         } else {
             vlanTag = Integer.parseInt(BroadcastDomainType.getValue(config.getBroadcastUri()));
             implemented.setBroadcastUri(config.getBroadcastUri());
@@ -245,7 +245,7 @@ public class ExternalGuestNetworkGuru extends GuestNetworkGuru {
 
     @Override
     public NicProfile allocate(Network config, NicProfile nic, VirtualMachineProfile vm) throws InsufficientVirtualNetworkCapacityException,
-        InsufficientAddressCapacityException {
+            InsufficientAddressCapacityException {
 
         if (_networkModel.networkIsConfiguredForExternalNetworking(config.getDataCenterId(), config.getId()) && nic != null && nic.getRequestedIPv4() != null) {
             throw new CloudRuntimeException("Does not support custom ip allocation at this time: " + nic);
@@ -280,7 +280,7 @@ public class ExternalGuestNetworkGuru extends GuestNetworkGuru {
 
     @Override
     public void reserve(NicProfile nic, Network config, VirtualMachineProfile vm, DeployDestination dest, ReservationContext context)
-        throws InsufficientVirtualNetworkCapacityException, InsufficientAddressCapacityException {
+            throws InsufficientVirtualNetworkCapacityException, InsufficientAddressCapacityException {
         assert (nic.getReservationStrategy() == ReservationStrategy.Start) : "What can I do for nics that are not allocated at start? ";
 
         DataCenter dc = _dcDao.findById(config.getDataCenterId());

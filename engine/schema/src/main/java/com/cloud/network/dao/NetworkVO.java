@@ -16,9 +16,14 @@
 // under the License.
 package com.cloud.network.dao;
 
-import java.net.URI;
-import java.util.Date;
-import java.util.UUID;
+import com.cloud.network.Network;
+import com.cloud.network.Networks.BroadcastDomainType;
+import com.cloud.network.Networks.Mode;
+import com.cloud.network.Networks.TrafficType;
+import com.cloud.utils.NumbersUtil;
+import com.cloud.utils.db.GenericDao;
+import com.cloud.utils.net.NetUtils;
+import org.apache.cloudstack.acl.ControlledEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,16 +33,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-
-import org.apache.cloudstack.acl.ControlledEntity;
-
-import com.cloud.network.Network;
-import com.cloud.network.Networks.BroadcastDomainType;
-import com.cloud.network.Networks.Mode;
-import com.cloud.network.Networks.TrafficType;
-import com.cloud.utils.NumbersUtil;
-import com.cloud.utils.db.GenericDao;
-import com.cloud.utils.net.NetUtils;
+import java.net.URI;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * NetworkConfigurationVO contains information about a specific network.
@@ -86,6 +84,9 @@ public class NetworkVO implements Network {
 
     @Column(name = "vpc_id")
     Long vpcId;
+
+    @Column(name = "tungsten_network_uuid")
+    String tungstenNetworkUuid;
 
     @Column(name = "physical_network_id")
     Long physicalNetworkId;
@@ -199,7 +200,7 @@ public class NetworkVO implements Network {
      * @param physicalNetworkId TODO
      */
     public NetworkVO(TrafficType trafficType, Mode mode, BroadcastDomainType broadcastDomainType, long networkOfferingId, State state, long dataCenterId,
-            Long physicalNetworkId, final boolean isRedundant) {
+                     Long physicalNetworkId, final boolean isRedundant) {
         this.trafficType = trafficType;
         this.mode = mode;
         this.broadcastDomainType = broadcastDomainType;
@@ -217,25 +218,25 @@ public class NetworkVO implements Network {
     }
 
     public NetworkVO(long id, Network that, long offeringId, String guruName, long domainId, long accountId, long related, String name, String displayText,
-            String networkDomain, GuestType guestType, long dcId, Long physicalNetworkId, ACLType aclType, boolean specifyIpRanges, Long vpcId, final boolean isRedundant, String externalId) {
+                     String networkDomain, GuestType guestType, long dcId, Long physicalNetworkId, ACLType aclType, boolean specifyIpRanges, Long vpcId, final boolean isRedundant, String externalId) {
         this(id,
-            that.getTrafficType(),
-            that.getMode(),
-            that.getBroadcastDomainType(),
-            offeringId,
-            domainId,
-            accountId,
-            related,
-            name,
-            displayText,
-            networkDomain,
-            guestType,
-            dcId,
-            physicalNetworkId,
-            aclType,
-            specifyIpRanges,
-            vpcId,
-            isRedundant);
+                that.getTrafficType(),
+                that.getMode(),
+                that.getBroadcastDomainType(),
+                offeringId,
+                domainId,
+                accountId,
+                related,
+                name,
+                displayText,
+                networkDomain,
+                guestType,
+                dcId,
+                physicalNetworkId,
+                aclType,
+                specifyIpRanges,
+                vpcId,
+                isRedundant);
         gateway = that.getGateway();
         cidr = that.getCidr();
         networkCidr = that.getNetworkCidr();
@@ -270,8 +271,8 @@ public class NetworkVO implements Network {
      * @param dataCenterId
      */
     public NetworkVO(long id, TrafficType trafficType, Mode mode, BroadcastDomainType broadcastDomainType, long networkOfferingId, long domainId, long accountId,
-            long related, String name, String displayText, String networkDomain, GuestType guestType, long dcId, Long physicalNetworkId, ACLType aclType,
-            boolean specifyIpRanges, Long vpcId, final boolean isRedundant) {
+                     long related, String name, String displayText, String networkDomain, GuestType guestType, long dcId, Long physicalNetworkId, ACLType aclType,
+                     boolean specifyIpRanges, Long vpcId, final boolean isRedundant) {
         this(trafficType, mode, broadcastDomainType, networkOfferingId, State.Allocated, dcId, physicalNetworkId, isRedundant);
         this.domainId = domainId;
         this.accountId = accountId;
@@ -285,6 +286,26 @@ public class NetworkVO implements Network {
         this.guestType = guestType;
         this.specifyIpRanges = specifyIpRanges;
         this.vpcId = vpcId;
+    }
+
+    public NetworkVO(long id, TrafficType trafficType, Mode mode, BroadcastDomainType broadcastDomainType, long networkOfferingId, long domainId, long accountId,
+                     long related, String name, String displayText, String networkDomain, GuestType guestType, long dcId, Long physicalNetworkId, ACLType aclType,
+                     boolean specifyIpRanges, Long vpcId, final boolean isRedundant, String tungstenNetworkUuid) {
+        this(trafficType, mode, broadcastDomainType, networkOfferingId, State.Allocated, dcId, physicalNetworkId, isRedundant);
+        this.domainId = domainId;
+        this.accountId = accountId;
+        this.related = related;
+        this.id = id;
+        this.name = name;
+        this.displayText = displayText;
+        this.aclType = aclType;
+        this.networkDomain = networkDomain;
+        uuid = UUID.randomUUID().toString();
+        this.guestType = guestType;
+        this.specifyIpRanges = specifyIpRanges;
+        this.vpcId = vpcId;
+        this.tungstenNetworkUuid = tungstenNetworkUuid;
+
     }
 
     @Override
@@ -395,6 +416,15 @@ public class NetworkVO implements Network {
     @Override
     public TrafficType getTrafficType() {
         return trafficType;
+    }
+
+    @Override
+    public String getTungstenNetworkUuid() {
+        return tungstenNetworkUuid;
+    }
+
+    public void setTungstenNetworkUuid(String tungstenNetworkUuid) {
+        this.tungstenNetworkUuid = tungstenNetworkUuid;
     }
 
     @Override

@@ -573,6 +573,7 @@ public class ApiConstants {
     // Tungsten controller
     public static final String TUNGSTEN_NETWORK_SUBNET_NAME = "tungstensubnetname";
     public static final String TUNGSTEN_NETWORK_UUID = "tungstennetworkuuid";
+    public static final String TUNGSTEN_VIRTUAL_ROUTER_UUID = "tungstenvirtualrouteruuid";
     public static final String TUNGSTEN_NETWORK_IPAM_UUID= "tungstennetworkipamuuid";
     public static final String TUNGSTEN_ADDR_FROM_START = "tungstenaddrfromstart";
     public static final String TUNGSTEN_IP_ALLOC_POOL_START = "tungstenipallocpoolstart";
@@ -590,6 +591,7 @@ public class ApiConstants {
     public static final String TUNGSTEN_VM_INTERFACE_MAC_ADDRESSES = "tungstenvminterfacemacaddresses";
     public static final String TUNGSTEN_VM_INTERFACE_MAC_ADDRESS = "tungstenvminterfacemacaddress";
     public static final String TUNGSTEN_VM_NAME = "tungstenvmname";
+    public static final String IS_TUNGSTEN_NETWORK = "istungstennetwork";
     // Ovs controller
     public static final String OVS_DEVICE_ID = "ovsdeviceid";
     public static final String OVS_DEVICE_NAME = "ovsdevicename";
@@ -644,6 +646,7 @@ public class ApiConstants {
     public static final String DPD = "dpd";
     public static final String FORCE_ENCAP = "forceencap";
     public static final String FOR_VPC = "forvpc";
+    public static final String FOR_TUNGSTEN = "fortungsten";
     public static final String SHRINK_OK = "shrinkok";
     public static final String NICIRA_NVP_DEVICE_ID = "nvpdeviceid";
     public static final String NICIRA_NVP_TRANSPORT_ZONE_UUID = "transportzoneuuid";

@@ -27,11 +27,11 @@
         };
 
         if (typeof elem.icmptype != 'undefined') {
-             var icmptype = elem.icmptype.toString()
+            var icmptype = elem.icmptype.toString()
         }
 
         if (typeof elem.icmpcode != 'undefined') {
-             var icmpcode = elem.icmpcode.toString()
+            var icmpcode = elem.icmpcode.toString()
         }
 
         if (elemData.startport == 0 && elemData.endport) {
@@ -702,6 +702,55 @@
                                             }
                                         }
                                     },
+                                    tungstenvirtualrouteruuid: {
+                                        label: 'label.tungsten',
+                                        dependsOn: 'networkOfferingId',
+                                        select: function(args) {
+                                            var networkOfferingObj;
+                                            var $form = args.$select.closest('form');
+                                            var data = {
+                                                listAll: true,
+                                                details: 'min'
+                                            };
+
+                                            $(networkOfferingObjs).each(function(key, value) {
+                                                if (value.id == args.networkOfferingId) {
+                                                    networkOfferingObj = value;
+                                                    return false; //break each loop
+                                                }
+                                            });
+
+                                            if (networkOfferingObj.fortungsten == true) {
+                                                args.$select.closest('.form-item').css('display', 'inline-block');
+                                                $.ajax({
+                                                    url: createURL('listTungstenVirtualRouters'),
+                                                    data: data,
+                                                    success: function(json) {
+                                                        var items = json.listtungstenvirtualroutersresponse.tungstenVirtualRouter;
+                                                        var data;
+                                                        if (items != null && items.length > 0) {
+                                                            data = $.map(items, function(item) {
+                                                                return {
+                                                                    id: item.uuid,
+                                                                    description: item.name
+                                                                }
+                                                            });
+                                                        }
+                                                        args.response.success({
+                                                            data: data
+                                                        });
+                                                    }
+                                                });
+                                                $form.find('.form-item[rel=networkDomain]').hide();
+                                            } else {
+                                                args.$select.closest('.form-item').hide();
+                                                $form.find('.form-item[rel=networkDomain]').show();
+                                                args.response.success({
+                                                    data: null
+                                                });
+                                            }
+                                        }
+                                    },
                                     externalId: {
                                         label: 'label.guest.externalId'
                                     },
@@ -756,6 +805,12 @@
                                 if (args.$form.find('.form-item[rel=vpcid]').css("display") != "none") {
                                     $.extend(dataObj, {
                                         vpcid: args.data.vpcid
+                                    });
+                                }
+
+                                if (args.$form.find('.form-item[rel=tungstenvirtualrouteruuid]').css("display") != "none") {
+                                    $.extend(dataObj, {
+                                        tungstenvirtualrouteruuid: args.data.tungstenvirtualrouteruuid
                                     });
                                 }
 
@@ -1518,10 +1573,10 @@
                                                 isOptional: true
                                             },
                                             'destcidrlist': {
-                                                 edit: true,
-                                                 label: 'label.cidr.destination.list',
-                                                 isOptional: true
-                                             },
+                                                edit: true,
+                                                label: 'label.cidr.destination.list',
+                                                isOptional: true
+                                            },
                                             'protocol': {
                                                 label: 'label.protocol',
                                                 select: function(args) {
@@ -3442,22 +3497,22 @@
                                                 isEditable: true,
                                                 select: function(args) {
                                                     var data = [{
-                                                            id: 'tcp',
-                                                            name: 'tcp',
-                                                            description: _l('label.lb.protocol.tcp')
-                                                        }, {
-                                                            id: 'udp',
-                                                            name: 'udp',
-                                                            description: _l('label.lb.protocol.udp')
-                                                        }, {
-                                                            id: 'tcp-proxy',
-                                                            name: 'tcp-proxy',
-                                                            description: _l('label.lb.protocol.tcp.proxy')
-                                                        }, {
-                                                            id: 'ssl',
-                                                            name: 'ssl',
-                                                            description: _l('label.lb.protocol.ssl')
-                                                        }];
+                                                        id: 'tcp',
+                                                        name: 'tcp',
+                                                        description: _l('label.lb.protocol.tcp')
+                                                    }, {
+                                                        id: 'udp',
+                                                        name: 'udp',
+                                                        description: _l('label.lb.protocol.udp')
+                                                    }, {
+                                                        id: 'tcp-proxy',
+                                                        name: 'tcp-proxy',
+                                                        description: _l('label.lb.protocol.tcp.proxy')
+                                                    }, {
+                                                        id: 'ssl',
+                                                        name: 'ssl',
+                                                        description: _l('label.lb.protocol.ssl')
+                                                    }];
                                                     if (typeof args.context != 'undefined') {
                                                         var lbProtocols = getLBProtocols(args.context.networks[0]);
                                                         data = (lbProtocols.length == 0) ? data : lbProtocols;
@@ -3611,27 +3666,27 @@
                                                         var lbID = data.createloadbalancerruleresponse.id;
 
                                                         var inputData = {
-                                                        	id: data.createloadbalancerruleresponse.id
+                                                            id: data.createloadbalancerruleresponse.id
                                                         };
 
                                                         var selectedVMs = args.itemData;
                                                         if (selectedVMs != null) {
-                                                        	var vmidipmapIndex = 0;
-                                                    		for (var vmIndex = 0; vmIndex < selectedVMs.length; vmIndex++) {
-                                                    			var selectedIPs = selectedVMs[vmIndex]._subselect;
-                                                    			for (var ipIndex = 0; ipIndex < selectedIPs.length; ipIndex++) {
-                                                    				inputData['vmidipmap[' + vmidipmapIndex + '].vmid'] = selectedVMs[vmIndex].id;
+                                                            var vmidipmapIndex = 0;
+                                                            for (var vmIndex = 0; vmIndex < selectedVMs.length; vmIndex++) {
+                                                                var selectedIPs = selectedVMs[vmIndex]._subselect;
+                                                                for (var ipIndex = 0; ipIndex < selectedIPs.length; ipIndex++) {
+                                                                    inputData['vmidipmap[' + vmidipmapIndex + '].vmid'] = selectedVMs[vmIndex].id;
 
-                                                    				if (args.context.ipAddresses[0].isportable) {
-                                                        			    inputData['vmidipmap[' + vmidipmapIndex + '].vmip'] = selectedIPs[ipIndex].split(',')[1];
-                                                        			} else {
-                                                        				inputData['vmidipmap[' + vmidipmapIndex + '].vmip'] = selectedIPs[ipIndex];
-                                                        			}
+                                                                    if (args.context.ipAddresses[0].isportable) {
+                                                                        inputData['vmidipmap[' + vmidipmapIndex + '].vmip'] = selectedIPs[ipIndex].split(',')[1];
+                                                                    } else {
+                                                                        inputData['vmidipmap[' + vmidipmapIndex + '].vmip'] = selectedIPs[ipIndex];
+                                                                    }
 
-                                                    				vmidipmapIndex++;
-                                                    			}
-                                                    		}
-                                                    	}
+                                                                    vmidipmapIndex++;
+                                                                }
+                                                            }
+                                                        }
 
                                                         $.ajax({
                                                             url: createURL('assignToLoadBalancerRule'),
@@ -3657,7 +3712,7 @@
                                                                                 },
                                                                                 complete: function(args) {
                                                                                     if (lbStickyCreated && lbCertificateCreated) {
-                                                                                            return;
+                                                                                        return;
                                                                                     }
 
                                                                                     if (!lbStickyCreated) {
@@ -4392,22 +4447,22 @@
 
                                     return $('<div>')
                                         .append(
-                                        $('<ul>').addClass('info')
-                                            .append(
-                                            // VPN IP
-                                            $('<li>').addClass('ip').html(_l('message.enabled.vpn') + ' ')
-                                                .append($('<strong>').html(ipAddress))
+                                            $('<ul>').addClass('info')
+                                                .append(
+                                                    // VPN IP
+                                                    $('<li>').addClass('ip').html(_l('message.enabled.vpn') + ' ')
+                                                        .append($('<strong>').html(ipAddress))
+                                                )
+                                                .append(
+                                                    // PSK
+                                                    $('<li>').addClass('psk').html(_l('message.enabled.vpn.ip.sec') + ' ')
+                                                        .append($('<strong>').html(psk))
+                                                )
+                                                .append(
+                                                    //Note
+                                                    $('<li>').html(_l('message.enabled.vpn.note'))
+                                                )
                                         )
-                                            .append(
-                                            // PSK
-                                            $('<li>').addClass('psk').html(_l('message.enabled.vpn.ip.sec') + ' ')
-                                                .append($('<strong>').html(psk))
-                                        )
-                                            .append(
-                                                //Note
-                                                $('<li>').html(_l('message.enabled.vpn.note'))
-                                            )
-                                    )
                                 }
                             }
                         }
@@ -7110,7 +7165,7 @@
         }
 
         $(protocols).each(function() {
-                data.push({id: 'ssl', name: 'ssl', description: _l('label.lb.protocol.ssl')});
+            data.push({id: 'ssl', name: 'ssl', description: _l('label.lb.protocol.ssl')});
         });
 
         return data;

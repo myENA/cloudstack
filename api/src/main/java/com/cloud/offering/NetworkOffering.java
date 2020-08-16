@@ -84,6 +84,8 @@ public interface NetworkOffering extends InfrastructureEntity, InternalIdentity,
 
     boolean isForVpc();
 
+    boolean isForTungsten();
+
     TrafficType getTrafficType();
 
     boolean isSpecifyVlan();

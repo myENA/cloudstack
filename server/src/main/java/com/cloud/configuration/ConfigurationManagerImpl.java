@@ -559,81 +559,81 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         // global parameter updation
         if (scope != null && !scope.isEmpty() && !ConfigKey.Scope.Global.toString().equalsIgnoreCase(scope)) {
             switch (ConfigKey.Scope.valueOf(scope)) {
-            case Zone:
-                final DataCenterVO zone = _zoneDao.findById(resourceId);
-                if (zone == null) {
-                    throw new InvalidParameterValueException("unable to find zone by id " + resourceId);
-                }
-                _dcDetailsDao.addDetail(resourceId, name, value, true);
-                break;
-            case Cluster:
-                final ClusterVO cluster = _clusterDao.findById(resourceId);
-                if (cluster == null) {
-                    throw new InvalidParameterValueException("unable to find cluster by id " + resourceId);
-                }
-                ClusterDetailsVO clusterDetailsVO = _clusterDetailsDao.findDetail(resourceId, name);
-                if (clusterDetailsVO == null) {
-                    clusterDetailsVO = new ClusterDetailsVO(resourceId, name, value);
-                    _clusterDetailsDao.persist(clusterDetailsVO);
-                } else {
-                    clusterDetailsVO.setValue(value);
-                    _clusterDetailsDao.update(clusterDetailsVO.getId(), clusterDetailsVO);
-                }
-                break;
-
-            case StoragePool:
-                final StoragePoolVO pool = _storagePoolDao.findById(resourceId);
-                if (pool == null) {
-                    throw new InvalidParameterValueException("unable to find storage pool by id " + resourceId);
-                }
-                if(name.equals(CapacityManager.StorageOverprovisioningFactor.key())) {
-                    if(!pool.getPoolType().supportsOverProvisioning() ) {
-                        throw new InvalidParameterValueException("Unable to update storage pool with id " + resourceId + ". Overprovision not supported for " + pool.getPoolType());
+                case Zone:
+                    final DataCenterVO zone = _zoneDao.findById(resourceId);
+                    if (zone == null) {
+                        throw new InvalidParameterValueException("unable to find zone by id " + resourceId);
                     }
-                }
+                    _dcDetailsDao.addDetail(resourceId, name, value, true);
+                    break;
+                case Cluster:
+                    final ClusterVO cluster = _clusterDao.findById(resourceId);
+                    if (cluster == null) {
+                        throw new InvalidParameterValueException("unable to find cluster by id " + resourceId);
+                    }
+                    ClusterDetailsVO clusterDetailsVO = _clusterDetailsDao.findDetail(resourceId, name);
+                    if (clusterDetailsVO == null) {
+                        clusterDetailsVO = new ClusterDetailsVO(resourceId, name, value);
+                        _clusterDetailsDao.persist(clusterDetailsVO);
+                    } else {
+                        clusterDetailsVO.setValue(value);
+                        _clusterDetailsDao.update(clusterDetailsVO.getId(), clusterDetailsVO);
+                    }
+                    break;
 
-                _storagePoolDetailsDao.addDetail(resourceId, name, value, true);
+                case StoragePool:
+                    final StoragePoolVO pool = _storagePoolDao.findById(resourceId);
+                    if (pool == null) {
+                        throw new InvalidParameterValueException("unable to find storage pool by id " + resourceId);
+                    }
+                    if(name.equals(CapacityManager.StorageOverprovisioningFactor.key())) {
+                        if(!pool.getPoolType().supportsOverProvisioning() ) {
+                            throw new InvalidParameterValueException("Unable to update storage pool with id " + resourceId + ". Overprovision not supported for " + pool.getPoolType());
+                        }
+                    }
 
-                break;
+                    _storagePoolDetailsDao.addDetail(resourceId, name, value, true);
 
-            case Account:
-                final AccountVO account = _accountDao.findById(resourceId);
-                if (account == null) {
-                    throw new InvalidParameterValueException("unable to find account by id " + resourceId);
-                }
-                AccountDetailVO accountDetailVO = _accountDetailsDao.findDetail(resourceId, name);
-                if (accountDetailVO == null) {
-                    accountDetailVO = new AccountDetailVO(resourceId, name, value);
-                    _accountDetailsDao.persist(accountDetailVO);
-                } else {
-                    accountDetailVO.setValue(value);
-                    _accountDetailsDao.update(accountDetailVO.getId(), accountDetailVO);
-                }
-                break;
+                    break;
 
-            case ImageStore:
-                final ImageStoreVO imgStore = _imageStoreDao.findById(resourceId);
-                Preconditions.checkState(imgStore != null);
-                _imageStoreDetailsDao.addDetail(resourceId, name, value, true);
-                break;
+                case Account:
+                    final AccountVO account = _accountDao.findById(resourceId);
+                    if (account == null) {
+                        throw new InvalidParameterValueException("unable to find account by id " + resourceId);
+                    }
+                    AccountDetailVO accountDetailVO = _accountDetailsDao.findDetail(resourceId, name);
+                    if (accountDetailVO == null) {
+                        accountDetailVO = new AccountDetailVO(resourceId, name, value);
+                        _accountDetailsDao.persist(accountDetailVO);
+                    } else {
+                        accountDetailVO.setValue(value);
+                        _accountDetailsDao.update(accountDetailVO.getId(), accountDetailVO);
+                    }
+                    break;
 
-            case Domain:
-                final DomainVO domain = _domainDao.findById(resourceId);
-                if (domain == null) {
-                    throw new InvalidParameterValueException("unable to find domain by id " + resourceId);
-                }
-                DomainDetailVO domainDetailVO = _domainDetailsDao.findDetail(resourceId, name);
-                if (domainDetailVO == null) {
-                    domainDetailVO = new DomainDetailVO(resourceId, name, value);
-                    _domainDetailsDao.persist(domainDetailVO);
-                } else {
-                    domainDetailVO.setValue(value);
-                    _domainDetailsDao.update(domainDetailVO.getId(), domainDetailVO);
-                }
-                break;
+                case ImageStore:
+                    final ImageStoreVO imgStore = _imageStoreDao.findById(resourceId);
+                    Preconditions.checkState(imgStore != null);
+                    _imageStoreDetailsDao.addDetail(resourceId, name, value, true);
+                    break;
 
-            default:
-                throw new InvalidParameterValueException("Scope provided is invalid");
+                case Domain:
+                    final DomainVO domain = _domainDao.findById(resourceId);
+                    if (domain == null) {
+                        throw new InvalidParameterValueException("unable to find domain by id " + resourceId);
+                    }
+                    DomainDetailVO domainDetailVO = _domainDetailsDao.findDetail(resourceId, name);
+                    if (domainDetailVO == null) {
+                        domainDetailVO = new DomainDetailVO(resourceId, name, value);
+                        _domainDetailsDao.persist(domainDetailVO);
+                    } else {
+                        domainDetailVO.setValue(value);
+                        _domainDetailsDao.update(domainDetailVO.getId(), domainDetailVO);
+                    }
+                    break;
+
+                default:
+                    throw new InvalidParameterValueException("Scope provided is invalid");
             }
             return value;
         }
@@ -1072,7 +1072,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     }
 
     private void checkPodAttributes(final long podId, final String podName, final long zoneId, final String gateway, final String cidr, final String startIp, final String endIp, final String allocationStateStr,
-            final boolean checkForDuplicates, final boolean skipGatewayOverlapCheck) {
+                                    final boolean checkForDuplicates, final boolean skipGatewayOverlapCheck) {
         if (checkForDuplicates) {
             // Check if the pod already exists
             if (validPod(podName, zoneId)) {
@@ -1313,7 +1313,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
                     /*
                      * POD Description is refactored to:
                      * <START_IP>-<END_IP>-<FOR_SYSTEM_VMS>-<VLAN>,<START_IP>-<END_IP>-<FOR_SYSTEM_VMS>-<VLAN>,...
-                    */
+                     */
                     String range = startIp + "-" + endIpFinal + "-" + (forSystemVms ? "1" : "0") + "-" + (vlanId == null ? DefaultVlanForPodIpRange : vlanId);
                     if(ipRange != null && !ipRange.isEmpty())
                         ipRange += ("," + range);
@@ -1600,7 +1600,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     @Override
     @DB
     public HostPodVO createPod(final long userId, final String podName, final long zoneId, final String gateway, final String cidr, final String startIp, String endIp, final String allocationStateStr,
-            final boolean skipGatewayOverlapCheck) {
+                               final boolean skipGatewayOverlapCheck) {
 
         // Check if the zone is valid
         if (!validZone(zoneId)) {
@@ -1719,7 +1719,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     }
 
     private void checkZoneParameters(final String zoneName, final String dns1, final String dns2, final String internalDns1, final String internalDns2, final boolean checkForDuplicates, final Long domainId,
-            final String allocationStateStr, final String ip6Dns1, final String ip6Dns2) {
+                                     final String allocationStateStr, final String ip6Dns1, final String ip6Dns2) {
         if (checkForDuplicates) {
             // Check if a zone with the specified name already exists
             if (validZone(zoneName)) {
@@ -2103,8 +2103,8 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     @Override
     @DB
     public DataCenterVO createZone(final long userId, final String zoneName, final String dns1, final String dns2, final String internalDns1, final String internalDns2, final String guestCidr, final String domain,
-            final Long domainId, final NetworkType zoneType, final String allocationStateStr, final String networkDomain, final boolean isSecurityGroupEnabled, final boolean isLocalStorageEnabled,
-            final String ip6Dns1, final String ip6Dns2) {
+                                   final Long domainId, final NetworkType zoneType, final String allocationStateStr, final String networkDomain, final boolean isSecurityGroupEnabled, final boolean isLocalStorageEnabled,
+                                   final String ip6Dns1, final String ip6Dns2) {
 
         // checking the following params outside checkzoneparams method as we do
         // not use these params for updatezone
@@ -2455,14 +2455,14 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     }
 
     protected ServiceOfferingVO createServiceOffering(final long userId, final boolean isSystem, final VirtualMachine.Type vmType,
-            final String name, final Integer cpu, final Integer ramSize, final Integer speed, final String displayText, final String provisioningType, final boolean localStorageRequired,
-            final boolean offerHA, final boolean limitResourceUse, final boolean volatileVm, String tags, final List<Long> domainIds, List<Long> zoneIds, final String hostTag,
-            final Integer networkRate, final String deploymentPlanner, final Map<String, String> details, final Boolean isCustomizedIops, Long minIops, Long maxIops,
-            Long bytesReadRate, Long bytesReadRateMax, Long bytesReadRateMaxLength,
-            Long bytesWriteRate, Long bytesWriteRateMax, Long bytesWriteRateMaxLength,
-            Long iopsReadRate, Long iopsReadRateMax, Long iopsReadRateMaxLength,
-            Long iopsWriteRate, Long iopsWriteRateMax, Long iopsWriteRateMaxLength,
-            final Integer hypervisorSnapshotReserve, String cacheMode) {
+                                                      final String name, final Integer cpu, final Integer ramSize, final Integer speed, final String displayText, final String provisioningType, final boolean localStorageRequired,
+                                                      final boolean offerHA, final boolean limitResourceUse, final boolean volatileVm, String tags, final List<Long> domainIds, List<Long> zoneIds, final String hostTag,
+                                                      final Integer networkRate, final String deploymentPlanner, final Map<String, String> details, final Boolean isCustomizedIops, Long minIops, Long maxIops,
+                                                      Long bytesReadRate, Long bytesReadRateMax, Long bytesReadRateMaxLength,
+                                                      Long bytesWriteRate, Long bytesWriteRateMax, Long bytesWriteRateMaxLength,
+                                                      Long iopsReadRate, Long iopsReadRateMax, Long iopsReadRateMaxLength,
+                                                      Long iopsWriteRate, Long iopsWriteRateMax, Long iopsWriteRateMaxLength,
+                                                      final Integer hypervisorSnapshotReserve, String cacheMode) {
         // Filter child domains when both parent and child domains are present
         List<Long> filteredDomainIds = filterChildSubDomains(domainIds);
 
@@ -2497,8 +2497,8 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
                 hostTag, deploymentPlanner);
 
         if (Boolean.TRUE.equals(isCustomizedIops) || isCustomizedIops == null) {
-                minIops = null;
-                maxIops = null;
+            minIops = null;
+            maxIops = null;
         } else {
             if (minIops == null && maxIops == null) {
                 minIops = 0L;
@@ -3381,7 +3381,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     @DB
     @ActionEvent(eventType = EventTypes.EVENT_VLAN_IP_RANGE_CREATE, eventDescription = "creating vlan ip range", async = false)
     public Vlan createVlanAndPublicIpRange(final CreateVlanIpRangeCmd cmd) throws InsufficientCapacityException, ConcurrentOperationException, ResourceUnavailableException,
-    ResourceAllocationException {
+            ResourceAllocationException {
         Long zoneId = cmd.getZoneId();
         final Long podId = cmd.getPodId();
         final String startIP = cmd.getStartIp();
@@ -3561,7 +3561,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
                 }
             } else if (network.getGuestType() == null ||
                     network.getGuestType() == Network.GuestType.Isolated
-                    && _ntwkOffServiceMapDao.areServicesSupportedByNetworkOffering(network.getNetworkOfferingId(), Service.SourceNat)) {
+                            && _ntwkOffServiceMapDao.areServicesSupportedByNetworkOffering(network.getNetworkOfferingId(), Service.SourceNat)) {
                 throw new InvalidParameterValueException("Can't create direct vlan for network id=" + networkId + " with type: " + network.getGuestType());
             }
         }
@@ -3623,8 +3623,8 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     }
 
     private Vlan commitVlan(final Long zoneId, final Long podId, final String startIP, final String endIP, final String newVlanGatewayFinal, final String newVlanNetmaskFinal,
-            final String vlanId, final Boolean forVirtualNetwork, final Boolean forSystemVms, final Long networkId, final Long physicalNetworkId, final String startIPv6, final String endIPv6,
-            final String ip6Gateway, final String ip6Cidr, final Domain domain, final Account vlanOwner, final Network network, final Pair<Boolean, Pair<String, String>> sameSubnet) {
+                            final String vlanId, final Boolean forVirtualNetwork, final Boolean forSystemVms, final Long networkId, final Long physicalNetworkId, final String startIPv6, final String endIPv6,
+                            final String ip6Gateway, final String ip6Cidr, final Domain domain, final Account vlanOwner, final Network network, final Pair<Boolean, Pair<String, String>> sameSubnet) {
         final GlobalLock commitVlanLock = GlobalLock.getInternLock("CommitVlan");
         commitVlanLock.lock(5);
         s_logger.debug("Acquiring lock for committing vlan");
@@ -3638,7 +3638,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
                     if ((sameSubnet == null || !sameSubnet.first()) && network.getTrafficType() == TrafficType.Guest && network.getGuestType() == GuestType.Shared
                             && _vlanDao.listVlansByNetworkId(networkId) != null) {
                         final Map<Capability, String> dhcpCapabilities = _networkSvc.getNetworkOfferingServiceCapabilities(_networkOfferingDao.findById(network.getNetworkOfferingId()),
-                            Service.Dhcp);
+                                Service.Dhcp);
                         final String supportsMultipleSubnets = dhcpCapabilities.get(Capability.DhcpAccrossMultipleSubnets);
                         if (supportsMultipleSubnets == null || !Boolean.valueOf(supportsMultipleSubnets)) {
                             throw new  InvalidParameterValueException("The dhcp service provider for this network does not support dhcp across multiple subnets");
@@ -3692,7 +3692,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     }
 
     public Pair<Boolean, Pair<String, String>> validateIpRange(final String startIP, final String endIP, final String newVlanGateway, final String newVlanNetmask, final List<VlanVO> vlans, final boolean ipv4,
-            final boolean ipv6, String ip6Gateway, String ip6Cidr, final String startIPv6, final String endIPv6, final Network network) {
+                                                               final boolean ipv6, String ip6Gateway, String ip6Cidr, final String startIPv6, final String endIPv6, final Network network) {
         String vlanGateway = null;
         String vlanNetmask = null;
         boolean sameSubnet = false;
@@ -3729,7 +3729,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     }
 
     public boolean hasSameSubnet(boolean ipv4, String vlanGateway, String vlanNetmask, String newVlanGateway, String newVlanNetmask, String newStartIp, String newEndIp,
-                                  boolean ipv6, String newIp6Gateway, String newIp6Cidr, String newIp6StartIp, String newIp6EndIp, Network network) {
+                                 boolean ipv6, String newIp6Gateway, String newIp6Cidr, String newIp6StartIp, String newIp6EndIp, Network network) {
         if (ipv4) {
             // check if subset or super set or neither.
             final NetUtils.SupersetOrSubset val = checkIfSubsetOrSuperset(vlanGateway, vlanNetmask, newVlanGateway, newVlanNetmask, newStartIp, newEndIp);
@@ -3772,7 +3772,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     @Override
     @DB
     public Vlan createVlanAndPublicIpRange(final long zoneId, final long networkId, final long physicalNetworkId, final boolean forVirtualNetwork, final boolean forSystemVms, final Long podId, final String startIP, final String endIP,
-            final String vlanGateway, final String vlanNetmask, String vlanId, boolean bypassVlanOverlapCheck, Domain domain, final Account vlanOwner, final String startIPv6, final String endIPv6, final String vlanIp6Gateway, final String vlanIp6Cidr) {
+                                           final String vlanGateway, final String vlanNetmask, String vlanId, boolean bypassVlanOverlapCheck, Domain domain, final Account vlanOwner, final String startIPv6, final String endIPv6, final String vlanIp6Gateway, final String vlanIp6Cidr) {
         final Network network = _networkModel.getNetwork(networkId);
 
         boolean ipv4 = false, ipv6 = false;
@@ -3835,14 +3835,14 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
                 networkVlanId = network.getBroadcastDomainType().toUri(network.getUuid()).toString();
             } else if (uri != null) {
                 // Do not search for the VLAN tag when the network doesn't support VLAN
-               if (uri.toString().startsWith("vlan")) {
+                if (uri.toString().startsWith("vlan")) {
                     final String[] vlan = uri.toString().split("vlan:\\/\\/");
                     networkVlanId = vlan[1];
                     // For pvlan
                     if (network.getBroadcastDomainType() != BroadcastDomainType.Vlan) {
                         networkVlanId = networkVlanId.split("-")[0];
                     }
-               }
+                }
             }
 
             if (vlanId != null && !connectivityWithoutVlan) {
@@ -4028,8 +4028,8 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     }
 
     private VlanVO commitVlanAndIpRange(final long zoneId, final long networkId, final long physicalNetworkId, final Long podId, final String startIP, final String endIP,
-            final String vlanGateway, final String vlanNetmask, final String vlanId, final Domain domain, final Account vlanOwner, final String vlanIp6Gateway, final String vlanIp6Cidr,
-            final boolean ipv4, final DataCenterVO zone, final VlanType vlanType, final String ipv6Range, final String ipRange, final boolean forSystemVms) {
+                                        final String vlanGateway, final String vlanNetmask, final String vlanId, final Domain domain, final Account vlanOwner, final String vlanIp6Gateway, final String vlanIp6Cidr,
+                                        final boolean ipv4, final DataCenterVO zone, final VlanType vlanType, final String ipv6Range, final String ipRange, final boolean forSystemVms) {
         return Transaction.execute(new TransactionCallback<VlanVO>() {
             @Override
             public VlanVO doInTransaction(final TransactionStatus status) {
@@ -4277,7 +4277,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
             final AccountVlanMapVO accountVlanMapVO = new AccountVlanMapVO(vlanOwner.getId(), vlan.getId());
             _accountVlanMapDao.persist(accountVlanMapVO);
 
-           // generate usage event for dedication of every ip address in the range
+            // generate usage event for dedication of every ip address in the range
             for (final IPAddressVO ip : ips) {
                 UsageEventUtils.publishUsageEvent(EventTypes.EVENT_NET_IP_ASSIGN, vlanOwner.getId(), ip.getDataCenterId(), ip.getId(), ip.getAddress().toString(), ip.isSourceNat(),
                         vlan.getVlanType().toString(), ip.getSystem(), ip.getClass().getName(), ip.getUuid());
@@ -4682,6 +4682,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         final Map<String, String> detailsStr = cmd.getDetails();
         final Boolean egressDefaultPolicy = cmd.getEgressDefaultPolicy();
         Boolean forVpc = cmd.getForVpc();
+        Boolean forTungsten = cmd.getForTungsten();
         Integer maxconn = null;
         boolean enableKeepAlive = false;
         String servicePackageuuid = cmd.getServicePackageId();
@@ -4839,6 +4840,10 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
                             forVpc = true;
                         }
 
+                        if (forTungsten == null && Provider.Tungsten.equals(provider)){
+                            forTungsten = true;
+                        }
+
                         if (service == Service.Dhcp) {
                             dhcpProvider = provider;
                         }
@@ -4961,7 +4966,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         }
 
         final NetworkOffering offering = createNetworkOffering(name, displayText, trafficType, tags, specifyVlan, availability, networkRate, serviceProviderMap, false, guestType, false,
-                serviceOfferingId, conserveMode, serviceCapabilityMap, specifyIpRanges, isPersistent, details, egressDefaultPolicy, maxconn, enableKeepAlive, forVpc, domainIds, zoneIds);
+                serviceOfferingId, conserveMode, serviceCapabilityMap, specifyIpRanges, isPersistent, details, egressDefaultPolicy, maxconn, enableKeepAlive, forVpc, forTungsten, domainIds, zoneIds);
         CallContext.current().setEventDetails(" Id: " + offering.getId() + " Name: " + name);
         return offering;
     }
@@ -5094,12 +5099,12 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     @Override
     @DB
     public NetworkOfferingVO createNetworkOffering(final String name, final String displayText, final TrafficType trafficType, String tags, final boolean specifyVlan,
-            final Availability availability,
-            final Integer networkRate, final Map<Service, Set<Provider>> serviceProviderMap, final boolean isDefault, final GuestType type, final boolean systemOnly,
-            final Long serviceOfferingId,
-            final boolean conserveMode, final Map<Service, Map<Capability, String>> serviceCapabilityMap, final boolean specifyIpRanges, final boolean isPersistent,
-            final Map<Detail, String> details, final boolean egressDefaultPolicy, final Integer maxconn, final boolean enableKeepAlive, Boolean forVpc,
-            final List<Long> domainIds, final List<Long> zoneIds) {
+                                                   final Availability availability,
+                                                   final Integer networkRate, final Map<Service, Set<Provider>> serviceProviderMap, final boolean isDefault, final GuestType type, final boolean systemOnly,
+                                                   final Long serviceOfferingId,
+                                                   final boolean conserveMode, final Map<Service, Map<Capability, String>> serviceCapabilityMap, final boolean specifyIpRanges, final boolean isPersistent,
+                                                   final Map<Detail, String> details, final boolean egressDefaultPolicy, final Integer maxconn, final boolean enableKeepAlive, Boolean forVpc, Boolean forTungsten,
+                                                   final List<Long> domainIds, final List<Long> zoneIds) {
 
         String servicePackageUuid;
         String spDescription = null;
@@ -5268,6 +5273,8 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         if (serviceOfferingId != null) {
             offeringFinal.setServiceOfferingId(serviceOfferingId);
         }
+
+        offeringFinal.setForTungsten(forTungsten);
 
         //Set Service package id
         offeringFinal.setServicePackage(servicePackageUuid);
@@ -6036,9 +6043,9 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         return _networkOfferingDao.search(sc, searchFilter);
     }
 
-     @Override
-     @DB
-     public boolean releaseDomainSpecificVirtualRanges(final long domainId) {
+    @Override
+    @DB
+    public boolean releaseDomainSpecificVirtualRanges(final long domainId) {
         final List<DomainVlanMapVO> maps = _domainVlanMapDao.listDomainVlanMapsByDomain(domainId);
         if (CollectionUtils.isNotEmpty(maps)) {
             try {
