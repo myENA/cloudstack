@@ -54,7 +54,6 @@ public class NetworkProfile implements Network {
     private final boolean restartRequired;
     private final boolean specifyIpRanges;
     private final Long vpcId;
-    private String tungstenNetworkUuid;
     private final boolean displayNetwork;
     private Long networkAclId;
     private final String guruName;
@@ -89,7 +88,6 @@ public class NetworkProfile implements Network {
         restartRequired = network.isRestartRequired();
         specifyIpRanges = network.getSpecifyIpRanges();
         vpcId = network.getVpcId();
-        tungstenNetworkUuid = network.getTungstenNetworkUuid();
         displayNetwork = network.getDisplayNetwork();
         networkAclId = network.getNetworkACLId();
         guruName = network.getGuruName();
@@ -182,16 +180,6 @@ public class NetworkProfile implements Network {
     @Override
     public TrafficType getTrafficType() {
         return trafficType;
-    }
-
-    @Override
-    public String getTungstenNetworkUuid() {
-        return tungstenNetworkUuid;
-    }
-
-    @Override
-    public void setTungstenNetworkUuid(String tungstenNetworkUuid) {
-        this.tungstenNetworkUuid = tungstenNetworkUuid;
     }
 
     @Override
