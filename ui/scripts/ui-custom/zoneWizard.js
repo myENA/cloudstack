@@ -727,7 +727,10 @@
                             }).html('L3VPN'),
                             $('<option>').attr({
                                 value: 'VCS'
-                            }).html('VCS')
+                            }).html('VCS'),
+                            $('<option>').attr({
+                                value: 'TF'
+                            }).html('TF')
                         )
                     )
                 );

@@ -243,10 +243,12 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
     private KVMStoragePoolManager _storagePoolMgr;
 
     private VifDriver _defaultVifDriver;
+    private VifDriver _tungstenVifDriver;
     private Map<TrafficType, VifDriver> _trafficTypeVifDrivers;
 
     protected static final String DEFAULT_OVS_VIF_DRIVER_CLASS_NAME = "com.cloud.hypervisor.kvm.resource.OvsVifDriver";
     protected static final String DEFAULT_BRIDGE_VIF_DRIVER_CLASS_NAME = "com.cloud.hypervisor.kvm.resource.BridgeVifDriver";
+    protected static final String DEFAULT_TUNGSTEN_VIF_DRIVER_CLASS_NAME = "com.cloud.hypervisor.kvm.resource.VRouterVifDriver";
 
     protected HypervisorType _hypervisorType;
     protected String _hypervisorURI;
@@ -557,7 +559,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
     protected List<String> _cpuFeatures;
 
     protected enum BridgeType {
-        NATIVE, OPENVSWITCH
+        NATIVE, OPENVSWITCH, TUNGSTEN
     }
 
     protected BridgeType _bridgeType;
@@ -1280,6 +1282,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
                 defaultVifDriverName = DEFAULT_BRIDGE_VIF_DRIVER_CLASS_NAME;
             }
         }
+        _tungstenVifDriver = getVifDriverClass(DEFAULT_TUNGSTEN_VIF_DRIVER_CLASS_NAME, params);
         _defaultVifDriver = getVifDriverClass(defaultVifDriverName, params);
 
         // Load any per-traffic-type vif drivers
@@ -1354,6 +1357,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         final Set<VifDriver> vifDrivers = new HashSet<VifDriver>();
 
         vifDrivers.add(_defaultVifDriver);
+        vifDrivers.add(_tungstenVifDriver);
         vifDrivers.addAll(_trafficTypeVifDrivers.values());
 
         final ArrayList<VifDriver> vifDriverList = new ArrayList<VifDriver>(vifDrivers);
