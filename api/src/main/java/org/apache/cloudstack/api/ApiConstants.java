@@ -571,24 +571,11 @@ public class ApiConstants {
     public static final String VSWITCH_NAME_GUEST_TRAFFIC = "guestvswitchname";
     public static final String VSWITCH_NAME_PUBLIC_TRAFFIC = "publicvswitchname";
     // Tungsten controller
-    public static final String TUNGSTEN_NETWORK_SUBNET_NAME = "tungstensubnetname";
     public static final String TUNGSTEN_NETWORK_UUID = "tungstennetworkuuid";
     public static final String TUNGSTEN_VIRTUAL_ROUTER_UUID = "tungstenvirtualrouteruuid";
-    public static final String TUNGSTEN_NETWORK_IPAM_UUID= "tungstennetworkipamuuid";
-    public static final String TUNGSTEN_ADDR_FROM_START = "tungstenaddrfromstart";
-    public static final String TUNGSTEN_IP_ALLOC_POOL_START = "tungstenipallocpoolstart";
-    public static final String TUNGSTEN_IP_ALLOC_POOL_END = "tungstenipallocpoolend";
-    public static final String TUNGSTEN_DNS_NAME_SERVERS = "tungstendnsnameservers";
-    public static final String TUNGSTEN_NETWORK_ENABLE_DHCP = "tungstennetworkenabledhcp";
-    public static final String TUNGSTEN_NETWORK_DEFAULT_GATEWAY = "tungstennetworkdefaultgateway";
-    public static final String TUNGSTEN_NETWORK_SUBNET_IP_PREFIX = "tungstennetworksubnetipprefix";
-    public static final String TUNGSTEN_NETWORK_SUBNET_IP_PREFIX_LEN = "tungstennetworksubnetipprefixlen";
     public static final String TUNGSTEN_VIRTUAL_MACHINE_UUID = "tungstenvirtualmachineuuid";
-    public static final String TUNGSTEN_SECURITY_GROUP_UUID = "tungstensecuritygroupuuid";
-    public static final String TUNGSTEN_PROJECT_UUID = "tungstenprojectuuid";
     public static final String TUNGSTEN_VM_INTERFACE_UUID = "tungstenvminterfaceuuid";
     public static final String TUNGSTEN_INSTANCE_IP_ADDRESS = "tungsteninstanceipaddress";
-    public static final String TUNGSTEN_VM_INTERFACE_MAC_ADDRESSES = "tungstenvminterfacemacaddresses";
     public static final String TUNGSTEN_VM_INTERFACE_MAC_ADDRESS = "tungstenvminterfacemacaddress";
     public static final String TUNGSTEN_VM_NAME = "tungstenvmname";
     public static final String IS_TUNGSTEN_NETWORK = "istungstennetwork";

@@ -26,6 +26,13 @@
         <artifactId>cloudstack</artifactId>
         <version>4.15.0.0-SNAPSHOT</version>
     </parent>
+    <repositories>
+        <repository>
+            <id>juniper-tungsten-api</id>
+            <url>https://github.com/radu-todirica/tungsten-api/raw/master/releases</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>mysql</groupId>
@@ -164,6 +171,11 @@
         <dependency>
             <groupId>org.influxdb</groupId>
             <artifactId>influxdb-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.juniper.tungsten</groupId>
+            <artifactId>juniper-tungsten-api</artifactId>
+            <version>2.0</version>
         </dependency>
     </dependencies>
     <build>

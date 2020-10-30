@@ -16,29 +16,6 @@
 // under the License.
 package com.cloud.user;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.inject.Inject;
-
-import org.apache.cloudstack.api.ApiConstants;
-import org.apache.cloudstack.api.command.admin.domain.ListDomainChildrenCmd;
-import org.apache.cloudstack.api.command.admin.domain.ListDomainsCmd;
-import org.apache.cloudstack.api.command.admin.domain.UpdateDomainCmd;
-import org.apache.cloudstack.context.CallContext;
-import org.apache.cloudstack.engine.orchestration.service.NetworkOrchestrationService;
-import org.apache.cloudstack.framework.messagebus.MessageBus;
-import org.apache.cloudstack.framework.messagebus.PublishScope;
-import org.apache.cloudstack.region.RegionManager;
-import org.apache.cloudstack.resourcedetail.dao.DiskOfferingDetailsDao;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
-
 import com.cloud.api.query.dao.DiskOfferingJoinDao;
 import com.cloud.api.query.dao.ServiceOfferingJoinDao;
 import com.cloud.api.query.vo.DiskOfferingJoinVO;
@@ -59,6 +36,7 @@ import com.cloud.exception.ConcurrentOperationException;
 import com.cloud.exception.InvalidParameterValueException;
 import com.cloud.exception.PermissionDeniedException;
 import com.cloud.exception.ResourceUnavailableException;
+import com.cloud.network.TungstenProvider;
 import com.cloud.network.dao.NetworkDomainDao;
 import com.cloud.projects.ProjectManager;
 import com.cloud.projects.ProjectVO;
@@ -66,6 +44,7 @@ import com.cloud.projects.dao.ProjectDao;
 import com.cloud.service.dao.ServiceOfferingDao;
 import com.cloud.service.dao.ServiceOfferingDetailsDao;
 import com.cloud.storage.dao.DiskOfferingDao;
+import com.cloud.tungsten.TungstenDomainManager;
 import com.cloud.user.dao.AccountDao;
 import com.cloud.utils.Pair;
 import com.cloud.utils.component.ManagerBase;
@@ -83,6 +62,27 @@ import com.cloud.utils.net.NetUtils;
 import com.cloud.vm.ReservationContext;
 import com.cloud.vm.ReservationContextImpl;
 import com.google.common.base.Strings;
+import org.apache.cloudstack.api.ApiConstants;
+import org.apache.cloudstack.api.command.admin.domain.ListDomainChildrenCmd;
+import org.apache.cloudstack.api.command.admin.domain.ListDomainsCmd;
+import org.apache.cloudstack.api.command.admin.domain.UpdateDomainCmd;
+import org.apache.cloudstack.context.CallContext;
+import org.apache.cloudstack.engine.orchestration.service.NetworkOrchestrationService;
+import org.apache.cloudstack.framework.messagebus.MessageBus;
+import org.apache.cloudstack.framework.messagebus.PublishScope;
+import org.apache.cloudstack.region.RegionManager;
+import org.apache.cloudstack.resourcedetail.dao.DiskOfferingDetailsDao;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Component
 public class DomainManagerImpl extends ManagerBase implements DomainManager, DomainService {
@@ -124,6 +124,8 @@ public class DomainManagerImpl extends ManagerBase implements DomainManager, Dom
     private NetworkDomainDao _networkDomainDao;
     @Inject
     private ConfigurationManager _configMgr;
+    @Inject
+    private TungstenDomainManager _tungstenDomainManager;
 
     @Inject
     MessageBus _messageBus;
@@ -229,7 +231,14 @@ public class DomainManagerImpl extends ManagerBase implements DomainManager, Dom
             @Override
             public DomainVO doInTransaction(TransactionStatus status) {
                 DomainVO domain = _domainDao.create(new DomainVO(name, ownerId, parentId, networkDomain, domainUUIDFinal));
-        _resourceCountDao.createResourceCounts(domain.getId(), ResourceLimit.ResourceOwnerType.Domain);
+                _resourceCountDao.createResourceCounts(domain.getId(), ResourceLimit.ResourceOwnerType.Domain);
+                //check if tungsten provider exists and create domain in tungsten
+                List<TungstenProvider> tungstenProviders = _tungstenDomainManager.getTungstenProviders();
+                if(tungstenProviders != null && !tungstenProviders.isEmpty()) {
+                    for (TungstenProvider tungstenProvider : tungstenProviders) {
+                        _tungstenDomainManager.createDomainInTungsten(tungstenProvider, domain.getName(), domain.getUuid());
+                    }
+                }
                 return domain;
             }
         });
@@ -335,6 +344,13 @@ public class DomainManagerImpl extends ManagerBase implements DomainManager, Dom
 
                 cleanupDomainOfferings(domain.getId());
                 CallContext.current().putContextParameter(Domain.class, domain.getUuid());
+                //check if tungsten provider exists and delete the domain from tungsten
+                List<TungstenProvider> tungstenProviders = _tungstenDomainManager.getTungstenProviders();
+                if(tungstenProviders != null && !tungstenProviders.isEmpty()) {
+                    for (TungstenProvider tungstenProvider : tungstenProviders) {
+                        _tungstenDomainManager.deleteDomainFromTungsten(tungstenProvider, domain.getUuid());
+                    }
+                }
                 return true;
             } catch (Exception ex) {
                 s_logger.error("Exception deleting domain with id " + domain.getId(), ex);
