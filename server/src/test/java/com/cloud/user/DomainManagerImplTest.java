@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import com.cloud.tungsten.TungstenDomainManager;
 import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.engine.orchestration.service.NetworkOrchestrationService;
 import org.apache.cloudstack.framework.messagebus.MessageBus;
@@ -92,6 +93,8 @@ public class DomainManagerImplTest {
     MessageBus _messageBus;
     @Mock
     ConfigurationManager _configMgr;
+    @Mock
+    private TungstenDomainManager _tungstenDomainManager;
 
     @Spy
     @InjectMocks
@@ -254,6 +257,7 @@ public class DomainManagerImplTest {
         Mockito.when(_configMgr.releaseDomainSpecificVirtualRanges(Mockito.anyLong())).thenReturn(true);
         Mockito.when(_diskOfferingDao.findByDomainId(Mockito.anyLong())).thenReturn(Collections.emptyList());
         Mockito.when(_offeringsDao.findByDomainId(Mockito.anyLong())).thenReturn(Collections.emptyList());
+        Mockito.when(_tungstenDomainManager.getTungstenProviders()).thenReturn(Collections.emptyList());
 
         try {
             Assert.assertTrue(domainManager.deleteDomain(20l, false));
@@ -287,6 +291,7 @@ public class DomainManagerImplTest {
         Mockito.when(_configMgr.releaseDomainSpecificVirtualRanges(Mockito.anyLong())).thenReturn(true);
         Mockito.when(_diskOfferingDao.findByDomainId(Mockito.anyLong())).thenReturn(Collections.emptyList());
         Mockito.when(_offeringsDao.findByDomainId(Mockito.anyLong())).thenReturn(Collections.emptyList());
+        Mockito.when(_tungstenDomainManager.getTungstenProviders()).thenReturn(Collections.emptyList());
 
         try {
             Assert.assertTrue(domainManager.deleteDomain(20l, true));
