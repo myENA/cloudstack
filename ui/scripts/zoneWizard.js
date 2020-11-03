@@ -3502,6 +3502,95 @@
                                                         });
                                                         // ***** Internal LB ***** (end) *****
 
+                                                        // ***** Tungsten Start *******
+                                                        // TODO : need make a UI to add tungsten provider && for zone instead of physical network
+                                                        // tungsten zone will have tungsten public network by default
+                                                        // add tungsten provider with physical network have tungsten public network
+                                                        if (thisPhysicalNetwork.isolationmethods == "TF"
+                                                            && thisPhysicalNetwork.returnedTrafficTypes.filter(traffic => traffic.traffictype == "Public").length > 0)
+                                                        {
+                                                            $.ajax({
+                                                                url: createURL('configTunstenPublicNetwork'),
+                                                                data: {
+                                                                    zoneid: args.data.returnedZone.id,
+                                                                    physicalnetworkid: thisPhysicalNetwork.id
+                                                                },
+                                                                type: "POST",
+                                                                success: function (json) {
+                                                                    var jobId = json.configtungstenpublicnetworkresponse.jobid;
+                                                                    var configTungstenPublicNetworkIntervalID = setInterval(function() {
+                                                                        $.ajax({
+                                                                            url: createURL("queryAsyncJobResult&jobId=" + jobId),
+                                                                            dataType: "json",
+                                                                            success: function (json) {
+                                                                                var result = json.queryasyncjobresultresponse;
+                                                                                if (result.jobstatus == 0) {
+                                                                                    return; //Job has not completed
+                                                                                } else {
+                                                                                    clearInterval(configTungstenPublicNetworkIntervalID);
+                                                                                    if (result.jobstatus == 1) {
+                                                                                        $.ajax({
+                                                                                            url: createURL('createTungstenProvider'),
+                                                                                            data: {
+                                                                                                tungstenproviderhostname: '192.168.5.202',
+                                                                                                name: 'tungsten',
+                                                                                                id: args.data.returnedZone.id,
+                                                                                                tungstenproviderport: '8082',
+                                                                                                tungstenprovidervrouter: '192.168.2.90',
+                                                                                                tungstenprovidervrouterport: '9091'
+                                                                                            },
+                                                                                            type: "POST",
+                                                                                            success: function (json) {
+                                                                                                var jobId = json.createtungstenproviderresponse.jobid;
+                                                                                                var createTungstenProviderIntervalID = setInterval(function () {
+                                                                                                    $.ajax({
+                                                                                                        url: createURL("queryAsyncJobResult&jobId=" + jobId),
+                                                                                                        dataType: "json",
+                                                                                                        success: function (json) {
+                                                                                                            var result = json.queryasyncjobresultresponse;
+                                                                                                            if (result.jobstatus == 0) {
+                                                                                                                return; //Job has not completed
+                                                                                                            } else {
+                                                                                                                clearInterval(createTungstenProviderIntervalID);
+
+                                                                                                                if (result.jobstatus == 1) {
+                                                                                                                } else if (result.jobstatus == 2) {
+                                                                                                                    alert("failed to create Tungsten Provider. Error: " + _s(result.jobresult.errortext));
+                                                                                                                }
+                                                                                                            }
+                                                                                                        },
+                                                                                                        error: function (XMLHttpResponse) {
+                                                                                                            var errorMsg = parseXMLHttpResponse(XMLHttpResponse);
+                                                                                                            alert("failed to enable Internal LB Provider. Error: " + errorMsg);
+                                                                                                        }
+                                                                                                    });
+                                                                                                }, g_queryAsyncJobResultInterval);
+                                                                                            },
+                                                                                            error: function (XMLHttpResponse) {
+                                                                                                var errorMsg = parseXMLHttpResponse(XMLHttpResponse);
+                                                                                                alert("createTungstenProvider failed. Error: " + errorMsg);
+                                                                                            }
+                                                                                        });
+                                                                                    } else if (result.jobstatus == 2) {
+                                                                                        alert("failed to create Tungsten Provider. Error: " + _s(result.jobresult.errortext));
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            error: function (XMLHttpResponse) {
+                                                                                var errorMsg = parseXMLHttpResponse(XMLHttpResponse);
+                                                                                alert("configTunstenPublicNetwork failed. Error: " + errorMsg);
+                                                                            }
+                                                                        })
+                                                                    }, g_queryAsyncJobResultInterval);
+                                                                },
+                                                                error: function (XMLHttpResponse) {
+                                                                    var errorMsg = parseXMLHttpResponse(XMLHttpResponse);
+                                                                    alert("configTunstenPublicNetwork failed. Error: " + errorMsg);
+                                                                }
+                                                            });
+                                                        }
+                                                        // ***** Tungsten End *******
+
                                                         if (args.data.zone.sgEnabled != true) { //Advanced SG-disabled zone
                                                             // ***** VPC Virtual Router ***** (begin) *****
                                                             var vpcVirtualRouterProviderId;
