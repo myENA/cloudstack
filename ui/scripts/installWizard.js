@@ -149,6 +149,36 @@
                 });
             },
 
+            'tooltip.addTungstenProvider.name': function(args) {
+                args.response.success({
+                    text: 'message.installWizard.tooltip.addTungstenProvider.name'
+                });
+            },
+
+            'tooltip.addTungstenProvider.tungstenproviderhostname': function(args) {
+                args.response.success({
+                    text: 'message.installWizard.tooltip.addTungstenProvider.tungstenproviderhostname'
+                });
+            },
+
+            'tooltip.addTungstenProvider.tungstenproviderport': function(args) {
+                args.response.success({
+                    text: 'message.installWizard.tooltip.addTungstenProvider.tungstenproviderport'
+                });
+            },
+
+            'tooltip.addTungstenProvider.tungstenprovidervrouter': function(args) {
+                args.response.success({
+                    text: 'message.installWizard.tooltip.addTungstenProvider.tungstenprovidervrouter'
+                });
+            },
+
+            'tooltip.addTungstenProvider.tungstenprovidervrouterport': function(args) {
+                args.response.success({
+                    text: 'message.installWizard.tooltip.addTungstenProvider.tungstenprovidervrouterport'
+                });
+            },
+
             'tooltip.addCluster.name': function(args) {
                 args.response.success({
                     text: 'message.installWizard.tooltip.addCluster.name'

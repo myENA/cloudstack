@@ -513,6 +513,52 @@
             }),
 
             /**
+             * Add tungsten provider form
+             * @param args
+             */
+            addTungstenProvider: elems.step({
+                title: _l('label.add.pod'),
+                id: 'add-tungsten',
+                stateID: 'tungstenProvider',
+                tooltipID: 'addTungstenProvider',
+                diagram: '.part.zone, .part.pod',
+                prevStepID: 'addPod',
+                nextStepID: 'configureGuestTraffic',
+                form: {
+                    name: {
+                        label: 'label.name',
+                        validation: {
+                            required: true
+                        }
+                    },
+                    tungstenproviderhostname: {
+                        label: 'Tungsten provider hostname',
+                        validation: {
+                            required: true
+                        }
+                    },
+                    tungstenproviderport: {
+                        label: 'Tungsten provider port',
+                        validation: {
+                            required: true
+                        }
+                    },
+                    tungstenprovidervrouter: {
+                        label: 'Tungsten provider vrouter',
+                        validation: {
+                            required: true
+                        }
+                    },
+                    tungstenprovidervrouterport: {
+                        label: 'Tungsten provider vrouter port',
+                        validation: {
+                            required: true
+                        }
+                    }
+                }
+            }),
+
+            /**
              * Add guest network form
              */
             configureGuestTraffic: elems.step({
