@@ -881,7 +881,24 @@
                             <div class="select-container"></div>
                         </div>
                     </div>
-                    <!-- Step 3.1c: Add tungsten provider -->
+                    <!-- Step 3.2: Configure public traffic -->
+                    <div class="setup-public-traffic" zone-wizard-prefilter="addPublicNetwork"
+                         zone-wizard-step-id="configurePublicTraffic">
+                        <ul class="subnav">
+                            <li class="conditional netscaler physical-network"><translate key="label.netScaler"/></li>
+                            <li class="public-network active"><translate key="label.public.traffic"/></li>
+                            <li class="tungsten-provider"><translate key="label.add.tungsten.provider"/></li>
+                            <li class="pod"><translate key="label.pod"/></li>
+                            <li class="guest-traffic"><translate key="label.guest.traffic"/></li>
+                            <li class="conditional storage-traffic"><translate key="label.storage.traffic"/></li>
+                        </ul>
+                        <div class="info-desc" id="add_zone_public_traffic_desc">
+                            <span id="for_basic_zone" style="display:none"><translate key="message.public.traffic.in.basic.zone"/></span>
+                            <span id="for_advanced_zone" style="display:none"><translate key="message.public.traffic.in.advanced.zone"/></span>
+                        </div>
+                        <div ui-custom="publicTrafficIPRange"></div>
+                    </div>
+                    <!-- Step 3.2a: Add tungsten provider -->
                     <div class="add-tungsten" zone-wizard-form="tungstenProvider" zone-wizard-prefilter="addTungstenProvider"
                          zone-wizard-step-id="addTungstenProvider">
                         <ul class="subnav">
@@ -898,22 +915,6 @@
                         <div class="content input-area">
                             <div class="select-container"></div>
                         </div>
-                    </div>
-                    <!-- Step 3.2: Configure public traffic -->
-                    <div class="setup-public-traffic" zone-wizard-prefilter="addPublicNetwork"
-                         zone-wizard-step-id="configurePublicTraffic">
-                        <ul class="subnav">
-                            <li class="conditional netscaler physical-network"><translate key="label.netScaler"/></li>
-                            <li class="public-network active"><translate key="label.public.traffic"/></li>
-                            <li class="pod"><translate key="label.pod"/></li>
-                            <li class="guest-traffic"><translate key="label.guest.traffic"/></li>
-                            <li class="conditional storage-traffic"><translate key="label.storage.traffic"/></li>
-                        </ul>
-                        <div class="info-desc" id="add_zone_public_traffic_desc">
-                            <span id="for_basic_zone" style="display:none"><translate key="message.public.traffic.in.basic.zone"/></span>
-                            <span id="for_advanced_zone" style="display:none"><translate key="message.public.traffic.in.advanced.zone"/></span>
-                        </div>
-                        <div ui-custom="publicTrafficIPRange"></div>
                     </div>
                     <!-- Step 3.3: Add pod -->
                     <div class="add-pod" zone-wizard-form="pod"
