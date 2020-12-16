@@ -2354,6 +2354,8 @@ class NetworkOffering:
 
         if "useVpc" in services:
             cmd.forvpc = (services["useVpc"] == "on")
+        if "useTungsten" in services:
+            cmd.fortungsten = (services["useTungsten"] == "on")
         cmd.serviceproviderlist = []
         if "serviceProviderList" in services:
             for service, provider in services["serviceProviderList"].items():

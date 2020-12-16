@@ -234,6 +234,23 @@ test_data = {
             "PortForwarding": 'VirtualRouter',
         },
     },
+    "tungsten_network_offering": {
+        "name": 'Test Tungsten Network offering',
+        "displaytext": 'Test Tungsten Network offering',
+        "guestiptype": 'Isolated',
+        "supportedservices": 'Dhcp,Dns,SourceNat,StaticNat,UserData,Connectivity',
+        "traffictype": 'GUEST',
+        "useTungsten": 'on',
+        "availability": 'Optional',
+        "serviceProviderList": {
+            "Dhcp": 'Tungsten',
+            "Dns": 'Tungsten',
+            "SourceNat": 'Tungsten',
+            "StaticNat": 'Tungsten',
+            "UserData": 'Tungsten',
+            "Connectivity": 'Tungsten',
+        },
+    },
     "nw_off_isolated_netscaler": {
         "name": 'Netscaler',
         "displaytext": 'Netscaler',
