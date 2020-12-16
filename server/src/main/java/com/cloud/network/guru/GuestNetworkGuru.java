@@ -23,6 +23,7 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import com.cloud.network.Network.GuestType;
+import com.cloud.offerings.dao.NetworkOfferingServiceMapDao;
 import org.apache.cloudstack.context.CallContext;
 import org.apache.cloudstack.engine.orchestration.service.NetworkOrchestrationService;
 import org.apache.cloudstack.framework.config.ConfigKey;
@@ -93,6 +94,8 @@ public abstract class GuestNetworkGuru extends AdapterBase implements NetworkGur
     protected NetworkModel _networkModel;
     @Inject
     protected DataCenterDao _dcDao;
+    @Inject
+    protected NetworkOfferingServiceMapDao _ntwkOfferingSrvcDao;
     @Inject
     protected VlanDao _vlanDao;
     @Inject
