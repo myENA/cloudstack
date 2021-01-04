@@ -71,6 +71,9 @@ public interface IpAddressManager {
     PublicIp assignPublicIpAddress(long dcId, Long podId, Account owner, VlanType type, Long networkId, String requestedIp, boolean isSystem, boolean forSystemVms)
             throws InsufficientAddressCapacityException;
 
+    PublicIp assignSourceNatPublicIpAddress(long dcId, Long podId, Account owner, VlanType type, Long networkId, String requestedIp, boolean isSystem, boolean forSystemVms)
+        throws InsufficientAddressCapacityException;
+
     /**
      * Do all of the work of releasing public ip addresses. Note that if this method fails, there can be side effects.
      *
@@ -206,5 +209,8 @@ public interface IpAddressManager {
     public boolean isIpEqualsGatewayOrNetworkOfferingsEmpty(Network network, String requestedIp);
 
     void releasePodIp(Long id) throws CloudRuntimeException;
+
+    public static final String MESSAGE_ASSIGN_IPADDR_EVENT = "Message.AssignIpAddr.Event";
+    public static final String MESSAGE_RELEASE_IPADDR_EVENT = "Message.ReleaseIpAddr.Event";
 }
 

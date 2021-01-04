@@ -38,6 +38,8 @@ import org.apache.cloudstack.engine.orchestration.service.NetworkOrchestrationSe
 import org.apache.cloudstack.framework.config.ConfigKey;
 import org.apache.cloudstack.framework.config.Configurable;
 import org.apache.cloudstack.framework.config.dao.ConfigurationDao;
+import org.apache.cloudstack.framework.messagebus.MessageBus;
+import org.apache.cloudstack.framework.messagebus.PublishScope;
 import org.apache.cloudstack.region.PortableIp;
 import org.apache.cloudstack.region.PortableIpDao;
 import org.apache.cloudstack.region.PortableIpVO;
@@ -288,6 +290,8 @@ public class IpAddressManagerImpl extends ManagerBase implements IpAddressManage
     DataCenterIpAddressDao _privateIPAddressDao;
     @Inject
     HostPodDao _hpDao;
+    @Inject
+    MessageBus _messageBus;
 
     SearchBuilder<IPAddressVO> AssignIpAddressSearch;
     SearchBuilder<IPAddressVO> AssignIpAddressFromPodVlanSearch;
@@ -756,6 +760,16 @@ public class IpAddressManagerImpl extends ManagerBase implements IpAddressManage
     }
 
     @Override
+    public PublicIp assignSourceNatPublicIpAddress(long dcId, Long podId, Account owner, VlanType type, Long networkId, String requestedIp, boolean isSystem, boolean forSystemVms)
+        throws InsufficientAddressCapacityException {
+        IPAddressVO ipAddressVO = _ipAddressDao.findByIpAndDcId(dcId, requestedIp);
+        if (ipAddressVO.getState() != State.Free) {
+            throw new InsufficientAddressCapacityException("can not assign to this network", Network.class, networkId);
+        }
+        return fetchNewPublicIp(dcId, podId, null, owner, type, networkId, true, true, requestedIp, isSystem, null, null, forSystemVms);
+    }
+
+    @Override
     public PublicIp assignPublicIpAddressFromVlans(long dcId, Long podId, Account owner, VlanType type, List<Long> vlanDbIds, Long networkId, String requestedIp, boolean isSystem)
             throws InsufficientAddressCapacityException {
         return fetchNewPublicIp(dcId, podId, vlanDbIds, owner, type, networkId, false, true, requestedIp, isSystem, null, null, false);
@@ -1037,6 +1051,7 @@ public class IpAddressManagerImpl extends ManagerBase implements IpAddressManage
                 // Cleanup all the resources for ip address if there are any, and only then un-assign ip in the system
                 if (cleanupIpResources(addr.getId(), Account.ACCOUNT_ID_SYSTEM, _accountMgr.getSystemAccount())) {
                     _ipAddressDao.unassignIpAddress(addr.getId());
+                    _messageBus.publish(_name, MESSAGE_RELEASE_IPADDR_EVENT, PublishScope.LOCAL, addr);
                 } else {
                     success = false;
                     s_logger.warn("Failed to release resources for ip address id=" + addr.getId());
@@ -1213,6 +1228,8 @@ public class IpAddressManagerImpl extends ManagerBase implements IpAddressManage
                     return ip;
                 }
             });
+
+            _messageBus.publish(_name, MESSAGE_ASSIGN_IPADDR_EVENT, PublishScope.LOCAL, ip.ip());
 
         } finally {
             if (accountToLock != null) {

@@ -78,7 +78,6 @@ import com.cloud.network.dao.PhysicalNetworkServiceProviderVO;
 import com.cloud.network.dao.PhysicalNetworkTrafficTypeDao;
 import com.cloud.network.dao.PhysicalNetworkTrafficTypeVO;
 import com.cloud.network.dao.PhysicalNetworkVO;
-import com.cloud.network.dao.TungstenProviderDao;
 import com.cloud.network.element.NetworkElement;
 import com.cloud.network.element.OvsProviderVO;
 import com.cloud.network.element.VirtualRouterElement;
@@ -108,7 +107,6 @@ import com.cloud.server.ResourceTag;
 import com.cloud.server.ResourceTag.ResourceObjectType;
 import com.cloud.tags.ResourceTagVO;
 import com.cloud.tags.dao.ResourceTagDao;
-import com.cloud.tungsten.TungstenResourceManager;
 import com.cloud.user.Account;
 import com.cloud.user.AccountManager;
 import com.cloud.user.AccountService;
@@ -182,7 +180,6 @@ import org.apache.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.naming.ConfigurationException;
-import java.io.IOException;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.URI;
@@ -328,10 +325,6 @@ public class NetworkServiceImpl extends ManagerBase implements NetworkService, C
     AccountService _accountService;
     @Inject
     NetworkAccountDao _networkAccountDao;
-    @Inject
-    TungstenProviderDao _tungstenProviderDao;
-    @Inject
-    TungstenResourceManager _tungstenResourceManager;
 
     int _cidrLimit;
     boolean _allowSubdomainNetworkAccess;
@@ -3368,17 +3361,6 @@ public class NetworkServiceImpl extends ManagerBase implements NetworkService, C
                     for (NetworkVO network : networks) {
                         _networksDao.remove(network.getId());
                     }
-                }
-
-                // Remove public network from tungsten
-                try {
-                    TungstenProvider tungstenProvider = _tungstenProviderDao.findByZoneId(pNetwork.getDataCenterId());
-                    if (tungstenProvider != null && pNetwork.getIsolationMethods().contains("TF")) {
-                        _tungstenResourceManager.deleteTungstenPublicNetwork(pNetwork, tungstenProvider);
-                    }
-                } catch (IOException e) {
-                    s_logger.warn("Unable to remove public network from tungsten" , e);
-                    return false;
                 }
 
                 // delete vnets
