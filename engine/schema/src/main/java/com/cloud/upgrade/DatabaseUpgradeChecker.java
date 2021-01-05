@@ -88,7 +88,8 @@ import com.cloud.upgrade.dao.Upgrade461to470;
 import com.cloud.upgrade.dao.Upgrade470to471;
 import com.cloud.upgrade.dao.Upgrade471to480;
 import com.cloud.upgrade.dao.Upgrade480to481;
-import com.cloud.upgrade.dao.Upgrade481to490;
+import com.cloud.upgrade.dao.Upgrade481to482;
+import com.cloud.upgrade.dao.Upgrade482to490;
 import com.cloud.upgrade.dao.Upgrade490to4910;
 import com.cloud.upgrade.dao.Upgrade4910to4920;
 import com.cloud.upgrade.dao.Upgrade4920to4930;
@@ -177,8 +178,8 @@ public class DatabaseUpgradeChecker implements SystemIntegrityChecker {
                 .next("4.7.1"   , new Upgrade471to480())
                 .next("4.7.2"   , new Upgrade471to480())
                 .next("4.8.0"   , new Upgrade480to481())
-                .next("4.8.1"   , new Upgrade481to490())
-                .next("4.8.2.0" , new Upgrade481to490())
+                .next("4.8.1"   , new Upgrade481to482())
+                .next("4.8.2"   , new Upgrade482to490())
                 .next("4.9.0"   , new Upgrade490to4910())
                 .next("4.9.1.0" , new Upgrade4910to4920())
                 .next("4.9.2.0" , new Upgrade4920to4930())
