@@ -19,6 +19,20 @@
 
 package com.cloud.utils.net;
 
+import com.cloud.utils.IteratorUtil;
+import com.cloud.utils.Pair;
+import com.cloud.utils.exception.CloudRuntimeException;
+import com.cloud.utils.script.Script;
+import com.googlecode.ipv6.IPv6Address;
+import com.googlecode.ipv6.IPv6AddressRange;
+import com.googlecode.ipv6.IPv6Network;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.net.util.SubnetUtils;
+import org.apache.commons.validator.routines.InetAddressValidator;
+import org.apache.commons.validator.routines.RegexValidator;
+import org.apache.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,30 +46,15 @@ import java.net.SocketException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
-import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.net.util.SubnetUtils;
-import org.apache.commons.validator.routines.InetAddressValidator;
-import org.apache.commons.validator.routines.RegexValidator;
-import org.apache.log4j.Logger;
-
-import com.cloud.utils.IteratorUtil;
-import com.cloud.utils.Pair;
-import com.cloud.utils.exception.CloudRuntimeException;
-import com.cloud.utils.script.Script;
-import com.googlecode.ipv6.IPv6Address;
-import com.googlecode.ipv6.IPv6AddressRange;
-import com.googlecode.ipv6.IPv6Network;
 
 public class NetUtils {
     protected final static Logger s_logger = Logger.getLogger(NetUtils.class);
@@ -387,6 +386,36 @@ public class NetUtils {
             result |= Integer.parseInt(tokens[i], 16);
         }
         return result;
+    }
+
+    public static String getTungstenDnsAddress(String cidr){
+        String[] splitCidr = cidr.split("/");
+        String[] cdirAddress= splitCidr[0].split("\\.");
+        int cidrSize = Integer.parseInt(splitCidr[1]);
+        if(cidrSize >= 24){
+            StringBuilder sb = new StringBuilder();
+            sb.append(cdirAddress[0]).append(".");
+            sb.append(cdirAddress[1]).append(".");
+            sb.append(cdirAddress[2]).append(".");
+            sb.append("253");
+            return sb.toString();
+        }
+        else if(cidrSize >= 16){
+            StringBuilder sb = new StringBuilder();
+            sb.append(cdirAddress[0]).append(".");
+            sb.append(cdirAddress[1]).append(".");
+            sb.append("255").append(".");
+            sb.append("253");
+            return sb.toString();
+        }
+        else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(cdirAddress[0]).append(".");
+            sb.append("255").append(".");
+            sb.append("255").append(".");
+            sb.append("253");
+            return sb.toString();
+        }
     }
 
     public static String[] getNicParams(final String nicName) {
