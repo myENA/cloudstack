@@ -86,6 +86,7 @@ import com.cloud.network.dao.PhysicalNetworkServiceProviderVO;
 import com.cloud.network.dao.PhysicalNetworkTrafficTypeDao;
 import com.cloud.network.dao.PhysicalNetworkTrafficTypeVO;
 import com.cloud.network.dao.PhysicalNetworkVO;
+import com.cloud.network.dao.TungstenGuestNetworkIpAddressDao;
 import com.cloud.network.dao.UserIpv6AddressDao;
 import com.cloud.network.element.IpDeployer;
 import com.cloud.network.element.IpDeployingRequester;
@@ -209,6 +210,8 @@ public class NetworkModelImpl extends ManagerBase implements NetworkModel, Confi
     NetworkOfferingDetailsDao _ntwkOffDetailsDao;
     @Inject
     private NetworkService _networkService;
+    @Inject
+    TungstenGuestNetworkIpAddressDao _tungstenGuestNetworkIpAddressDao;
 
     private final HashMap<String, NetworkOfferingVO> _systemNetworks = new HashMap<String, NetworkOfferingVO>(5);
     static Long s_privateOfferingId = null;
@@ -1873,6 +1876,9 @@ public class NetworkModelImpl extends ManagerBase implements NetworkModel, Confi
         //Get ips used by load balancers
         List<String> lbIps = _appLbRuleDao.listLbIpsBySourceIpNetworkId(network.getId());
         ips.addAll(lbIps);
+        //Get ips used by tungsten
+        List<String> tfIps = _tungstenGuestNetworkIpAddressDao.listByNetworkId(network.getId());
+        ips.addAll(tfIps);
         return ips;
     }
 
