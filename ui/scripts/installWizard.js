@@ -167,15 +167,21 @@
                 });
             },
 
-            'tooltip.addTungstenProvider.tungstenprovidervrouter': function(args) {
+            'tooltip.addTungstenProvider.tungstengateway': function(args) {
                 args.response.success({
-                    text: 'message.installWizard.tooltip.addTungstenProvider.tungstenprovidervrouter'
+                    text: 'message.installWizard.tooltip.addTungstenProvider.tungstengateway'
                 });
             },
 
             'tooltip.addTungstenProvider.tungstenprovidervrouterport': function(args) {
                 args.response.success({
                     text: 'message.installWizard.tooltip.addTungstenProvider.tungstenprovidervrouterport'
+                });
+            },
+
+            'tooltip.addTungstenProvider.tungstenproviderintrospectport': function(args) {
+                args.response.success({
+                    text: 'message.installWizard.tooltip.addTungstenProvider.tungstenproviderintrospectport'
                 });
             },
 

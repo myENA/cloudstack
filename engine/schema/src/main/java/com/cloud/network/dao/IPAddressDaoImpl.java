@@ -59,6 +59,7 @@ public class IPAddressDaoImpl extends GenericDaoBase<IPAddressVO, Long> implemen
     protected GenericSearchBuilder<IPAddressVO, Integer> AllIpCountForDashboard;
     protected SearchBuilder<IPAddressVO> DeleteAllExceptGivenIp;
     protected GenericSearchBuilder<IPAddressVO, Long> AllocatedIpCountForAccount;
+    protected SearchBuilder<IPAddressVO> TungstenFloatingIpSearch;
     @Inject
     protected VlanDao _vlanDao;
     protected GenericSearchBuilder<IPAddressVO, Long> CountFreePublicIps;
@@ -147,6 +148,13 @@ public class IPAddressDaoImpl extends GenericDaoBase<IPAddressVO, Long> implemen
         join.and("vlanType", join.entity().getVlanType(), Op.EQ);
         CountFreePublicIps.join("vlans", join, CountFreePublicIps.entity().getVlanId(), join.entity().getId(), JoinBuilder.JoinType.INNER);
         CountFreePublicIps.done();
+
+        TungstenFloatingIpSearch = createSearchBuilder();
+        TungstenFloatingIpSearch.and("dc", TungstenFloatingIpSearch.entity().getDataCenterId(), Op.EQ);
+        TungstenFloatingIpSearch.and("state", TungstenFloatingIpSearch.entity().getState(), Op.EQ);
+        TungstenFloatingIpSearch.and("network", TungstenFloatingIpSearch.entity().getAssociatedWithNetworkId(), Op.NNULL);
+        TungstenFloatingIpSearch.and("sourceNat", TungstenFloatingIpSearch.entity().isSourceNat(), Op.EQ);
+        TungstenFloatingIpSearch.done();
 
         DeleteAllExceptGivenIp = createSearchBuilder();
         DeleteAllExceptGivenIp.and("vlanDbId", DeleteAllExceptGivenIp.entity().getVlanId(), Op.EQ);
@@ -479,5 +487,14 @@ public class IPAddressDaoImpl extends GenericDaoBase<IPAddressVO, Long> implemen
         SearchCriteria<IPAddressVO> sc = AllFieldsSearch.create();
         sc.setParameters("vlan", vlandbId);
         lockRows(sc, null, true);
+    }
+
+    @Override
+    public List<IPAddressVO> listByDcIdAndAssociatedNetwork(final long dcId) {
+        SearchCriteria<IPAddressVO> sc = TungstenFloatingIpSearch.create();
+        sc.setParameters("dataCenterId", dcId);
+        sc.setParameters("sourceNat", false);
+        sc.setParameters("state", State.Allocated);
+        return listBy(sc);
     }
 }

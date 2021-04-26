@@ -3654,7 +3654,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         commitVlanLock.lock(5);
         s_logger.debug("Acquiring lock for committing vlan");
         try {
-            return Transaction.execute(new TransactionCallback<Vlan>() {
+            Vlan vlan = Transaction.execute(new TransactionCallback<Vlan>() {
                 @Override
                 public Vlan doInTransaction(final TransactionStatus status) {
                     String newVlanNetmask = newVlanNetmaskFinal;
@@ -3683,6 +3683,10 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
                     return vlan;
                 }
             });
+
+            messageBus.publish(_name, MESSAGE_CREATE_VLAN_IP_RANGE_EVENT, PublishScope.LOCAL, vlan);
+
+            return vlan;
         } finally {
             commitVlanLock.unlock();
         }
@@ -4225,6 +4229,8 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
                 s_logger.debug(String.format("Delete vlan_db_id=%s in pod_vlan_map", vlanDbId));
             }
         });
+
+        messageBus.publish(_name, MESSAGE_DELETE_VLAN_IP_RANGE_EVENT, PublishScope.LOCAL, vlanRange);
 
         return true;
     }

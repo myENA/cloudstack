@@ -91,4 +91,6 @@ public interface IPAddressDao extends GenericDao<IPAddressVO, Long> {
     List<IPAddressVO> listByAssociatedVmId(long vmId);
 
     IPAddressVO findByVmIdAndNetworkId(long networkId, long vmId);
+
+    List<IPAddressVO> listByDcIdAndAssociatedNetwork(long dcId);
 }
