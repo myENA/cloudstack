@@ -49,6 +49,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import com.cloud.exception.UnsupportedServiceException;
 import com.cloud.hypervisor.Hypervisor;
+import com.cloud.network.security.SecurityGroupService;
+import com.cloud.network.security.SecurityGroupVO;
 import org.apache.cloudstack.acl.ControlledEntity.ACLType;
 import org.apache.cloudstack.acl.SecurityChecker.AccessType;
 import org.apache.cloudstack.affinity.AffinityGroupService;
@@ -96,6 +98,8 @@ import org.apache.cloudstack.framework.async.AsyncCallFuture;
 import org.apache.cloudstack.framework.config.ConfigKey;
 import org.apache.cloudstack.framework.config.Configurable;
 import org.apache.cloudstack.framework.config.dao.ConfigurationDao;
+import org.apache.cloudstack.framework.messagebus.MessageBus;
+import org.apache.cloudstack.framework.messagebus.PublishScope;
 import org.apache.cloudstack.managed.context.ManagedContextRunnable;
 import org.apache.cloudstack.query.QueryService;
 import org.apache.cloudstack.storage.command.DeleteCommand;
@@ -502,6 +506,8 @@ public class UserVmManagerImpl extends ManagerBase implements UserVmManager, Vir
     private ResourceTagDao resourceTagDao;
     @Inject
     private TemplateOVFPropertiesDao templateOVFPropertiesDao;
+    @Inject
+    private MessageBus _messageBus;
 
     private ScheduledExecutorService _executor = null;
     private ScheduledExecutorService _vmIpFetchExecutor = null;
@@ -4323,6 +4329,12 @@ public class UserVmManagerImpl extends ManagerBase implements UserVmManager, Vir
             // this value is not being sent to the backend; need only for api
             // display purposes
             vm.setPassword((String)vmParamPair.second().get(VirtualMachineProfile.Param.VmPassword));
+        }
+
+        List<SecurityGroupVO> securityGroupsForVm = _securityGroupMgr.getSecurityGroupsForVm(vmId);
+        if (_securityGroupMgr.isVmSecurityGroupEnabled(vmId) && !securityGroupsForVm.isEmpty()) {
+            _messageBus.publish(_name, SecurityGroupService.MESSAGE_ADD_VM_TO_SECURITY_GROUPS_EVENT, PublishScope.LOCAL,
+                    new Pair<>(vmId, securityGroupsForVm));
         }
 
         return vm;
