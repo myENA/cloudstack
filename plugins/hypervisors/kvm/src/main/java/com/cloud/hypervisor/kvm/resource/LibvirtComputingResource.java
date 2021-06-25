@@ -220,9 +220,9 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
     private String _ovsPvlanVmPath;
     private String _routerProxyPath;
     private String _ovsTunnelPath;
-    private String _setupTungstenVrouterPath;
-    private String _updateTungstenLoadbalancerStatsPath;
-    private String _updateTungstenLoadbalancerSslPath;
+    private String setupTungstenVrouterPath;
+    private String updateTungstenLoadbalancerStatsPath;
+    private String updateTungstenLoadbalancerSslPath;
     private String _host;
     private String _dcId;
     private String _pod;
@@ -246,7 +246,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
     private KVMStoragePoolManager _storagePoolMgr;
 
     private VifDriver _defaultVifDriver;
-    private VifDriver _tungstenVifDriver;
+    private VifDriver tungstenVifDriver;
     private Map<TrafficType, VifDriver> _trafficTypeVifDrivers;
 
     protected static final String DEFAULT_OVS_VIF_DRIVER_CLASS_NAME = "com.cloud.hypervisor.kvm.resource.OvsVifDriver";
@@ -654,6 +654,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
     protected String getDefaultTungstenScriptsDir() {
         return "scripts/vm/network/tungsten";
     }
+
     @Override
     public boolean configure(final String name, final Map<String, Object> params) throws ConfigurationException {
         boolean success = super.configure(name, params);
@@ -821,18 +822,18 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
             throw new ConfigurationException("Unable to find the ovs-pvlan-vm.sh");
         }
 
-        _setupTungstenVrouterPath = Script.findScript(tungstenScriptsDir, "setup_tungsten_vrouter.sh");
-        if (_setupTungstenVrouterPath == null) {
+        setupTungstenVrouterPath = Script.findScript(tungstenScriptsDir, "setup_tungsten_vrouter.sh");
+        if (setupTungstenVrouterPath == null) {
             throw new ConfigurationException("Unable to find the setup_tungsten_vrouter.sh");
         }
 
-        _updateTungstenLoadbalancerStatsPath = Script.findScript(tungstenScriptsDir, "update_tungsten_loadbalancer_stats.sh");
-        if (_updateTungstenLoadbalancerStatsPath == null) {
+        updateTungstenLoadbalancerStatsPath = Script.findScript(tungstenScriptsDir, "update_tungsten_loadbalancer_stats.sh");
+        if (updateTungstenLoadbalancerStatsPath == null) {
             throw new ConfigurationException("Unable to find the update_tungsten_loadbalancer_stats.sh");
         }
 
-        _updateTungstenLoadbalancerSslPath = Script.findScript(tungstenScriptsDir, "update_tungsten_loadbalancer_ssl.sh");
-        if (_updateTungstenLoadbalancerSslPath == null) {
+        updateTungstenLoadbalancerSslPath = Script.findScript(tungstenScriptsDir, "update_tungsten_loadbalancer_ssl.sh");
+        if (updateTungstenLoadbalancerSslPath == null) {
             throw new ConfigurationException("Unable to find the update_tungsten_loadbalancer_ssl.sh");
         }
 
@@ -1308,7 +1309,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
                 defaultVifDriverName = DEFAULT_BRIDGE_VIF_DRIVER_CLASS_NAME;
             }
         }
-        _tungstenVifDriver = getVifDriverClass(DEFAULT_TUNGSTEN_VIF_DRIVER_CLASS_NAME, params);
+        tungstenVifDriver = getVifDriverClass(DEFAULT_TUNGSTEN_VIF_DRIVER_CLASS_NAME, params);
         _defaultVifDriver = getVifDriverClass(defaultVifDriverName, params);
 
         // Load any per-traffic-type vif drivers
@@ -1383,7 +1384,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         final Set<VifDriver> vifDrivers = new HashSet<VifDriver>();
 
         vifDrivers.add(_defaultVifDriver);
-        vifDrivers.add(_tungstenVifDriver);
+        vifDrivers.add(tungstenVifDriver);
         vifDrivers.addAll(_trafficTypeVifDrivers.values());
 
         final ArrayList<VifDriver> vifDriverList = new ArrayList<VifDriver>(vifDrivers);
@@ -4038,7 +4039,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
 
     public boolean setupTungstenVRouter(final String oper, final String inf, final String subnet, final String route,
         final String vrf) {
-        final Script cmd = new Script(_setupTungstenVrouterPath, _timeout, s_logger);
+        final Script cmd = new Script(setupTungstenVrouterPath, _timeout, s_logger);
         cmd.add(oper);
         cmd.add(inf);
         cmd.add(subnet);
@@ -4054,7 +4055,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
 
     public boolean updateTungstenLoadbalancerStats(final String lbUuid, final String lbStatsPort,
         final String lbStatsUri, final String lbStatsAuth) {
-        final Script cmd = new Script(_updateTungstenLoadbalancerStatsPath, _timeout, s_logger);
+        final Script cmd = new Script(updateTungstenLoadbalancerStatsPath, _timeout, s_logger);
         cmd.add(lbUuid);
         cmd.add(lbStatsPort);
         cmd.add(lbStatsUri);
@@ -4069,7 +4070,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
 
     public boolean updateTungstenLoadbalancerSsl(final String lbUuid, final String sslCertName,
         final String certificateKey, final String privateKey, final String privateIp, final String port) {
-        final Script cmd = new Script(_updateTungstenLoadbalancerSslPath, _timeout, s_logger);
+        final Script cmd = new Script(updateTungstenLoadbalancerSslPath, _timeout, s_logger);
         cmd.add(lbUuid);
         cmd.add(sslCertName);
         cmd.add(certificateKey);
